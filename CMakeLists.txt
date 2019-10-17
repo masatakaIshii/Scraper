@@ -6,10 +6,25 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 
 set(SRCS
     sources/request.c
-    sources/config.c)
+    sources/config.c
+    sources/option.c
+    sources/raw_resource.c
+    sources/relative_resource.c
+    sources/request.c
+    sources/session.c
+    sources/task.c
+    sources/version.c)
 
 set(HEADERS
-    sources/request.h)
+    sources/request.h
+    sources/config.h
+    sources/option.h
+    sources/raw_resource.h
+    sources/relative_resource.h
+    sources/request.h
+    sources/session.h
+    sources/task.h
+    sources/version.h)
 
 add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
 #add_executable(Scraper test/main.c ${SRCS} ${HEADERS})
