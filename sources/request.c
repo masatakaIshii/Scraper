@@ -1,5 +1,9 @@
-//
-// Created by masat on 16/10/2019.
-//
+/*
+ *  Filename    : request.c
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : request structure and functions
+ */
 
 #include "request.h"

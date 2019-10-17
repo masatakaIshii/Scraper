@@ -7,8 +7,12 @@
 
 #include <stdio.h>
 #include "action.h"
+#include "task.h"
+
 typedef struct Config {
-    Action *
-}
+    Action **actions;
+    Task **task;
+    char *content;
+} Config;
 
 #endif //SCRAPER_CONFIG_H
