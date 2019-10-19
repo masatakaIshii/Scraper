@@ -13,7 +13,8 @@ set(SRCS
     sources/request.c
     sources/session.c
     sources/task.c
-    sources/version.c)
+    sources/version.c
+    sources/common.c)
 
 set(HEADERS
     sources/request.h
@@ -24,10 +25,17 @@ set(HEADERS
     sources/request.h
     sources/session.h
     sources/task.h
-    sources/version.h)
+    sources/version.h
+    sources/common.h)
 
-add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
-#add_executable(Scraper test/main.c ${SRCS} ${HEADERS})
+set(TESTSRCS
+    test/testRequest.c)
+
+set(TESTHEADERS
+    test/testRequest.h)
+
+#add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
+add_executable(Scraper test/main.c ${SRCS} ${TESTSRCS} ${HEADERS} ${TESTHEADERS})
 
 find_package(CURL)
 if (CURL_FOUND)
