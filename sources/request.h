@@ -10,21 +10,24 @@
 
 #include <stdio.h>
 #include <curl/curl.h>
+#include "common.h"
 
 typedef struct Request {
     CURL *pHandle;
+    int isHandleInit;
     FILE *pFile;
+    int isFileOpen;
     char *url;
     char errBuf[CURL_ERROR_SIZE];
 } Request;
 
-Request *initRequest();
+Request *initRequest(char *url);
 
-void setOptionCurl(Request *request, CURLoption *options, int nbrOptions);
+int saveRequestInFile(Request *pRequest, char *savePath);
 
-int saveFile(Request *request, char *savePath);
+int initPFile(char *outputPath, char *mode);
 
-int clearPHandle(Request *request);
+void clearPHandle(Request *pRequest) ;
 
 int clearPFile(Request *request);
 
