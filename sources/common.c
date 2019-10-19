@@ -3,3 +3,9 @@
 //
 
 #include "common.h"
+
+void errorQuit(char *message) {
+    printf("%s", message);
+    curl_global_cleanup();
+    exit(1);
+}

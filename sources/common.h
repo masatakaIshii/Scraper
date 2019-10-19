@@ -5,4 +5,10 @@
 #ifndef SCRAPER_COMMON_H
 #define SCRAPER_COMMON_H
 
+#include<stdio.h>
+#include<stdlib.h>
+#include<curl/curl.h>
+
+void errorQuit(char *message);
+
 #endif //SCRAPER_COMMON_H
