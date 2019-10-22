@@ -7,11 +7,52 @@
 #include <curl/curl.h>
 #include "testRequest.h"
 
+void showIfSuiteAndTestArgumentsIsIncorrect(int argc, char **argv, CU_pSuite currentSuite, CU_pTest currentTest) {
+    if (argc > 1) {
+        if (currentSuite == NULL) {
+            printf("currentSuite %s doesn't exist\n", argv[1]);
+        }
+        if (argc == 3) {
+            if (currentTest == NULL) {
+                printf("currentTest %s doesn't exist\n", argv[2]);
+            }
+        }
+    }
+}
+
+void runSuitesAndTests(int argc, char **argv) {
+    CU_pSuite currentSuite;
+    CU_pTest currentTest;
+    char suiteName[100];
+    char testName[100];
+
+    switch (argc)
+    {
+        case 1 :
+            CU_basic_run_tests();
+            break;
+        case 2:
+            currentSuite = CU_get_suite(argv[1]);
+            CU_basic_run_suite(currentSuite);
+            break;
+        case 3:
+            strcpy(suiteName, argv[1]);
+            strcpy(testName, argv[2]);
+            currentSuite = CU_get_suite(suiteName);
+            currentTest = CU_get_test(currentSuite, testName);
+            CU_basic_run_test(currentSuite, currentTest);
+            break;
+        default:
+            printf("Too many arguments\n");
+            return;
+    }
+
+    showIfSuiteAndTestArgumentsIsIncorrect(argc, argv, currentSuite, currentTest);
+}
+
 int main(int argc, char **argv)
 {
     curl_global_init(CURL_GLOBAL_ALL);
-    char suiteName[100];
-    char testName[100];
 
     if (CUE_SUCCESS != CU_initialize_registry())
     {
@@ -25,25 +66,7 @@ int main(int argc, char **argv)
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
 
-    switch (argc)
-    {
-        case 1 :
-            CU_basic_run_tests();
-            break;
-        case 2:
-            CU_basic_run_suite(CU_get_suite(argv[1]));
-            break;
-        case 3:
-            strcpy(suiteName, argv[1]);
-            strcpy(testName, argv[2]);
-            CU_pSuite currentSuite = CU_get_suite(suiteName);
-            CU_pTest currentTest = CU_get_test(currentSuite, testName);
-            CU_basic_run_test(currentSuite, currentTest);
-            break;
-        default:
-            printf("Too many arguments\n");
-            break;
-    }
+    runSuitesAndTests(argc, argv);
 
     CU_cleanup_registry();
     curl_global_cleanup();

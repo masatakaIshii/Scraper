@@ -8,8 +8,7 @@ set(SRCS
     sources/request.c
     sources/config.c
     sources/option.c
-    sources/raw_resource.c
-    sources/relative_resource.c
+    sources/resource.c
     sources/request.c
     sources/session.c
     sources/task.c
@@ -20,8 +19,7 @@ set(HEADERS
     sources/request.h
     sources/config.h
     sources/option.h
-    sources/raw_resource.h
-    sources/relative_resource.h
+    sources/resource.h
     sources/request.h
     sources/session.h
     sources/task.h
