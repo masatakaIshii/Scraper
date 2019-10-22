@@ -27,6 +27,9 @@ int main(int argc, char **argv)
 
     switch (argc)
     {
+        case 1 :
+            CU_basic_run_tests();
+            break;
         case 2:
             CU_basic_run_suite(CU_get_suite(argv[1]));
             break;
@@ -38,7 +41,7 @@ int main(int argc, char **argv)
             CU_basic_run_test(currentSuite, currentTest);
             break;
         default:
-            CU_basic_run_tests();
+            printf("Too many arguments\n");
             break;
     }
 
