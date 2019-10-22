@@ -8,7 +8,8 @@ static Request *pRequest = NULL;
 static FILE *fp = NULL;
 static char *filePath1 = "testSaveFile1.html";
 static char *filePath2 = "testSaveFile2.html";
-static char *filePath3 = "yahoo.html";
+static char *filePath3 = "yahoo1.html";
+static char *filePath4 = "yahoo2.html";
 static char *exampleFIle = "<!doctype html>\n"
                            "<html>\n"
                            "<head>\n"
@@ -70,9 +71,12 @@ int cleanRequest(void) {
     if (remove(filePath2) != 0) {
         printf("\nProblem remove %s\n", filePath2);
     }
-//    if (remove(filePath3) != 0) {
-//        printf("\nProblem remove %s\n", filePath3);
-//    }
+    if (remove(filePath3) != 0) {
+        printf("\nProblem remove %s\n", filePath3);
+    }
+    if (remove(filePath4) != 0) {
+        printf("\nProblem remove %s\n", filePath4);
+    }
     return 0;
 }
 
@@ -109,7 +113,7 @@ static void checkContentFile() {
     fp = NULL;
 }
 
-static void redirectUrlIfResponse300() {
+static void getFileWithRedirectUrl() {
     char temp[100];
     FILE *fp;
     pRequest = initRequest("https://yahoo.com/");
@@ -128,13 +132,40 @@ static void redirectUrlIfResponse300() {
     CU_ASSERT_STRING_NOT_EQUAL(temp, "redirect");
 }
 
+static void getHtmlEncodedFile() {
+    char temp[100];
+    FILE *fp;
+    pRequest = initRequest("https://yahoo.com/");
+    if (saveRequestInFile(pRequest, filePath4) != 0) {
+        printf("problem save request\n");
+    }
+    destroyRequest(pRequest);
+    pRequest = NULL;
+
+    fp = fopen(filePath4, "rb");
+    if (fp == NULL) {
+        printf("Problem openfile\n");
+        exit(1);
+    }
+    fgets(temp, 10, fp);
+    temp[10 - 1] = '\0';
+    fclose(fp);
+
+    for (int i = 0; i < 9; i++) {
+        temp[i] = toupper(temp[i]);
+    }
+
+    CU_ASSERT_STRING_EQUAL(temp, "<!DOCTYPE");
+}
+
 CU_ErrorCode requestSpec() {
     CU_pSuite pSuite = NULL;
     pSuite = CU_add_suite("testRequest", NULL, cleanRequest);
 
     if ((NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
         (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
-        (NULL == CU_add_test(pSuite, "redirectUrlIfResponse300", redirectUrlIfResponse300))) {
+        (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
+        (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile))) {
         CU_cleanup_registry();
         return CU_get_error();
     }
