@@ -18,10 +18,13 @@ typedef struct Request {
     FILE *pFile;
     int isFileOpen;
     char *url;
+    char *mimeType;
     char errBuf[CURL_ERROR_SIZE];
 } Request;
 
 Request *initRequest(char *url);
+
+void setOptionsCurl(Request *pRequest);
 
 int saveRequestInFile(Request *pRequest, char *savePath);
 
