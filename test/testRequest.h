@@ -7,11 +7,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <CUnit/Basic.h>
 #include "../sources/request.h"
 
 CU_ErrorCode requestSpec() ;
-
-
 
 #endif //SCRAPER_TESTREQUEST_H

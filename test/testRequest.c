@@ -79,6 +79,7 @@ static void checkSaveFile() {
     destroyRequest(pRequest);
     pRequest = NULL;
     CU_ASSERT(actualResult == 0);
+    CU_ASSERT(access(filePath1, F_OK) != 1);
 }
 
 static void checkContentFile() {
@@ -151,7 +152,7 @@ static void getHtmlEncodedFile() {
     CU_ASSERT_STRING_EQUAL(temp, "<!DOCTYPE");
 }
 
-static void getMimeType() {
+static void checkContentType() {
     char contentType1[100];
     char contentType2[100];
     char contentType3[100];
@@ -160,22 +161,22 @@ static void getMimeType() {
     if (saveRequestInFile(pRequest, filePath4) != 0) {
         printf("problem save request\n");
     }
-    (pRequest->mimeType != NULL) ? strcpy(contentType1, pRequest->mimeType) : strcpy(contentType1, "");
+    (pRequest->contentType != NULL) ? strcpy(contentType1, pRequest->contentType) : strcpy(contentType1, "");
     destroyRequest(pRequest);
     pRequest = initRequest("https://blog-fr.orson.io/wp-content/uploads/2017/06/jpeg-ou-png.jpg");
     if (saveRequestInFile(pRequest, filePath4) != 0) {
         printf("problem save request\n");
     }
-    (pRequest->mimeType != NULL) ? strcpy(contentType1, pRequest->mimeType) : strcpy(contentType1, "");
+    (pRequest->contentType != NULL) ? strcpy(contentType2, pRequest->contentType) : strcpy(contentType2, "");
     destroyRequest(pRequest);
 
     pRequest = initRequest("https://encrypted-vtbn1.gstatic.com/video?q=tbn:ANd9GcQ_qElyG_xAPTXyC3CUx9tLom30rGaGWpWksBfe_kALSKmQnjaa");
     if (saveRequestInFile(pRequest, filePath4) != 0) {
         printf("problem save request\n");
     }
-    (pRequest->mimeType != NULL) ? strcpy(contentType1, pRequest->mimeType) : strcpy(contentType1, "");
-    
-    CU_ASSERT_STRING_EQUAL(contentType1, "text/html");
+    (pRequest->contentType != NULL) ? strcpy(contentType3, pRequest->contentType) : strcpy(contentType3, "");
+
+    CU_ASSERT_STRING_EQUAL(contentType1, "text/html; charset=UTF-8");
     CU_ASSERT_STRING_EQUAL(contentType2, "image/jpeg");
     CU_ASSERT_STRING_EQUAL(contentType3, "video/mp4");
 }
@@ -188,7 +189,7 @@ CU_ErrorCode requestSpec() {
         (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
         (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
         (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
-        (NULL == CU_add_test(pSuite, "getMimeType", getMimeType))) {
+        (NULL == CU_add_test(pSuite, "checkContentType", checkContentType))) {
 
         CU_cleanup_registry();
         return CU_get_error();
