@@ -22,6 +22,7 @@
 cmake-build-*/
 
 # Visual studio code
+.vscode/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

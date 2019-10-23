@@ -7,15 +7,12 @@
 
 
 #include "action.h"
-#include "raw_resource.h"
-#include "relative_resource.h"
+#include "resource.h"
 
 typedef struct Session {
     Action *action;
-    RawResource **rawResources;
-    int nbrRawResources;
-    RelativeResource **relativeResources;
-    int nbrRelativeResources;
+    Resource **rawResources;
+    int numberResources;
     char *createdDate;
     int maxDepth;
     int isVersioning;

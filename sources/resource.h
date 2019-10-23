@@ -2,10 +2,10 @@
 // Created by masat on 16/10/2019.
 //
 
-#ifndef SCRAPER_RAW_RESOURCE_H
-#define SCRAPER_RAW_RESOURCE_H
+#ifndef SCRAPER_RESOURCE_H
+#define SCRAPER_RESOURCE_H
 
-typedef struct RawResource {
+typedef struct Resource {
     char *fileName;
     char *rawPath;
     char *outputPath;
@@ -15,6 +15,6 @@ typedef struct RawResource {
     long size;
     int numberLinks;
     char **links;
-} RawResource;
+} Resource;
 
-#endif //SCRAPER_RAW_RESOURCE_H
+#endif //SCRAPER_RESOURCE_H
