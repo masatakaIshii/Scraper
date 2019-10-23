@@ -24,6 +24,8 @@ Request *initRequest(char *url) {
 
     strncpy(pRequest->url, url, strlen(url));
 
+    pRequest->mimeType = NULL;
+
     return pRequest;
 }
 
@@ -31,6 +33,14 @@ static int writeDataInFile(void *ptr, int size, int numberElements, void *stream
     int written = fwrite(ptr, size, numberElements, (FILE *)stream);
 
     return written;
+}
+
+void setOptionsCurl(Request *pRequest) {
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_URL, pRequest->url);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_ACCEPT_ENCODING, "");
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEFUNCTION, writeDataInFile);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEDATA, pRequest->pFile); // finish save file by request
 }
 
 int saveRequestInFile(Request *pRequest, char *fileName) {
@@ -41,10 +51,6 @@ int saveRequestInFile(Request *pRequest, char *fileName) {
         errorQuit("Problem curl easy init\n");
     }
     pRequest->isHandleInit = 1;
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_URL, pRequest->url);
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_ACCEPT_ENCODING, "");
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEFUNCTION, writeDataInFile);
 
     pRequest->pFile = fopen(fileName, "wb");
     if (pRequest->pFile == NULL) {
@@ -53,7 +59,8 @@ int saveRequestInFile(Request *pRequest, char *fileName) {
     }
     pRequest->isFileOpen = 1;
 
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEDATA, pRequest->pFile); // finish save file by request§
+    setOptionsCurl(pRequest);
+
     result = curl_easy_perform(pRequest->pHandle);
 
     return (int)result;
@@ -82,4 +89,5 @@ int destroyRequest(Request *pRequest) {
         free(pRequest->url);
         pRequest->url = NULL;
     }
+    pRequest->mimeType = NULL;
 }
