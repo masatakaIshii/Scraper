@@ -9,7 +9,7 @@ static FILE *fp = NULL;
 static char *filePath1 = "testSaveFile1.html";
 static char *filePath2 = "testSaveFile2.html";
 static char *filePath3 = "yahoo1.html";
-static char *filePath4 = "yahoo2.html";
+static char *filePath4 = "yahoo2.html"; 
 static char *exampleFIle = "<!doctype html>\n"
                            "<html>\n"
                            "<head>\n"
@@ -65,18 +65,11 @@ int cleanRequest(void) {
     if (pRequest != NULL) {
         destroyRequest(pRequest);
     }
-    if (remove(filePath1) != 0) {
-        printf("\nProblem remove %s\n", filePath1);
-    }
-    if (remove(filePath2) != 0) {
-        printf("\nProblem remove %s\n", filePath2);
-    }
-    if (remove(filePath3) != 0) {
-        printf("\nProblem remove %s\n", filePath3);
-    }
-    if (remove(filePath4) != 0) {
-        printf("\nProblem remove %s\n", filePath4);
-    }
+    remove(filePath1);
+    remove(filePath2);
+    remove(filePath3);
+    remove(filePath4);
+
     return 0;
 }
 
@@ -158,6 +151,35 @@ static void getHtmlEncodedFile() {
     CU_ASSERT_STRING_EQUAL(temp, "<!DOCTYPE");
 }
 
+static void getMimeType() {
+    char contentType1[100];
+    char contentType2[100];
+    char contentType3[100];
+
+    pRequest = initRequest("https://yahoo.com/");
+    if (saveRequestInFile(pRequest, filePath4) != 0) {
+        printf("problem save request\n");
+    }
+    (pRequest->mimeType != NULL) ? strcpy(contentType1, pRequest->mimeType) : strcpy(contentType1, "");
+    destroyRequest(pRequest);
+    pRequest = initRequest("https://blog-fr.orson.io/wp-content/uploads/2017/06/jpeg-ou-png.jpg");
+    if (saveRequestInFile(pRequest, filePath4) != 0) {
+        printf("problem save request\n");
+    }
+    (pRequest->mimeType != NULL) ? strcpy(contentType1, pRequest->mimeType) : strcpy(contentType1, "");
+    destroyRequest(pRequest);
+
+    pRequest = initRequest("https://encrypted-vtbn1.gstatic.com/video?q=tbn:ANd9GcQ_qElyG_xAPTXyC3CUx9tLom30rGaGWpWksBfe_kALSKmQnjaa");
+    if (saveRequestInFile(pRequest, filePath4) != 0) {
+        printf("problem save request\n");
+    }
+    (pRequest->mimeType != NULL) ? strcpy(contentType1, pRequest->mimeType) : strcpy(contentType1, "");
+    
+    CU_ASSERT_STRING_EQUAL(contentType1, "text/html");
+    CU_ASSERT_STRING_EQUAL(contentType2, "image/jpeg");
+    CU_ASSERT_STRING_EQUAL(contentType3, "video/mp4");
+}
+
 CU_ErrorCode requestSpec() {
     CU_pSuite pSuite = NULL;
     pSuite = CU_add_suite("testRequest", NULL, cleanRequest);
@@ -165,7 +187,9 @@ CU_ErrorCode requestSpec() {
     if ((NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
         (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
         (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
-        (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile))) {
+        (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
+        (NULL == CU_add_test(pSuite, "getMimeType", getMimeType))) {
+
         CU_cleanup_registry();
         return CU_get_error();
     }

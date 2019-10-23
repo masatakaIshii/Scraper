@@ -6,6 +6,7 @@
 #define SCRAPER_TESTREQUEST_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <CUnit/Basic.h>
 #include "../sources/request.h"
 
