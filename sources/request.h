@@ -18,13 +18,17 @@ typedef struct Request {
     FILE *pFile;
     int isFileOpen;
     char *url;
-    char *mimeType;
+    char *contentType;
     char errBuf[CURL_ERROR_SIZE];
 } Request;
 
 Request *initRequest(char *url);
 
-void setOptionsCurl(Request *pRequest);
+static int writeDataInFile(void *ptr, int size, int numberElements, void *stream);
+
+static void setOptionsCurl(Request *pRequest);
+
+static int saveContentType(Request *pRequest);
 
 int saveRequestInFile(Request *pRequest, char *savePath);
 
@@ -32,8 +36,8 @@ int initPFile(char *outputPath, char *mode);
 
 void clearPHandle(Request *pRequest) ;
 
-int clearPFile(Request *request);
+void clearPFile(Request *pRequest);
 
-int destroyRequest(Request *request);
+void destroyRequest(Request *pRequest);
 
 #endif //SCRAPER_REQUEST_H
