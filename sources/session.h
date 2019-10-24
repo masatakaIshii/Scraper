@@ -1,11 +1,15 @@
-//
-// Created by masat on 16/10/2019.
-//
+/*
+ *  Filename    : session.h
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : file to manage the session of action
+ */
 
 #ifndef SCRAPER_SESSION_H
 #define SCRAPER_SESSION_H
 
-
+#include "app.h"
 #include "action.h"
 #include "resource.h"
 
@@ -20,6 +24,7 @@ typedef struct Session {
     char **types;
 } Session;
 
+Session *initSession(Action *action);
 
 
 #endif //SCRAPER_SESSION_H

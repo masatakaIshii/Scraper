@@ -170,8 +170,7 @@ static void checkContentType() {
     (pRequest->contentType != NULL) ? strcpy(contentType2, pRequest->contentType) : strcpy(contentType2, "");
     destroyRequest(pRequest);
 
-    pRequest = initRequest(
-            "https://encrypted-vtbn1.gstatic.com/video?q=tbn:ANd9GcQ_qElyG_xAPTXyC3CUx9tLom30rGaGWpWksBfe_kALSKmQnjaa");
+    pRequest = initRequest("https://encrypted-vtbn1.gstatic.com/video?q=tbn:ANd9GcQ_qElyG_xAPTXyC3CUx9tLom30rGaGWpWksBfe_kALSKmQnjaa");
     if (saveRequestInFile(pRequest, filePath4) != 0) {
         printf("problem save request\n");
     }

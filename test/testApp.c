@@ -10,6 +10,8 @@ static void changeNumberSessionApp(int number) {
     pApp->numberSession = number;
 }
 
+
+
 static void checkIfAppIsStatic() {
     App *pApp = getApp();
 

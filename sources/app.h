@@ -14,19 +14,45 @@
 #include "config.h"
 #include "session.h"
 
+typedef struct ListSession {
+    Session **sessions;
+    int capacity;
+    int count;
+} ListSession;
+
 typedef struct App {
     Config *pConfig;
-    int numberSession;
-    Session **pSessions;
+    ListSession *listSession;
 } App;
 
+/**
+ * function to get singleton pointer App structure
+ * @return App* pApp : pointer of app structure
+ */
 App *getApp();
 
+/**
+ * Function to init list of sessions
+ * @return listSession : list of sessions
+ */
+ListSession *newListSession();
+
+void addSession(Session *pSession);
+
+Session *getSession(int index);
+
+/**
+ * function to get
+ * @return
+ */
+Config *getConfig();
 // TODO: Config *getConfig
 
 // TODO: Session *getSession
 
-// TODO: void destroyApp(App *pApp);
+void freeListSession(ListSession *pSession);
+
+void destroyApp();
 
 // TODO: int startApp(App *app);
 
