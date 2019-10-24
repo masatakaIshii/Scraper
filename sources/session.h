@@ -12,11 +12,14 @@
 typedef struct Session {
     Action *action;
     Resource **rawResources;
+    char *name;
     int numberResources;
     char *createdDate;
     int maxDepth;
     int isVersioning;
     char **types;
 } Session;
+
+
 
 #endif //SCRAPER_SESSION_H
