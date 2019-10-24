@@ -5,6 +5,7 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 set(SRCS
+    sources/app.c
     sources/request.c
     sources/config.c
     sources/option.c
@@ -16,6 +17,7 @@ set(SRCS
     sources/common.c)
 
 set(HEADERS
+    sources/app.h
     sources/request.h
     sources/config.h
     sources/option.h
@@ -27,10 +29,11 @@ set(HEADERS
     sources/common.h)
 
 set(TESTSRCS
-    test/testRequest.c)
+    test/testRequest.c
+    test/testApp.c)
 
 set(TESTHEADERS
-    test/testRequest.h)
+    test/test.h)
 
 #add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
 add_executable(Scraper test/main.c ${SRCS} ${TESTSRCS} ${HEADERS} ${TESTHEADERS})
