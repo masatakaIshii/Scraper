@@ -11,7 +11,7 @@
 App *getApp() {
     static App *pApp = NULL;
 
-    if (pApp == NULL)  {
+    if (pApp == NULL) {
         pApp = malloc(sizeof(App));
         pApp->numberSession = 0;
         pApp->pConfig = NULL;

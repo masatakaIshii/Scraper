@@ -42,7 +42,7 @@ Request *initRequest(char *url) {
  * @return : writtin : number character of file
  */
 static int writeDataInFile(void *ptr, int size, int numberElements, void *stream) {
-    int written = fwrite(ptr, size, numberElements, (FILE *)stream);
+    int written = fwrite(ptr, size, numberElements, (FILE *) stream);
 
     return written;
 }
@@ -116,7 +116,7 @@ int saveRequestInFile(Request *pRequest, char *fileName) {
         printf("ERROR curl_easy_perform: %s", pRequest->errBuf);
     }
 
-    return (int)result;
+    return (int) result;
 }
 
 /**

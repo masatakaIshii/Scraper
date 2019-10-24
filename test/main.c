@@ -26,8 +26,7 @@ void runSuitesAndTests(int argc, char **argv) {
     char suiteName[100];
     char testName[100];
 
-    switch (argc)
-    {
+    switch (argc) {
         case 1 :
             CU_basic_run_tests();
             break;
@@ -59,14 +58,12 @@ CU_ErrorCode listSpecs(CU_pSuite pSuite) {
     return CU_get_error();
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     CU_pSuite pSuite = NULL;
     CU_ErrorCode result = CUE_SUCCESS;
     curl_global_init(CURL_GLOBAL_ALL);
 
-    if (CUE_SUCCESS != CU_initialize_registry())
-    {
+    if (CUE_SUCCESS != CU_initialize_registry()) {
         return CU_get_error();
     }
 

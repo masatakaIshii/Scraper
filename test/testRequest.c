@@ -9,7 +9,7 @@ static FILE *fp = NULL;
 static char *filePath1 = "testSaveFile1.html";
 static char *filePath2 = "testSaveFile2.html";
 static char *filePath3 = "yahoo1.html";
-static char *filePath4 = "yahoo2.html"; 
+static char *filePath4 = "yahoo2.html";
 static char *exampleFIle = "<!doctype html>\n"
                            "<html>\n"
                            "<head>\n"
@@ -170,7 +170,8 @@ static void checkContentType() {
     (pRequest->contentType != NULL) ? strcpy(contentType2, pRequest->contentType) : strcpy(contentType2, "");
     destroyRequest(pRequest);
 
-    pRequest = initRequest("https://encrypted-vtbn1.gstatic.com/video?q=tbn:ANd9GcQ_qElyG_xAPTXyC3CUx9tLom30rGaGWpWksBfe_kALSKmQnjaa");
+    pRequest = initRequest(
+            "https://encrypted-vtbn1.gstatic.com/video?q=tbn:ANd9GcQ_qElyG_xAPTXyC3CUx9tLom30rGaGWpWksBfe_kALSKmQnjaa");
     if (saveRequestInFile(pRequest, filePath4) != 0) {
         printf("problem save request\n");
     }
