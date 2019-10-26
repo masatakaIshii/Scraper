@@ -26,7 +26,7 @@ Request *initRequest(char *url) {
         errorQuit("problem pRequest\n");
     }
 
-    strncpy(pRequest->url, url, strlen(url));
+    strcpy(pRequest->url, url);
 
     pRequest->contentType = NULL;
 
