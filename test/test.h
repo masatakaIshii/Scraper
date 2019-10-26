@@ -11,8 +11,10 @@
 #include <CUnit/Basic.h>
 #include "../sources/request.h"
 #include "../sources/app.h"
+#include "../sources/common.h"
 
 CU_ErrorCode requestSpec(CU_pSuite pSuite) ;
 CU_ErrorCode appSpec(CU_pSuite pSuite);
+CU_ErrorCode commonSpec(CU_pSuite pSuite);
 
 #endif //SCRAPER_TESTREQUEST_H

@@ -7,18 +7,18 @@ int cleanApp(void) {
 static void changeNumberSessionApp(int number) {
     App *pApp = getApp();
 
-    pApp->numberSession = number;
+    pApp->listSession->count = number;
 }
-
-
 
 static void checkIfAppIsStatic() {
     App *pApp = getApp();
 
+    CU_ASSERT_EQUAL(pApp->listSession->capacity, 10);
+    CU_ASSERT_PTR_NOT_NULL(pApp->listSession->sessions[0]);
     changeNumberSessionApp(7);
-    CU_ASSERT_EQUAL(pApp->numberSession, 7);
+    CU_ASSERT_EQUAL(pApp->listSession->count, 7);
     changeNumberSessionApp(99);
-    CU_ASSERT_EQUAL(pApp->numberSession, 99);
+    CU_ASSERT_EQUAL(pApp->listSession->count, 99);
     free(pApp->pConfig);
     free(pApp);
 }
@@ -30,18 +30,6 @@ CU_ErrorCode appSpec(CU_pSuite pSuite) {
         CU_cleanup_registry();
         return CU_get_error();
     }
-
-    printf("appSpec\n");
-
-    // if ((NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
-    //     (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
-    //     (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
-    //     (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
-    //     (NULL == CU_add_test(pSuite, "checkContentType", checkContentType))) {
-
-    //     CU_cleanup_registry();
-    //     return CU_get_error();
-    // }
 
     return CU_get_error();
 }
