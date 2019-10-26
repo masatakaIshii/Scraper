@@ -1,7 +1,10 @@
-//
-// Created by masat on 19/10/2019.
-//
-
+/*
+ *  Filename    : common.h
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : common functions for application
+ */
 #ifndef SCRAPER_COMMON_H
 #define SCRAPER_COMMON_H
 
@@ -10,5 +13,11 @@
 #include<curl/curl.h>
 
 void errorQuit(char *message);
+
+int getCountListMimeType();
+
+char **getListMimeTypeFileExt();
+
+char *getFileNameByUrl(char *url, char *mimeType);
 
 #endif //SCRAPER_COMMON_H
