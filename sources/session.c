@@ -11,6 +11,6 @@
 Session *initSession(Action *action) {
     Session *pSession = malloc(sizeof(Session));
     if (pSession == NULL) {
-
+        pSession->action = action;
     }
 }

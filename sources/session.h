@@ -9,22 +9,22 @@
 #ifndef SCRAPER_SESSION_H
 #define SCRAPER_SESSION_H
 
-#include "app.h"
 #include "action.h"
 #include "resource.h"
 
 typedef struct Session {
     Action *action;
+    char *fileName;
     Resource **rawResources;
-    char *name;
     int numberResources;
     char *createdDate;
     int maxDepth;
     int isVersioning;
-    char **types;
+    char **types; // ?
 } Session;
 
 Session *initSession(Action *action);
 
+#include "app.h"
 
 #endif //SCRAPER_SESSION_H
