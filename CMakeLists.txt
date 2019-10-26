@@ -30,19 +30,27 @@ set(HEADERS
 
 set(TESTSRCS
     test/testRequest.c
-    test/testApp.c)
+    test/testApp.c
+    test/testCommon.c)
 
 set(TESTHEADERS
     test/test.h)
 
-#add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
-add_executable(Scraper test/main.c ${SRCS} ${TESTSRCS} ${HEADERS} ${TESTHEADERS})
+add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
+add_executable(TestScraper test/main.c ${SRCS} ${TESTSRCS} ${HEADERS} ${TESTHEADERS})
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    file(INSTALL ${CMAKE_BINARY_DIR}/Scraper.exe DESTINATION ../bin)
+endif ()
+
 
 find_package(CURL)
 if (CURL_FOUND)
     message("Curl found")
     target_include_directories(Scraper PUBLIC ${CURL_INCLUDE_DIRS})
+    target_include_directories(TestScraper PUBLIC ${CURL_INCLUDE_DIRS})
     target_link_libraries(Scraper PUBLIC ${CURL_LIBRARIES})
+    target_link_libraries(TestScraper PUBLIC ${CURL_LIBRARIES})
 else ()
     message(Curl not found)
 endif ()
@@ -52,8 +60,8 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(CUNIT REQUIRED cunit)
 if (CUNIT_FOUND)
     message("Cunit found")
-    target_include_directories(Scraper PUBLIC ${CUNIT_INCLUDE_DIRS})
-    target_link_libraries(Scraper PUBLIC ${CUNIT_LIBRARIES})
+    target_include_directories(TestScraper PUBLIC ${CUNIT_INCLUDE_DIRS})
+    target_link_libraries(TestScraper PUBLIC ${CUNIT_LIBRARIES})
 else ()
     message("cunit not found")
 endif ()

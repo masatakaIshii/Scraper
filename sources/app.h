@@ -31,6 +31,8 @@ typedef struct App {
  */
 App *getApp();
 
+
+// ----- ListSession functions -----
 /**
  * Function to init list of sessions
  * @return listSession : list of sessions
@@ -39,7 +41,10 @@ ListSession *newListSession();
 
 void addSession(Session *pSession);
 
+
 Session *getSession(int index);
+
+void freeListSession(ListSession *pSession);
 
 /**
  * function to get
@@ -50,7 +55,7 @@ Config *getConfig();
 
 // TODO: Session *getSession
 
-void freeListSession(ListSession *pSession);
+
 
 void destroyApp();
 

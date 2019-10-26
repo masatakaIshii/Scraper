@@ -59,7 +59,7 @@ Session *getSession(int index) {
 }
 
 /**
- *
+ * function get config with structure App
  * @return
  */
 Config *getConfig() {
