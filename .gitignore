@@ -30,3 +30,5 @@ cmake-build-*/
 !.vscode/extensions.json
 *.code-workspace
 build/*
+
+bin/
