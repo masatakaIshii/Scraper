@@ -13,60 +13,36 @@ void errorQuit(char *message) {
     exit(1);
 }
 
-char *getFileName(const char *resourceUrl, int length) {
-    char *fileName = NULL;
-
-    fileName = calloc(length, sizeof(char));
-    if (fileName == NULL) {
+/**
+ * malloc and copy string with precise length
+ * @param str
+ * @param length
+ * @return
+ */
+char *strMallocCpy(const char *str, int length) {
+    char *newStr = calloc(length + 1, sizeof(char));
+    if (newStr == NULL) {
         return NULL;
     }
-    strncpy(fileName, resourceUrl, length - 1);
 
-    return fileName;
+    strncpy(newStr, str, length);
+    return newStr;
 }
 
-UHRes searchAfterComProtocol(char *urlWithoutComProtocol, char **fileName) {
-    UHRes result = UH_WITHOUT_FILE_EXT;
-    int length = 0;
-    char *urlResource = NULL;
-    char *checkPoint = NULL;
+/**
+ * get index of array of char strCheck after the occurrence of string strOccur
+ * @param strCheck
+ * @param strOccur
+ * @return index : index after occurrence strOccur
+ */
+int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
+    char *startOccur = strstr(strCheck, strOccur);
 
-    if (urlWithoutComProtocol != NULL) {
-        urlResource = strrchr(urlWithoutComProtocol, '/');
-        if (urlResource != NULL) {
-            length = strrchr(urlResource, '?') != NULL ? strrchr(urlResource, '?') - urlResource + 1 : strlen(urlResource) + 1;
-            urlResource = getFileName(urlResource, length);
-            checkPoint = strrchr(urlResource, '.');
-            if (checkPoint != NULL) {
-                result = UH_WITH_FILE_EXT;
-            }
-            if (fileName != NULL) {
-                *fileName = urlResource;
-                if (*fileName == NULL) {
-                    result = UH_MEM_PB;
-                }
-            } else {
-                free(urlResource);
-            }
-        }
+    if (startOccur != NULL) {
+        return startOccur - strCheck + strlen(strOccur);
     }
 
-    return result;
-}
-
-UHRes haveFileExt(char *url, char **fileName) {
-    UHRes result = UH_NAME_PB;
-    char *urlWithoutComProtocol = NULL;
-    int length = 0;
-
-    if ((length = strspn(url, "https://")) == strlen("https://") ||
-        (length = strspn(url, "http://")) == strlen("http://")) {
-
-        urlWithoutComProtocol = url + length;
-        result = searchAfterComProtocol(urlWithoutComProtocol, fileName);
-    }
-
-    return result;
+    return 0;
 }
 
 int getCountListMimeType() {

@@ -7,23 +7,13 @@
  */
 #ifndef SCRAPER_COMMON_H
 #define SCRAPER_COMMON_H
-
-#include<stdio.h>
-#include<stdlib.h>
 #include<curl/curl.h>
-
-typedef enum UrlHelperResponse {
-    UH_WITH_FILE_EXT,
-    UH_WITHOUT_FILE_EXT,
-    UH_NAME_PB,
-    UH_MEM_PB
-} UHRes;
 
 void errorQuit(char *message);
 
-UHRes searchAfterComProtocol(char *url, char **fileName);
+char *strMallocCpy(const char *str, int length);
 
-UHRes haveFileExt(char *url, char **fileName);
+int getIndexAfterOccurStr(const char *strCheck, const char *strOccur);
 
 int getCountListMimeType();
 
