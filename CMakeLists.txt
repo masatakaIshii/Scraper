@@ -14,7 +14,8 @@ set(SRCS
     sources/session.c
     sources/task.c
     sources/version.c
-    sources/common.c)
+    sources/common.c
+    sources/urlHelper.c)
 
 set(HEADERS
     sources/app.h
@@ -26,12 +27,13 @@ set(HEADERS
     sources/session.h
     sources/task.h
     sources/version.h
-    sources/common.h)
+    sources/common.h
+    sources/urlHelper.h)
 
 set(TESTSRCS
     test/testRequest.c
     test/testApp.c
-    test/testCommon.c)
+        test/testUrlHelper.c)
 
 set(TESTHEADERS
     test/test.h)

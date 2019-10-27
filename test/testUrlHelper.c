@@ -14,7 +14,7 @@ static void testIfUrlHaveFileExtension() {
 }
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
-    pSuite = CU_add_suite("testCommon", NULL, NULL);
+    pSuite = CU_add_suite("testUrlHelper", NULL, NULL);
 
     if (NULL == CU_add_test(pSuite, "testGetFileNameByUrl", testIfUrlHaveFileExtension)) {
         CU_cleanup_registry();
