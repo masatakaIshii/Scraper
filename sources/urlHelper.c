@@ -65,7 +65,13 @@ void urlHelperSetDomainName(UrlHelper *pUrlHelper) {
 }
 
 void urlHelperSetFileName(UrlHelper *pUrlHelper) {
+    int length = 0;
 
+    if (pUrlHelper->isDomainName == 1) {
+
+        length = getIndexAfterOccurStr(pUrlHelper->url, pUrlHelper->domainName);
+        pUrlHelper->isFileName = 1;
+    }
 }
 
 

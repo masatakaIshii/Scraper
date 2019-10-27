@@ -44,7 +44,14 @@ static void testCheckDomainName() {
 }
 
 static void testCheckFileName() {
+    pUrlHelper = initUrlHelper("http://google.com/tata.txt");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
+    CU_ASSERT(pUrlHelper->isFileName == 1);
+    destroyUrlHelper(pUrlHelper);
 
+    pUrlHelper = initUrlHelper("https://www.tata.be");
+    CU_ASSERT(pUrlHelper->isFileName != 1);
+    destroyUrlHelper(pUrlHelper);
 }
 
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
