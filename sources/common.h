@@ -12,16 +12,18 @@
 #include<stdlib.h>
 #include<curl/curl.h>
 
-enum UrlHelperResponse {
+typedef enum UrlHelperResponse {
     UH_WITH_FILE_EXT,
     UH_WITHOUT_FILE_EXT,
     UH_NAME_PB,
     UH_MEM_PB
-};
+} UHRes;
 
 void errorQuit(char *message);
 
-int haveFileExt(char *url);
+UHRes searchAfterComProtocol(char *url, char **fileName);
+
+UHRes haveFileExt(char *url, char **fileName);
 
 int getCountListMimeType();
 

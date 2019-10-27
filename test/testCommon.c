@@ -5,11 +5,12 @@
 
 
 static void testIfUrlHaveFileExtension() {
-    CU_ASSERT(haveFileExt("h.ttoigejorg/ijhifez///iufzheiuf.hziefu") == UH_NAME_PB);
-    CU_ASSERT(haveFileExt("http://www.google.com") == UH_WITHOUT_FILE_EXT);
-    CU_ASSERT(haveFileExt("https://www.google.com/dede.txt") == UH_WITH_FILE_EXT);
-    CU_ASSERT(haveFileExt("https://www.toto.fr/tatatiti") == UH_WITHOUT_FILE_EXT);
-    CU_ASSERT(haveFileExt("http://www.youtube.be/dededodo?video=toto.mp4") == UH_WITHOUT_FILE_EXT);
+    CU_ASSERT(haveFileExt("h.ttoigejorg/ijhifez///iufzheiuf.hziefu", NULL) == UH_NAME_PB);
+    CU_ASSERT(haveFileExt("http://www.google.com", NULL) == UH_WITHOUT_FILE_EXT);
+    CU_ASSERT(haveFileExt("https://www.google.com/dede.txt", NULL) == UH_WITH_FILE_EXT);
+    CU_ASSERT(haveFileExt("https://www.toto.fr/tatatiti", NULL) == UH_WITHOUT_FILE_EXT);
+    CU_ASSERT(haveFileExt("https://www.toto.fr/tatatiti/tonton.docs", NULL) == UH_WITH_FILE_EXT);
+    CU_ASSERT(haveFileExt("http://www.youtube.be/dededodo?video=toto.mp4", NULL) == UH_WITHOUT_FILE_EXT);
 }
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {

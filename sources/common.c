@@ -13,27 +13,57 @@ void errorQuit(char *message) {
     exit(1);
 }
 
-int haveFileExt(char *url) {
+char *getFileName(const char *resourceUrl, int length) {
+    char *fileName = NULL;
+
+    fileName = calloc(length, sizeof(char));
+    if (fileName == NULL) {
+        return NULL;
+    }
+    strncpy(fileName, resourceUrl, length - 1);
+
+    return fileName;
+}
+
+UHRes searchAfterComProtocol(char *urlWithoutComProtocol, char **fileName) {
+    UHRes result = UH_WITHOUT_FILE_EXT;
     int length = 0;
-    char *withoutProtocolCom = NULL;
-    char *checkSlash = NULL;
-    char *checkPoint =  NULL;
-    int result = UH_NAME_PB;
+    char *urlResource = NULL;
+    char *checkPoint = NULL;
+
+    if (urlWithoutComProtocol != NULL) {
+        urlResource = strrchr(urlWithoutComProtocol, '/');
+        if (urlResource != NULL) {
+            length = strrchr(urlResource, '?') != NULL ? strrchr(urlResource, '?') - urlResource + 1 : strlen(urlResource) + 1;
+            urlResource = getFileName(urlResource, length);
+            checkPoint = strrchr(urlResource, '.');
+            if (checkPoint != NULL) {
+                result = UH_WITH_FILE_EXT;
+            }
+            if (fileName != NULL) {
+                *fileName = urlResource;
+                if (*fileName == NULL) {
+                    result = UH_MEM_PB;
+                }
+            } else {
+                free(urlResource);
+            }
+        }
+    }
+
+    return result;
+}
+
+UHRes haveFileExt(char *url, char **fileName) {
+    UHRes result = UH_NAME_PB;
+    char *urlWithoutComProtocol = NULL;
+    int length = 0;
 
     if ((length = strspn(url, "https://")) == strlen("https://") ||
         (length = strspn(url, "http://")) == strlen("http://")) {
-        result = UH_WITHOUT_FILE_EXT;
 
-        withoutProtocolCom = url + length;
-        if (withoutProtocolCom != NULL) {
-            checkSlash = strrchr(withoutProtocolCom, '/');
-            if (checkSlash != NULL) {
-                checkPoint = strrchr(checkSlash, '.');
-                if (checkPoint != NULL) {
-                    result = UH_WITH_FILE_EXT;
-                }
-            }
-        }
+        urlWithoutComProtocol = url + length;
+        result = searchAfterComProtocol(urlWithoutComProtocol, fileName);
     }
 
     return result;
