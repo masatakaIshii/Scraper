@@ -83,4 +83,6 @@ void destroyApp() {
         freeListSession(pApp->listSession);
         pApp->listSession = NULL;
     }
+
+    free(pApp);
 }
