@@ -52,6 +52,26 @@ static void testCheckFileName() {
     pUrlHelper = initUrlHelper("https://www.tata.be");
     CU_ASSERT(pUrlHelper->isFileName != 1);
     destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://www.tata.be/");
+    CU_ASSERT(pUrlHelper->isFileName != 1);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://tonton.jp/tati.png");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "tati.png");
+    CU_ASSERT(pUrlHelper->isFileName == 1);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://tonton.jp/itat/tata/tete/toto/tati.png");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "tati.png");
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("http://www.youtube.com/watch?v=MijmeoH9LT4");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "watch");
+    destroyUrlHelper(pUrlHelper);
 }
 
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
