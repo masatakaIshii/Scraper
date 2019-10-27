@@ -3,20 +3,57 @@
 //
 #include "test.h"
 
+static UrlHelper *pUrlHelper = NULL;
 
-static void testIfUrlHaveFileExtension() {
-    CU_ASSERT(haveFileExt("h.ttoigejorg/ijhifez///iufzheiuf.hziefu", NULL) == UH_NAME_PB);
-    CU_ASSERT(haveFileExt("http://www.google.com", NULL) == UH_WITHOUT_FILE_EXT);
-    CU_ASSERT(haveFileExt("https://www.google.com/dede.txt", NULL) == UH_WITH_FILE_EXT);
+static void testCheckUrl() {
+    pUrlHelper = initUrlHelper("h.ttoigejorg/ijhifez///iufzheiuf.hziefu");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->url, "h.ttoigejorg/ijhifez///iufzheiuf.hziefu");
+    CU_ASSERT(pUrlHelper->result == UH_NAME_PB);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("http://www.google.com");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->url, "http://www.google.com");
+    CU_ASSERT(pUrlHelper->result == UH_OK);
+    destroyUrlHelper(pUrlHelper);
+    /*CU_ASSERT(haveFileExt("https://www.google.com/dede.txt", NULL) == UH_WITH_FILE_EXT);
     CU_ASSERT(haveFileExt("https://www.toto.fr/tatatiti", NULL) == UH_WITHOUT_FILE_EXT);
     CU_ASSERT(haveFileExt("https://www.toto.fr/tatatiti/tonton.docs", NULL) == UH_WITH_FILE_EXT);
-    CU_ASSERT(haveFileExt("http://www.youtube.be/dededodo?video=toto.mp4", NULL) == UH_WITHOUT_FILE_EXT);
+    CU_ASSERT(haveFileExt("http://www.youtube.be/dededodo?video=toto.mp4", NULL) == UH_WITHOUT_FILE_EXT);*/
 }
 
-CU_ErrorCode commonSpec(CU_pSuite pSuite) {
+static void testCheckDomainName() {
+    pUrlHelper = initUrlHelper("http://www.google.com");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->domainName);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->domainName, "www.google.com");
+    CU_ASSERT(pUrlHelper->isDomainName == 1);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://toto.fr");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->domainName);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->domainName, "toto.fr");
+    CU_ASSERT(pUrlHelper->isDomainName == 1);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://fzieoifjzoeif");
+    CU_ASSERT(pUrlHelper->isDomainName != 1);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("http://www.toto.titi.org/tonton.png");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->domainName, "www.toto.titi.org");
+    destroyUrlHelper(pUrlHelper);
+}
+
+static void testCheckFileName() {
+
+}
+
+CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testUrlHelper", NULL, NULL);
 
-    if (NULL == CU_add_test(pSuite, "testGetFileNameByUrl", testIfUrlHaveFileExtension)) {
+    if ((NULL == CU_add_test(pSuite, "testCheckUrl", testCheckUrl)) ||
+        (NULL == CU_add_test(pSuite, "testCheckDomainName", testCheckDomainName)) ||
+        (NULL == CU_add_test(pSuite, "testCheckFileName", testCheckFileName))) {
+
         CU_cleanup_registry();
         return CU_get_error();
     }
