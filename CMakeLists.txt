@@ -31,9 +31,10 @@ set(HEADERS
     sources/urlHelper.h)
 
 set(TESTSRCS
+    test/testCommon.c
     test/testRequest.c
     test/testApp.c
-        test/testUrlHelper.c)
+    test/testUrlHelper.c)
 
 set(TESTHEADERS
     test/test.h)

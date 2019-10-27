@@ -50,7 +50,8 @@ void runSuitesAndTests(int argc, char **argv) {
 }
 
 CU_ErrorCode listSpecs(CU_pSuite pSuite) {
-    if (CUE_SUCCESS != requestSpec(pSuite) ||
+    if (CUE_SUCCESS != commonSpec(pSuite) ||
+        CUE_SUCCESS != requestSpec(pSuite) ||
         CUE_SUCCESS != appSpec(pSuite) ||
         CUE_SUCCESS != urlHelperSpec(pSuite)) {
         CU_cleanup_registry();

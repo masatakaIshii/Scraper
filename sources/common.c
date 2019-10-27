@@ -31,8 +31,8 @@ char *strMallocCpy(const char *str, int length) {
 
 /**
  * get index of array of char strCheck after the occurrence of string strOccur
- * @param strCheck
- * @param strOccur
+ * @param strCheck : string to search if there are occurrence
+ * @param strOccur : string correspond to occurrence
  * @return index : index after occurrence strOccur
  */
 int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
