@@ -66,11 +66,22 @@ void urlHelperSetDomainName(UrlHelper *pUrlHelper) {
 
 void urlHelperSetFileName(UrlHelper *pUrlHelper) {
     int length = 0;
+    char *absPath =  NULL;
+    char *fileName = NULL;
+    char *optionalData = NULL;
 
     if (pUrlHelper->isDomainName == 1) {
-
         length = getIndexAfterOccurStr(pUrlHelper->url, pUrlHelper->domainName);
-        pUrlHelper->isFileName = 1;
+        absPath = pUrlHelper->url + length;
+
+        if (strrchr(absPath, '/') != NULL && strlen(absPath) > 1) {
+            fileName = strrchr(absPath, '/') + 1;
+            optionalData = strchr(fileName, '?');
+            length = optionalData != NULL ? optionalData - fileName : strlen(fileName);
+
+            pUrlHelper->fileName = strMallocCpy(fileName, length);
+            pUrlHelper->isFileName = 1;
+        }
     }
 }
 
@@ -104,6 +115,7 @@ char *getFileName(const char *resourceUrl, int length) {
     return fileName;
 }
 
+/*
 UHRes searchAfterComProtocol(char *urlWithoutComProtocol, char **fileName) {
 //    UHRes result = UH_WITHOUT_FILE_EXT;
 ////    int length = 0;
@@ -147,3 +159,4 @@ UHRes haveFileExt(char *url, char **fileName) {
 
     return result;
 }
+*/
