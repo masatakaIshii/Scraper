@@ -15,10 +15,6 @@ static void testCheckUrl() {
     CU_ASSERT_STRING_EQUAL(pUrlHelper->url, "http://www.google.com");
     CU_ASSERT(pUrlHelper->result == UH_OK);
     destroyUrlHelper(pUrlHelper);
-    /*CU_ASSERT(haveFileExt("https://www.google.com/dede.txt", NULL) == UH_WITH_FILE_EXT);
-    CU_ASSERT(haveFileExt("https://www.toto.fr/tatatiti", NULL) == UH_WITHOUT_FILE_EXT);
-    CU_ASSERT(haveFileExt("https://www.toto.fr/tatatiti/tonton.docs", NULL) == UH_WITH_FILE_EXT);
-    CU_ASSERT(haveFileExt("http://www.youtube.be/dededodo?video=toto.mp4", NULL) == UH_WITHOUT_FILE_EXT);*/
 }
 
 static void testCheckDomainName() {
@@ -74,12 +70,41 @@ static void testCheckFileName() {
     destroyUrlHelper(pUrlHelper);
 }
 
+static void testCheckFileExt() {
+    pUrlHelper = initUrlHelper("http://www.youtube.com/");
+    CU_ASSERT_PTR_NULL(pUrlHelper->extFile);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("http://www.youtube.com/video?id=16");
+    CU_ASSERT_PTR_NULL(pUrlHelper->extFile);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://yahoo.org/index.html");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, "html");
+    CU_ASSERT(pUrlHelper->isExtFile == 1);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("http://www.google.fr/form.google.doc");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, "doc");
+    CU_ASSERT(pUrlHelper->isExtFile == 1);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://deezer.com/servietsky.funkytown.wav?petard=true&artist=lippsInc.info");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, "wav");
+    CU_ASSERT(pUrlHelper->isExtFile == 1);
+    destroyUrlHelper(pUrlHelper);
+}
+
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testUrlHelper", NULL, NULL);
 
     if ((NULL == CU_add_test(pSuite, "testCheckUrl", testCheckUrl)) ||
         (NULL == CU_add_test(pSuite, "testCheckDomainName", testCheckDomainName)) ||
-        (NULL == CU_add_test(pSuite, "testCheckFileName", testCheckFileName))) {
+        (NULL == CU_add_test(pSuite, "testCheckFileName", testCheckFileName)) ||
+        (NULL == CU_add_test(pSuite, "testCheckFileExt", testCheckFileExt))) {
 
         CU_cleanup_registry();
         return CU_get_error();
