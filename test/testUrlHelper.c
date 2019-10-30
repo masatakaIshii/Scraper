@@ -85,6 +85,8 @@ static void testCheckFileExt() {
     CU_ASSERT(pUrlHelper->isExtFile == 1);
     destroyUrlHelper(pUrlHelper);
 
+    pUrlHelper = initUrlHelper("http://");
+
     pUrlHelper = initUrlHelper("http://www.google.fr/form.google.doc");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
     CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, "doc");
@@ -95,6 +97,11 @@ static void testCheckFileExt() {
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
     CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, "wav");
     CU_ASSERT(pUrlHelper->isExtFile == 1);
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://deezer.com/servietsky.funkytown.");
+    CU_ASSERT_PTR_NULL(pUrlHelper->extFile);
+    CU_ASSERT(pUrlHelper->isExtFile == 0);
     destroyUrlHelper(pUrlHelper);
 }
 

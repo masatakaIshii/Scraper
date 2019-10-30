@@ -4,6 +4,8 @@
 
 #include "urlHelper.h"
 
+static void urlHelperSetExtFile(UrlHelper *pHelper);
+
 /**
  * Initialize the structure UrlHelper to get few parts of url
  * @param url : current url to view
@@ -43,6 +45,7 @@ static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url) {
         return;
     }
     urlHelperSetFileName(pUrlHelper);
+    urlHelperSetExtFile(pUrlHelper);
 }
 
 /**
@@ -97,10 +100,35 @@ void urlHelperSetFileName(UrlHelper *pUrlHelper) {
             length = optionalData != NULL ? optionalData - fileName : strlen(fileName);
 
             pUrlHelper->fileName = strMallocCpy(fileName, length);
+            if (pUrlHelper->fileName == NULL) {
+                //destroyApp
+                exit(1);
+            }
             pUrlHelper->isFileName = 1;
         }
     }
 }
+
+/**
+ * Function to set ext file of file name in url
+ * @param pHelper
+ */
+static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
+    char *extFile = NULL;
+
+    if (pUrlHelper->isFileName == 1) {
+        extFile = strrchr(pUrlHelper->fileName, '.');
+        if (extFile != NULL && strlen(extFile) > 1) {
+            pUrlHelper->extFile = strMallocCpy(extFile + 1, strlen(extFile));
+            if (pUrlHelper->extFile == NULL) {
+                // destroyApp
+                exit(1);
+            }
+            pUrlHelper->isExtFile = 1;
+        }
+    }
+}
+
 
 /**
  * destroy the pointer of structure UrlHelper
