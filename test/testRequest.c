@@ -2,14 +2,14 @@
 // Created by masat on 17/10/2019.
 //
 
-#include "testRequest.h"
+#include "test.h"
 
 static Request *pRequest = NULL;
 static FILE *fp = NULL;
 static char *filePath1 = "testSaveFile1.html";
 static char *filePath2 = "testSaveFile2.html";
 static char *filePath3 = "yahoo1.html";
-static char *filePath4 = "yahoo2.html"; 
+static char *filePath4 = "yahoo2.html";
 static char *exampleFIle = "<!doctype html>\n"
                            "<html>\n"
                            "<head>\n"
@@ -181,8 +181,7 @@ static void checkContentType() {
     CU_ASSERT_STRING_EQUAL(contentType3, "video/mp4");
 }
 
-CU_ErrorCode requestSpec() {
-    CU_pSuite pSuite = NULL;
+CU_ErrorCode requestSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testRequest", NULL, cleanRequest);
 
     if ((NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||

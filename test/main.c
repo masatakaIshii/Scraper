@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <CUnit/Basic.h>
 #include <curl/curl.h>
-#include "testRequest.h"
+#include "test.h"
 
 void showIfSuiteAndTestArgumentsIsIncorrect(int argc, char **argv, CU_pSuite currentSuite, CU_pTest currentTest) {
     if (argc > 1) {
@@ -26,8 +26,7 @@ void runSuitesAndTests(int argc, char **argv) {
     char suiteName[100];
     char testName[100];
 
-    switch (argc)
-    {
+    switch (argc) {
         case 1 :
             CU_basic_run_tests();
             break;
@@ -50,19 +49,27 @@ void runSuitesAndTests(int argc, char **argv) {
     showIfSuiteAndTestArgumentsIsIncorrect(argc, argv, currentSuite, currentTest);
 }
 
-int main(int argc, char **argv)
-{
+CU_ErrorCode listSpecs(CU_pSuite pSuite) {
+    if (CUE_SUCCESS != commonSpec(pSuite) ||
+        CUE_SUCCESS != requestSpec(pSuite) ||
+        CUE_SUCCESS != appSpec(pSuite) ||
+        CUE_SUCCESS != urlHelperSpec(pSuite)) {
+        CU_cleanup_registry();
+    }
+
+    return CU_get_error();
+}
+
+int main(int argc, char **argv) {
+    CU_pSuite pSuite = NULL;
+    CU_ErrorCode result = CUE_SUCCESS;
     curl_global_init(CURL_GLOBAL_ALL);
 
-    if (CUE_SUCCESS != CU_initialize_registry())
-    {
+    if (CUE_SUCCESS != CU_initialize_registry()) {
         return CU_get_error();
     }
 
-    if (CUE_SUCCESS != requestSpec()) {
-        CU_cleanup_registry();
-        return CU_get_error();
-    }
+    result = listSpecs(pSuite);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
 
@@ -71,5 +78,5 @@ int main(int argc, char **argv)
     CU_cleanup_registry();
     curl_global_cleanup();
 
-    return CU_get_error();
+    return result;
 }

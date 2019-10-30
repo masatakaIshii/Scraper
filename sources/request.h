@@ -64,7 +64,7 @@ int saveRequestInFile(Request *pRequest, char *savePath);
  * Function to clean pointer of type curl in Request structure
  * @param pRequest : structure of Request
  */
-void clearPHandle(Request *pRequest) ;
+void clearPHandle(Request *pRequest);
 
 /**
  * Function to close stream of file in Request structure
