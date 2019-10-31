@@ -20,13 +20,13 @@ Request *initRequest(char *url) {
     }
     pRequest->isFileOpen = 0;
     pRequest->isHandleInit = 0;
-    pRequest->url = calloc(strlen(url) + 1, sizeof(char));
-    if (pRequest->url == NULL) {
+    pRequest->pUrlHelper = initUrlHelper(url);
+    if (pRequest->pUrlHelper->url == NULL) {
         destroyRequest(pRequest);
         errorQuit("problem pRequest\n");
     }
 
-    strcpy(pRequest->url, url);
+    strcpy(pRequest->pUrlHelper->url, url);
 
     pRequest->contentType = NULL;
 
@@ -52,12 +52,12 @@ static int writeDataInFile(void *ptr, int size, int numberElements, void *stream
  * @param pRequest : pointer of structure Request
  */
 static void setOptionsCurl(Request *pRequest) {
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_URL, pRequest->url);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_URL, pRequest->pUrlHelper->url);
     curl_easy_setopt(pRequest->pHandle, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(pRequest->pHandle, CURLOPT_ACCEPT_ENCODING, "");
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_ERRORBUFFER, pRequest->errBuf);
     curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEFUNCTION, writeDataInFile);
     curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEDATA, pRequest->pFile); // finish save file by request
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_ERRORBUFFER, pRequest->errBuf);
 }
 
 /**
@@ -78,21 +78,16 @@ static int saveContentType(Request *pRequest) {
             exit(1);
         }
         strcpy(pRequest->contentType, contentType);
-    } else {
-        printf("ERROR curl_easy_getinfo: %s", pRequest->errBuf);
     }
 
     return result;
 }
 
 /**
- * Function to save request GET content in file
- * @param pRequest : pointer of structure Request
- * @param fileName : name file
- * @return result : result of curl request
+ * function to set stream file and handle to save request in file
  */
-int saveRequestInFile(Request *pRequest, char *fileName) {
-    CURLcode result;
+static void setStreamAndHandle(Request *pRequest, char *fileName) {
+
     pRequest->pHandle = curl_easy_init();
     if (pRequest->pHandle == NULL) {
         destroyRequest(pRequest);
@@ -106,14 +101,31 @@ int saveRequestInFile(Request *pRequest, char *fileName) {
         errorQuit("Problem with open file\n");
     }
     pRequest->isFileOpen = 1;
+}
 
+/**
+ * Function to save request GET content in file
+ * @param pRequest : pointer of structure Request
+ * @param fileName : name file
+ * @return result : result of curl request
+ */
+int saveRequestInFile(Request *pRequest, char *fileName) {
+    CURLcode result;
+
+    if (pRequest->pUrlHelper->isDomainName != 1) {
+        strcpy(pRequest->errBuf, "ERROR Domain name is not correct");
+        return CURLE_URL_MALFORMAT;
+    }
+    setStreamAndHandle(pRequest, fileName);
     setOptionsCurl(pRequest);
 
     result = curl_easy_perform(pRequest->pHandle);
     if (result == CURLE_OK) {
         result = saveContentType(pRequest);
     } else {
-        printf("ERROR curl_easy_perform: %s", pRequest->errBuf);
+        clearPHandle(pRequest->pHandle);
+        clearPFile(pRequest);
+        remove(fileName);
     }
 
     return (int) result;
@@ -151,9 +163,9 @@ void destroyRequest(Request *pRequest) {
     clearPHandle(pRequest);
     clearPFile(pRequest);
 
-    if (pRequest->url != NULL) {
-        free(pRequest->url);
-        pRequest->url = NULL;
+    if (pRequest->pUrlHelper->url != NULL) {
+        free(pRequest->pUrlHelper->url);
+        pRequest->pUrlHelper->url = NULL;
     }
     if (pRequest->contentType != NULL) {
         free(pRequest->contentType);
