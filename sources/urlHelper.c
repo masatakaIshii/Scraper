@@ -17,6 +17,10 @@ UrlHelper *initUrlHelper(const char *url) {
         //destroyApp();
         errorQuit("Problem malloc in initUrlHelper\n");
     }
+    pUrlHelper->domainName = NULL;
+    pUrlHelper->fileName = NULL;
+    pUrlHelper->extFile = NULL;
+
     pUrlHelper->isDomainName = 0;
     pUrlHelper->isFileName = 0;
     pUrlHelper->isExtFile = 0;
