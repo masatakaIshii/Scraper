@@ -129,7 +129,6 @@ static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
     }
 }
 
-
 /**
  * destroy the pointer of structure UrlHelper
  * @param pUrlHelper

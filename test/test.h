@@ -10,9 +10,11 @@
 #include <unistd.h>
 #include <CUnit/Basic.h>
 #include "../sources/common.h"
-#include "../sources/request.h"
-#include "../sources/app.h"
 #include "../sources/urlHelper.h"
+#include "../sources/request.h"
+#include "../sources/resource.h"
+#include "../sources/session.h"
+#include "../sources/app.h"
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite);
 CU_ErrorCode requestSpec(CU_pSuite pSuite) ;

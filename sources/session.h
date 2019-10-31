@@ -15,7 +15,7 @@
 typedef struct Session {
     Action *action;
     char *fileName;
-    Resource **rawResources;
+    //Resource **resources;
     int numberResources;
     char *createdDate;
     int maxDepth;

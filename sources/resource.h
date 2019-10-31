@@ -5,9 +5,10 @@
 #ifndef SCRAPER_RESOURCE_H
 #define SCRAPER_RESOURCE_H
 
+#include "request.h"
+
 typedef struct Resource {
-    char *fileName;
-    char *rawPath;
+    Request *pRequest;
     char *outputPath;
     char *type;
     int depth;

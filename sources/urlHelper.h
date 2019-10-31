@@ -13,8 +13,6 @@
 typedef enum UrlHelperResponse {
     UH_OK,
     UH_NAME_PB,
-    UH_MEM_URL_PB,
-    UH_EXT_FILE_NOT_FOUND
 } UHRes;
 
 typedef struct UrlHelper {
@@ -37,11 +35,5 @@ void urlHelperSetDomainName(UrlHelper *pUrlHelper);
 void urlHelperSetFileName(UrlHelper *pUrlHelper);
 
 void destroyUrlHelper(UrlHelper *pUrlHelper);
-/*
-UHRes searchAfterComProtocol(char *url, char **fileName);
 
-UHRes haveFileExt(char *url, char **fileName);
-
-void checkUrl(UrlHelper *pUrlHelper, const char *url);
-*/
 #endif //SCRAPER_URLHELPER_H

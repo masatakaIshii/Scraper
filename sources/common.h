@@ -21,6 +21,4 @@ char **getListMimeTypeFileExt();
 
 char *getFileNameByUrl(char *url, char *mimeType);
 
-#include "app.h"
-
 #endif //SCRAPER_COMMON_H
