@@ -30,16 +30,29 @@ App *getApp() {
  */
 ListSession *newListSession() {
     ListSession *listSession = malloc(sizeof(ListSession));
+    if (listSession == NULL) {
+        return NULL;
+    }
     listSession->capacity = 10;
-    listSession->count = 0;
+
     listSession->sessions = malloc(sizeof(Session*) * listSession->capacity);
+    if (listSession->sessions == NULL) {
+        free(listSession);
+        return NULL;
+    }
 
     return listSession;
 }
 
 
 void freeListSession(ListSession *pSession) {
+    int i;
 
+    for (i = 0; i < pSession->count; i++) {
+        free(pSession->sessions[i]);
+    }
+    free(pSession->sessions);
+    free(pSession);
 }
 
 int sessionsCount() {

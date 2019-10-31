@@ -14,7 +14,7 @@ static void checkIfAppIsStatic() {
     App *pApp = getApp();
 
     CU_ASSERT_EQUAL(pApp->listSession->capacity, 10);
-    CU_ASSERT_PTR_NOT_NULL(pApp->listSession->sessions[0]);
+    CU_ASSERT_PTR_NOT_NULL(pApp->listSession->sessions);
     changeNumberSessionApp(7);
     CU_ASSERT_EQUAL(pApp->listSession->count, 7);
     changeNumberSessionApp(99);
