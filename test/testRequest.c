@@ -83,8 +83,8 @@ static void checkSaveFile() {
 }
 
 static void checkContentFile() {
-    char c = ' ';
     int i = 0;
+    char *str;
 
     pRequest = initRequest("http://example.com");
     if (saveRequestInFile(pRequest, filePath2) != 0) {
@@ -98,13 +98,18 @@ static void checkContentFile() {
         printf("Problem fopen in testSaveFile2");
         return;
     }
-    while (fread(&c, sizeof(char), 1, fp), !feof(fp)) {
-        CU_ASSERT_EQUAL(c, exampleFIle[i]);
-        i++;
+    str = calloc(strlen(exampleFIle) + 1, sizeof(char));
+    if (str == NULL) {
+        printf("problem malloc str in checkContentFile in testRequest\n");
+        exit(1);
     }
-
+    fread(str, sizeof(char), strlen(exampleFIle), fp);
     fclose(fp);
     fp = NULL;
+    CU_ASSERT_PTR_NOT_NULL_FATAL(str);
+    CU_ASSERT_STRING_EQUAL(str, exampleFIle);
+
+    free(str);
 }
 
 static void getFileWithRedirectUrl() {
@@ -158,27 +163,31 @@ static void checkContentType() {
     char contentType3[100];
 
     pRequest = initRequest("https://yahoo.com/");
-    if (saveRequestInFile(pRequest, filePath4) != 0) {
-        printf("problem save request\n");
-    }
+    CU_ASSERT(saveRequestInFile(pRequest, filePath4) == 0);
     (pRequest->contentType != NULL) ? strcpy(contentType1, pRequest->contentType) : strcpy(contentType1, "");
-    destroyRequest(pRequest);
-    pRequest = initRequest("https://blog-fr.orson.io/wp-content/uploads/2017/06/jpeg-ou-png.jpg");
-    if (saveRequestInFile(pRequest, filePath4) != 0) {
-        printf("problem save request\n");
-    }
-    (pRequest->contentType != NULL) ? strcpy(contentType2, pRequest->contentType) : strcpy(contentType2, "");
-    destroyRequest(pRequest);
-
-    pRequest = initRequest("https://encrypted-vtbn1.gstatic.com/video?q=tbn:ANd9GcQ_qElyG_xAPTXyC3CUx9tLom30rGaGWpWksBfe_kALSKmQnjaa");
-    if (saveRequestInFile(pRequest, filePath4) != 0) {
-        printf("problem save request\n");
-    }
-    (pRequest->contentType != NULL) ? strcpy(contentType3, pRequest->contentType) : strcpy(contentType3, "");
-
     CU_ASSERT_STRING_EQUAL(contentType1, "text/html; charset=UTF-8");
+    destroyRequest(pRequest);
+
+    pRequest = initRequest("https://blog-fr.orson.io/wp-content/uploads/2017/06/jpeg-ou-png.jpg");
+    CU_ASSERT(saveRequestInFile(pRequest, filePath4) == 0);
+    (pRequest->contentType != NULL) ? strcpy(contentType2, pRequest->contentType) : strcpy(contentType2, "");
     CU_ASSERT_STRING_EQUAL(contentType2, "image/jpeg");
+    destroyRequest(pRequest);
+
+    pRequest = initRequest(
+            "https://encrypted-vtbn1.gstatic.com/video?q=tbn:ANd9GcQ_qElyG_xAPTXyC3CUx9tLom30rGaGWpWksBfe_kALSKmQnjaa");
+    CU_ASSERT(saveRequestInFile(pRequest, filePath4) == 0);
+    (pRequest->contentType != NULL) ? strcpy(contentType3, pRequest->contentType) : strcpy(contentType3, "");
     CU_ASSERT_STRING_EQUAL(contentType3, "video/mp4");
+}
+
+static void checkWhenUrlNotExist() {
+    // TODO : check if request structure is free
+    // TODO : check if the file is not create when url not exist
+    pRequest = initRequest("https://fzoiejfoizejfoizejfozejfcdoiijaz.fr");
+    CU_ASSERT(saveRequestInFile(pRequest, filePath4) != 0);
+    remove(filePath4);
+    CU_ASSERT(access(filePath4, F_OK) == -1);
 }
 
 CU_ErrorCode requestSpec(CU_pSuite pSuite) {
@@ -188,7 +197,8 @@ CU_ErrorCode requestSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
         (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
         (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
-        (NULL == CU_add_test(pSuite, "checkContentType", checkContentType))) {
+        (NULL == CU_add_test(pSuite, "checkContentType", checkContentType)) ||
+        (NULL == CU_add_test(pSuite, "checkWhenUrlNotExist", checkWhenUrlNotExist))) {
 
         CU_cleanup_registry();
         return CU_get_error();
