@@ -135,9 +135,11 @@ static void getFileWithRedirectUrl() {
     pRequest = NULL;
 
     fp = fopen(filePath3, "rb");
-
+    if (fp == NULL) {
+        printf("Problem open stream\n");
+        exit(1);
+    }
     fgets(temp, 100, fp);
-
     fclose(fp);
 
     CU_ASSERT_STRING_NOT_EQUAL(temp, "redirect");
