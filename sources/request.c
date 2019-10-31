@@ -163,9 +163,9 @@ void destroyRequest(Request *pRequest) {
     clearPHandle(pRequest);
     clearPFile(pRequest);
 
-    if (pRequest->pUrlHelper->url != NULL) {
-        free(pRequest->pUrlHelper->url);
-        pRequest->pUrlHelper->url = NULL;
+    if (pRequest->pUrlHelper != NULL) {
+        destroyUrlHelper(pRequest->pUrlHelper);
+        pRequest->pUrlHelper = NULL;
     }
     if (pRequest->contentType != NULL) {
         free(pRequest->contentType);
