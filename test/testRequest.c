@@ -73,6 +73,18 @@ int cleanRequest(void) {
     return 0;
 }
 
+static void checkWhenUrlNotExist() {
+    pRequest = initRequest("https://fzoiejfoizejfoizejfozejfcdoiijaz.fr");
+    CU_ASSERT(saveRequestInFile(pRequest, "errorFile.txt") != 0);
+    CU_ASSERT(strlen(pRequest->errBuf) > 0);
+    CU_ASSERT(access("errorFile.txt", F_OK) == -1);
+    destroyRequest(pRequest);
+    pRequest = initRequest("https:cdoiijaz.fr");
+    CU_ASSERT(saveRequestInFile(pRequest, "errordomain.txt") != 0);
+    CU_ASSERT(strlen(pRequest->errBuf) > 0);
+    destroyRequest(pRequest);
+}
+
 static void checkSaveFile() {
     pRequest = initRequest("http://example.com");
     int actualResult = saveRequestInFile(pRequest, filePath1);
@@ -181,24 +193,15 @@ static void checkContentType() {
     CU_ASSERT_STRING_EQUAL(contentType3, "video/mp4");
 }
 
-static void checkWhenUrlNotExist() {
-    // TODO : check if request structure is free
-    // TODO : check if the file is not create when url not exist
-    pRequest = initRequest("https://fzoiejfoizejfoizejfozejfcdoiijaz.fr");
-    CU_ASSERT(saveRequestInFile(pRequest, filePath4) != 0);
-    remove(filePath4);
-    CU_ASSERT(access(filePath4, F_OK) == -1);
-}
-
 CU_ErrorCode requestSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testRequest", NULL, cleanRequest);
 
-    if ((NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
+    if ((NULL == CU_add_test(pSuite, "checkWhenUrlNotExist", checkWhenUrlNotExist) ||
+        (NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
         (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
         (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
         (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
-        (NULL == CU_add_test(pSuite, "checkContentType", checkContentType)) ||
-        (NULL == CU_add_test(pSuite, "checkWhenUrlNotExist", checkWhenUrlNotExist))) {
+        (NULL == CU_add_test(pSuite, "checkContentType", checkContentType)))) {
 
         CU_cleanup_registry();
         return CU_get_error();
