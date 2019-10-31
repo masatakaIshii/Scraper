@@ -11,13 +11,14 @@
 #include <stdio.h>
 #include <curl/curl.h>
 #include "common.h"
+#include "urlHelper.h"
 
 typedef struct Request {
     CURL *pHandle;
     int isHandleInit;
     FILE *pFile;
     int isFileOpen;
-    char *url;
+    UrlHelper *pUrlHelper;
     char *contentType;
     char errBuf[CURL_ERROR_SIZE];
 } Request;
