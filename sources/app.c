@@ -49,7 +49,7 @@ void freeListSession(ListSession *pSession) {
     int i;
 
     for (i = 0; i < pSession->count; i++) {
-        free(pSession->sessions[i]);
+        destroySession(pSession->sessions[i]);
     }
     free(pSession->sessions);
     free(pSession);
@@ -85,7 +85,6 @@ Config *getConfig() {
  */
 void destroyApp() {
     App *pApp = getApp();
-    int i;
 
     if (pApp->pConfig != NULL) {
         free(pApp->pConfig);
