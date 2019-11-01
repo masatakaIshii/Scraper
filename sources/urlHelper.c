@@ -157,6 +157,8 @@ void destroyUrlHelper(UrlHelper *pUrlHelper) {
  * Get the file extension depends to mime type
  * @param pUrlHelper
  * @return
+ * 1 : Success to set extention file in structure UrlHelper
+ * 0 : not set because of not found extention file depend to mime type
  */
 int getExtFileByMimeType(UrlHelper *pUrlHelper) {
     // TODO : get the ext file by mime type when the file extension is not in url

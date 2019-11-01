@@ -24,6 +24,13 @@ UrlHelper *initUrlHelper(const char *url);
  */
 void destroyUrlHelper(UrlHelper *pUrlHelper);
 
+/**
+ * Get the file extension depends to mime type
+ * @param pUrlHelper
+ * @return
+ * 1 : Success to set extention file in structure UrlHelper
+ * 0 : not set because of not found extention file depend to mime type
+ */
 int getExtFileByMimeType(UrlHelper *pUrlHelper);
 
 #endif //SCRAPER_URLHELPER_H
