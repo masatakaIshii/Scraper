@@ -153,3 +153,8 @@ void destroyUrlHelper(UrlHelper *pUrlHelper) {
 
     free(pUrlHelper);
 }
+
+void getExtFileByMimeType(UrlHelper *pUrlHelper) {
+    // TODO : get the ext file by mime type when the file extension is not in url
+    fprintf(stderr, "The function to get file extention by mime type is not implemented, maybe soon\n");
+}

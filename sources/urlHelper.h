@@ -36,4 +36,6 @@ void urlHelperSetFileName(UrlHelper *pUrlHelper);
 
 void destroyUrlHelper(UrlHelper *pUrlHelper);
 
+void getExtFileByMimeType(UrlHelper *pUrlHelper);
+
 #endif //SCRAPER_URLHELPER_H
