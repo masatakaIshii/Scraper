@@ -13,22 +13,13 @@
 #include "common.h"
 #include "urlHelper.h"
 
-typedef struct Request {
-    CURL *pHandle;
-    int isHandleInit;
-    FILE *pFile;
-    int isFileOpen;
-    UrlHelper *pUrlHelper;
-    char *contentType;
-    char errBuf[CURL_ERROR_SIZE];
-} Request;
 
 /**
  * Initialise Request structure
  * @param url : url to get
  * @return *Request
  */
-Request *initRequest(char *url);
+Request *initRequest(const char *url);
 
 /**
  * Callback function to write get data in file during response of curl

@@ -18,7 +18,7 @@ Session *initSession(Action *action, char *sessionName) {
         free(pSession);
         return NULL;
     }
-    pSession->actions = malloc(sizeof(Action*));
+    //pSession->actions = malloc(sizeof(Action*));
 
     pSession->createdDate = getCurrentTime();
     pSession->resources = malloc(sizeof(Resource*));

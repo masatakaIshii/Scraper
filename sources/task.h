@@ -7,11 +7,4 @@
 
 #include "action.h"
 
-typedef struct Task {
-    Action **actions;
-    int numberActions;
-    Option **options;
-    int numberOptions;
-} Task;
-
 #endif //SCRAPER_TASK_H

@@ -7,11 +7,6 @@
 
 #include"option.h"
 
-typedef struct Action {
-    char *name;
-    char *url;
-    Option **options;
-    int numberOption;
-} Action;
+
 
 #endif //SCRAPER_ACTION_H

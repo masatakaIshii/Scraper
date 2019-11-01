@@ -13,7 +13,7 @@
  * @param url : url to get
  * @return *Request
  */
-Request *initRequest(char *url) {
+Request *initRequest(const char *url) {
     Request *pRequest = malloc(sizeof(Request));
     if (pRequest == NULL) {
         errorQuit("Problem malloc pRequest\n");

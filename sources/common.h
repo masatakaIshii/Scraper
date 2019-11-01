@@ -7,7 +7,8 @@
  */
 #ifndef SCRAPER_COMMON_H
 #define SCRAPER_COMMON_H
-#include<curl/curl.h>
+#include <curl/curl.h>
+#include "struct.h"
 
 void errorQuit(char *message);
 

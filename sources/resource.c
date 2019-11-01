@@ -3,7 +3,6 @@
 //
 
 #include "resource.h"
-#include "app.h"
 
 Resource *initResource(const char *url, int depth, int maxDepth) {
     Resource *pResource = NULL;
@@ -13,7 +12,7 @@ Resource *initResource(const char *url, int depth, int maxDepth) {
             return NULL;
         }
         pResource->depth = depth;
-        //pResource->createdDate = getCurrentTime();
+        pResource->maxDepth = maxDepth;
         pResource->pRequest = initRequest(url);
         if (pResource->pRequest == NULL) {
             free(pResource->createdDate);
@@ -35,22 +34,22 @@ static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath)
 
     pResource->dirResourcePath = strMallocCpy(dirResourcePath, strlen(dirResourcePath));
     if (pResource->dirResourcePath == NULL) {
-        destroyApp();
-        errorQuit("Problem malloc directory path of resource");
+        printf("Problem malloc directory path of resource");
+        return -1;
     }
 
     if (pUrlHelper->isExtFile == 1) {
         pResource->outputPath = strMallocCat(pResource->dirResourcePath, pUrlHelper->fileName);
         if (pResource->outputPath == NULL) {
-            destroyApp();
             errorQuit("Problem malloc output file path in resource\n");
+            return -1;
         }
     } else {
         if (getExtFileByMimeType(pUrlHelper)) {
             fileNameWithExt = strMallocCat(pUrlHelper->fileName, pUrlHelper->extFile);
             pResource->outputPath = strMallocCat(pResource->dirResourcePath, fileNameWithExt);
         } else {
-            return -1;
+            return 1;
         }
     }
 
@@ -58,8 +57,11 @@ static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath)
 }
 
 int createFileResource(Resource *pResource, const char *dirResourcePath) {
-    if (setDirAndOutputPath(pResource, dirResourcePath) != 0) {
+    int result = setDirAndOutputPath(pResource, dirResourcePath);
+    if (result != 0) {
+
         fprintf(stderr, "Don't found file extention of resource with url '%s'", pResource->pRequest->pUrlHelper->url);
+        return -1;
     }
 
     if (saveRequestInFile(pResource->pRequest, pResource->outputPath) != CURLE_OK) {
@@ -67,9 +69,9 @@ int createFileResource(Resource *pResource, const char *dirResourcePath) {
         return -1;
     }
 
+    pResource->createdDate = getCurrentTime();
 
-    
-    // TODO : saveFileInResource with outputPath
+    return 0;
 }
 
 void addResourceInfoInFile(Resource *pResource, const char *resourcesFile) {

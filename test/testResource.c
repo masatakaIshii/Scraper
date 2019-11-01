@@ -5,7 +5,7 @@
 #include "test.h"
 
 static void testInitResource() {
-
+    Resource
 }
 
 

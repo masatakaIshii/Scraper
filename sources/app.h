@@ -12,18 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "config.h"
+#include "request.h"
 #include "session.h"
-
-typedef struct ListSession {
-    Session **sessions;
-    int capacity;
-    int count;
-} ListSession;
-
-typedef struct App {
-    Config *pConfig;
-    ListSession *listSession;
-} App;
 
 /**
  * function to get singleton pointer App structure
@@ -57,6 +47,8 @@ Config *getConfig();
 
 
 void destroyApp();
+
+
 
 // TODO: int startApp(App *app);
 

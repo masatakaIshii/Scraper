@@ -5,35 +5,23 @@
 #ifndef SCRAPER_URLHELPER_H
 #define SCRAPER_URLHELPER_H
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<curl/curl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
 #include "common.h"
+#include "app.h"
 
-typedef enum UrlHelperResponse {
-    UH_OK,
-    UH_NAME_PB,
-} UHRes;
-
-typedef struct UrlHelper {
-    char *url;
-    char *domainName;
-    char *fileName;
-    char *extFile;
-    int isDomainName;
-    int isFileName;
-    int isExtFile;
-    UHRes result;
-} UrlHelper;
-
+/**
+ * Initialize the structure UrlHelper to get few parts of url
+ * @param url : current url to view
+ * @return : pointer of structure UrlHelper
+ */
 UrlHelper *initUrlHelper(const char *url);
 
-static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url);
-
-void urlHelperSetDomainName(UrlHelper *pUrlHelper);
-
-void urlHelperSetFileName(UrlHelper *pUrlHelper);
-
+/**
+ * Destroy the pointer of structure UrlHelper
+ * @param pUrlHelper
+ */
 void destroyUrlHelper(UrlHelper *pUrlHelper);
 
 int getExtFileByMimeType(UrlHelper *pUrlHelper);

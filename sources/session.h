@@ -11,20 +11,11 @@
 
 #include "common.h"
 #include "action.h"
+#include "request.h"
 #include "resource.h"
-
-typedef struct Session {
-    Action **actions;
-    int numberActions;
-    char *name;
-    Resource **resources;
-    char *createdDate;
-} Session;
 
 Session *initSession(Action *action, char *sessionName);
 
 void destroySession(Session *pSession);
-
-#include "app.h"
 
 #endif //SCRAPER_SESSION_H

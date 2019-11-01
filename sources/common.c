@@ -57,7 +57,7 @@ char *getCurrentTime() {
     currentTime = time(NULL);
     if (currentTime == (time_t) - 1) {
         //destroyApp();
-        errorQuit("Problem to get current time\n");
+        return NULL;
     }
 
     strCurrentTime = ctime(&currentTime);
