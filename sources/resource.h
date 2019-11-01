@@ -5,10 +5,12 @@
 #ifndef SCRAPER_RESOURCE_H
 #define SCRAPER_RESOURCE_H
 
+#include "common.h"
 #include "request.h"
 
 typedef struct Resource {
     Request *pRequest;
+    char *dirResourcePath;
     char *outputPath;
     char *type;
     int depth;
@@ -17,5 +19,11 @@ typedef struct Resource {
     int numberLinks;
     char **links;
 } Resource;
+
+Resource *initResource(const char *url, int depth, int maxDepth);
+
+int createFileResource(Resource *pResource, const char *dirResourcePath);
+
+void addResourceInformationInResourcesFile(Resource *pResource, const char *resourcesFile);
 
 #endif //SCRAPER_RESOURCE_H
