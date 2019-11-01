@@ -15,10 +15,13 @@
 #include "../sources/resource.h"
 #include "../sources/session.h"
 #include "../sources/app.h"
+#include "testDummiesAction.h"
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite);
 CU_ErrorCode requestSpec(CU_pSuite pSuite) ;
 CU_ErrorCode appSpec(CU_pSuite pSuite);
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite);
+CU_ErrorCode sessionSpec(CU_pSuite pSuite);
+CU_ErrorCode resourceSpec(CU_pSuite pSuite);
 
 #endif //SCRAPER_TESTREQUEST_H

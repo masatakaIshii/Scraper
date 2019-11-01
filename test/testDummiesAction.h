@@ -5,4 +5,14 @@
 #ifndef SCRAPER_TESTDUMMIESACTION_H
 #define SCRAPER_TESTDUMMIESACTION_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "../sources/common.h"
+#include "../sources/action.h"
+
+Action *dummySimpleAction();
+void destroyDummyAction(Action *dummyAction);
+Action *dummyDepthAction();
+
 #endif //SCRAPER_TESTDUMMIESACTION_H

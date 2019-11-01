@@ -53,7 +53,8 @@ CU_ErrorCode listSpecs(CU_pSuite pSuite) {
     if (CUE_SUCCESS != commonSpec(pSuite) ||
         CUE_SUCCESS != requestSpec(pSuite) ||
         CUE_SUCCESS != appSpec(pSuite) ||
-        CUE_SUCCESS != urlHelperSpec(pSuite)) {
+        CUE_SUCCESS != urlHelperSpec(pSuite) ||
+        CUE_SUCCESS != sessionSpec(pSuite)) {
         CU_cleanup_registry();
     }
 
