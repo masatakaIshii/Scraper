@@ -15,6 +15,8 @@ char *strMallocCpy(const char *str, int length);
 
 int getIndexAfterOccurStr(const char *strCheck, const char *strOccur);
 
+char *getCurrentTime();
+
 int getCountListMimeType();
 
 char **getListMimeTypeFileExt();

@@ -41,7 +41,6 @@ ListSession *newListSession();
 
 void addSession(Session *pSession);
 
-
 Session *getSession(int index);
 
 void freeListSession(ListSession *pSession);

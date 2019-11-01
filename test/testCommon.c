@@ -37,11 +37,20 @@ void static testStrMallocCpy() {
     CU_ASSERT_PTR_NULL(test);
 }
 
+void static testGetCurrentDate() {
+    char *currentDate = getCurrentTime();
+    time_t expected = time(NULL);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(currentDate);
+    CU_ASSERT_STRING_EQUAL(currentDate, ctime(&expected));
+    free(currentDate);
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
     if ((NULL == CU_add_test(pSuite, "testGetIndexAfterOccurStr", testGetIndexAfterOccurStr)) ||
-        (NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy))) {
+        (NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy)) ||
+            (NULL ==CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate))) {
 
         CU_cleanup_registry();
         return CU_get_error();

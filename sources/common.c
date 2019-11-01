@@ -45,6 +45,27 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
     return 0;
 }
 
+/**
+ * Get current time format "strDate strMonth intDate intHours:intMin:intSec intYears"
+ * Example : "Sun Oct 01 13:12:00 2019"
+ * @return string content current time
+ */
+char *getCurrentTime() {
+    time_t currentTime;
+    char *strCurrentTime = NULL;
+
+    currentTime = time(NULL);
+    if (currentTime == (time_t) - 1) {
+        //destroyApp();
+        errorQuit("Problem to get current time\n");
+    }
+
+    strCurrentTime = ctime(&currentTime);
+
+    return strCurrentTime;
+}
+
+
 int getCountListMimeType() {
 
 }
