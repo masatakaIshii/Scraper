@@ -17,6 +17,8 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur);
 
 char *getCurrentTime();
 
+char *strMallocCat(const char *str1, const char *str2);
+
 int getCountListMimeType();
 
 char **getListMimeTypeFileExt();

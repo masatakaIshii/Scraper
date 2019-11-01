@@ -65,6 +65,18 @@ char *getCurrentTime() {
     return strCurrentTime;
 }
 
+char *strMallocCat(const char *str1, const char *str2) {
+    char *newStr = calloc(strlen(str1) + strlen(str2) + 1, sizeof(char));
+    if (newStr == NULL) {
+        //destroyApp();
+        errorQuit("Problem to calloc string in strMallocCat");
+    }
+
+    strcpy(newStr, str1);
+    strcat(newStr, str2);
+
+    return newStr;
+}
 
 int getCountListMimeType() {
 

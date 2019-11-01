@@ -3,7 +3,7 @@
 //
 #include "test.h"
 
-void static testGetIndexAfterOccurStr() {
+static void testGetIndexAfterOccurStr() {
     int length = getIndexAfterOccurStr("C'est bon les bonbons", "C'est");
     CU_ASSERT_EQUAL(length, strlen("C'est"));
 
@@ -17,7 +17,7 @@ void static testGetIndexAfterOccurStr() {
     CU_ASSERT_EQUAL(length, strlen("HEYYEYAA"));
 }
 
-void static testStrMallocCpy() {
+static void testStrMallocCpy() {
     char *test = strMallocCpy("dada", 4);
     CU_ASSERT_STRING_EQUAL(test, "dada");
     CU_ASSERT_EQUAL(strlen(test), 4);
@@ -37,7 +37,7 @@ void static testStrMallocCpy() {
     CU_ASSERT_PTR_NULL(test);
 }
 
-void static testGetCurrentDate() {
+static void testGetCurrentDate() {
     char *currentDate = getCurrentTime();
     time_t expected = time(NULL);
     CU_ASSERT_PTR_NOT_NULL_FATAL(currentDate);
@@ -45,12 +45,38 @@ void static testGetCurrentDate() {
     free(currentDate);
 }
 
+static void testStrMallocCat() {
+    char *str1 = "testons";
+    char *str2 = " son efficacite";
+    char *result = NULL;
+    result = strMallocCat(str1, str2);
+
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "testons son efficacite");
+    free(result);
+
+    result = strMallocCat("tonton", "");
+    CU_ASSERT_STRING_EQUAL(result, "tonton");
+    CU_ASSERT(strlen(result) == strlen("tonton"));
+    free(result);
+
+    result = strMallocCat("", "tonton");
+    CU_ASSERT_STRING_EQUAL(result, "tonton");
+    CU_ASSERT(strlen(result) == strlen("tonton"));
+    free(result);
+
+    result = strMallocCat("", "");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    free(result);
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
     if ((NULL == CU_add_test(pSuite, "testGetIndexAfterOccurStr", testGetIndexAfterOccurStr)) ||
         (NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy)) ||
-            (NULL ==CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate))) {
+        (NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate)) ||
+        (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat))) {
 
         CU_cleanup_registry();
         return CU_get_error();
