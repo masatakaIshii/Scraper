@@ -31,12 +31,16 @@ set(HEADERS
     sources/urlHelper.h)
 
 set(TESTSRCS
+    test/testDummiesAction.c
     test/testCommon.c
     test/testRequest.c
+    test/testRequest.c
     test/testApp.c
+    test/testSession.c
     test/testUrlHelper.c)
 
 set(TESTHEADERS
+    test/testDummiesAction.h
     test/test.h)
 
 add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
