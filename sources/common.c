@@ -7,17 +7,43 @@
  */
 #include "common.h"
 
-void errorQuit(char *message) {
-    printf("%s", message);
-    curl_global_cleanup();
-    exit(1);
+/**
+ * verify the pointer and if its null, show message and quit program with exit status '1'
+ * @param pointer
+ * @param message
+ */
+void verifyPointer(void *pointer, const char *message) {
+    if (pointer == NULL) {
+        destroyApp();
+        fprintf(stderr, "%s", message);
+        curl_global_cleanup();
+        exit(1);
+    }
+}
+
+/**
+ * strcat with proper malloc and not static array of character
+ * @param str1
+ * @param str2
+ * @return newStr : string that is concat with str1 and str2
+ */
+char *strMallocCat(const char *str1, const char *str2) {
+    char *newStr = calloc(strlen(str1) + strlen(str2) + 1, sizeof(char));
+    if (newStr == NULL) {
+        return NULL;
+    }
+
+    strcpy(newStr, str1);
+    strcat(newStr, str2);
+
+    return newStr;
 }
 
 /**
  * malloc and copy string with precise length
  * @param str
  * @param length
- * @return
+ * @return newStr : new string that is malloc
  */
 char *strMallocCpy(const char *str, int length) {
     char *newStr = calloc(length + 1, sizeof(char));
@@ -56,7 +82,6 @@ char *getCurrentTime() {
 
     currentTime = time(NULL);
     if (currentTime == (time_t) - 1) {
-        //destroyApp();
         return NULL;
     }
 
@@ -64,28 +89,15 @@ char *getCurrentTime() {
 
     return strCurrentTime;
 }
-
-char *strMallocCat(const char *str1, const char *str2) {
-    char *newStr = calloc(strlen(str1) + strlen(str2) + 1, sizeof(char));
-    if (newStr == NULL) {
-        //destroyApp();
-        errorQuit("Problem to calloc string in strMallocCat");
-    }
-
-    strcpy(newStr, str1);
-    strcat(newStr, str2);
-
-    return newStr;
-}
-
-int getCountListMimeType() {
-
-}
-
-char **getListMimeTypeFileExt() {
-
-}
-
-char *getFileNameByUrl(char *url, char *mimeType) {
-
-}
+//
+//int getCountListMimeType() {
+//
+//}
+//
+//char **getListMimeTypeFileExt() {
+//
+//}
+//
+//char *getFileNameByUrl(char *url, char *mimeType) {
+//
+//}
