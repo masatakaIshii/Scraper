@@ -78,12 +78,17 @@ typedef struct Request {
 } Request;
 
 typedef struct Resource {
+    short isRequest;
     Request *pRequest;
+    short isDirResourcePath;
     char *dirResourcePath;
+    short isOutputPath;
     char *outputPath;
+    short isType;
     char *type;
     int depth;
     int maxDepth;
+    short isCreatedDate;
     char *createdDate;
     long size;
     int numberLinks;
