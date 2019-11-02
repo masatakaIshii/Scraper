@@ -35,6 +35,7 @@ set(TESTSRCS
     test/testCommon.c
     test/testRequest.c
     test/testRequest.c
+    test/testResource.c
     test/testApp.c
     test/testSession.c
     test/testUrlHelper.c)
