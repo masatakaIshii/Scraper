@@ -24,10 +24,8 @@ static void urlHelperSetFileName(UrlHelper *pUrlHelper) {
             length = optionalData != NULL ? (int)(optionalData - fileName) : (int)strlen(fileName);
 
             pUrlHelper->fileName = strMallocCpy(fileName, length);
-            if (pUrlHelper->fileName == NULL) {
-                destroyApp();
-                errorQuit("Problem to strMallocCpy fileName if UrlHelper\n");
-            }
+            verifyPointer(pUrlHelper->fileName, "Problem to strMallocCpy fileName if UrlHelper\n");
+
             pUrlHelper->isFileName = 1;
         }
     }
@@ -51,10 +49,8 @@ static void urlHelperSetDomainName(UrlHelper *pUrlHelper) {
         end = strchr(start, '/');
         length = (end == NULL) ? (int)strlen(start) : (int)(end - start);
         pUrlHelper->domainName = strMallocCpy(start, length);
-        if (pUrlHelper->domainName == NULL) {
-            destroyApp();
-            errorQuit("Problem strMallocCpy domainName in urlHelperSetDomainName\n");
-        }
+        verifyPointer(pUrlHelper->domainName, "Problem strMallocCpy domainName in urlHelperSetDomainName\n");
+
         if (strchr(pUrlHelper->domainName, '.') == NULL) {
             free(pUrlHelper->domainName);
             pUrlHelper->result = UH_NAME_PB;
@@ -77,10 +73,8 @@ static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
         extFile = strrchr(pUrlHelper->fileName, '.');
         if (extFile != NULL && strlen(extFile) > 1) {
             pUrlHelper->extFile = strMallocCpy(extFile + 1, (int)strlen(extFile));
-            if (pUrlHelper->extFile == NULL) {
-                destroyApp();
-                errorQuit("Problem strMallocCpy exitFile UrlHelper\n");
-            }
+            verifyPointer(pUrlHelper->extFile, "Problem strMallocCpy exitFile UrlHelper\n");
+
             pUrlHelper->isExtFile = 1;
         }
     }
@@ -93,10 +87,7 @@ static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
  */
 static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url) {
     pUrlHelper->url = strMallocCpy(url, (int)strlen(url));
-    if (pUrlHelper->url == NULL) {
-        destroyApp();
-        errorQuit("Problem malloc url in fillUrlHelper\n");
-    }
+    verifyPointer(pUrlHelper->url, "Problem malloc url in fillUrlHelper\n");
 
     urlHelperSetDomainName(pUrlHelper);
     if (pUrlHelper->result == UH_NAME_PB) {
@@ -113,22 +104,19 @@ static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url) {
  */
 UrlHelper *initUrlHelper(const char *url) {
     UrlHelper *pUrlHelper = malloc(sizeof(UrlHelper));
-    if (pUrlHelper == NULL) {
-        destroyApp();
-        errorQuit("Problem malloc in initUrlHelper\n");
-    } else {
-        pUrlHelper->domainName = NULL;
-        pUrlHelper->fileName = NULL;
-        pUrlHelper->extFile = NULL;
+    verifyPointer(pUrlHelper, "Problem malloc in initUrlHelper\n");
 
-        pUrlHelper->isDomainName = 0;
-        pUrlHelper->isFileName = 0;
-        pUrlHelper->isExtFile = 0;
-        pUrlHelper->result = UH_OK;
+    pUrlHelper->domainName = NULL;
+    pUrlHelper->fileName = NULL;
+    pUrlHelper->extFile = NULL;
 
-        fillUrlHelper(pUrlHelper, url);
-    }
+    pUrlHelper->isDomainName = 0;
+    pUrlHelper->isFileName = 0;
+    pUrlHelper->isExtFile = 0;
+    pUrlHelper->result = UH_OK;
 
+    fillUrlHelper(pUrlHelper, url);
+    
     return pUrlHelper;
 }
 

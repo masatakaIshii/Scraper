@@ -15,16 +15,11 @@
  */
 Request *initRequest(const char *url) {
     Request *pRequest = malloc(sizeof(Request));
-    if (pRequest == NULL) {
-        errorQuit("Problem malloc pRequest\n");
-    }
+    verifyPointer(pRequest, "Problem malloc pRequest\n");
     pRequest->isFileOpen = 0;
     pRequest->isHandleInit = 0;
     pRequest->pUrlHelper = initUrlHelper(url);
-    if (pRequest->pUrlHelper->url == NULL) {
-        destroyRequest(pRequest);
-        errorQuit("problem pRequest\n");
-    }
+    verifyPointer(pRequest->pUrlHelper->url, "problem pRequest\n");
 
     strcpy(pRequest->pUrlHelper->url, url);
 
@@ -89,17 +84,13 @@ static int saveContentType(Request *pRequest) {
 static void setStreamAndHandle(Request *pRequest, char *fileName) {
 
     pRequest->pHandle = curl_easy_init();
-    if (pRequest->pHandle == NULL) {
-        destroyRequest(pRequest);
-        errorQuit("Problem curl easy init\n");
-    }
+    verifyPointer(pRequest->pHandle, "Problem curl easy init\n");
+
     pRequest->isHandleInit = 1;
 
     pRequest->pFile = fopen(fileName, "wb");
-    if (pRequest->pFile == NULL) {
-        destroyRequest(pRequest);
-        errorQuit("Problem with open file\n");
-    }
+    verifyPointer(pRequest->pFile, "Problem with open file\n");
+
     pRequest->isFileOpen = 1;
 }
 
