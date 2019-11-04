@@ -103,5 +103,25 @@ void addResourceInfoInFile(Resource *pResource, const char *resourcesFile) {
 }
 
 void destroyResource(Resource *pResource) {
+    if (pResource->isCreatedDate == 1) {
+        free(pResource->createdDate);
+        pResource->isCreatedDate = 0;
+    }
 
+    if (pResource->isOutputPath == 1) {
+        free(pResource->outputPath);
+        pResource->isOutputPath = 0;
+    }
+
+    if (pResource->isDirResourcePath == 1) {
+        free(pResource->dirResourcePath);
+        pResource->isDirResourcePath = 0;
+    }
+
+    if (pResource->isRequest == 1) {
+        destroyRequest(pResource->pRequest);
+        pResource->isRequest = 0;
+    }
+
+    free(pResource);
 }
