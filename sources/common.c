@@ -89,6 +89,20 @@ char *getCurrentTime() {
 
     return strCurrentTime;
 }
+
+/**
+ * destroy pointer if boolean of field is == 1, and affect boolean to 0
+ * @param pointer : the pointer to free
+ * @param isMalloc : variable of boolean to check if pointer is already malloc and put to 0
+ */
+void freePointer(void **pointer, int *isMalloc) {
+    if (*isMalloc == 1) {
+        free(*pointer);
+        *pointer = NULL;
+        *isMalloc = 0;
+    }
+}
+
 //
 //int getCountListMimeType() {
 //

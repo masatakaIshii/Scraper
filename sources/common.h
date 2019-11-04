@@ -39,6 +39,8 @@ char *getCurrentTime();
 
 char *strMallocCat(const char *str1, const char *str2);
 
+void freePointer(void **pointer, int *isMalloc);
+
 //int getCountListMimeType();
 //
 //char **getListMimeTypeFileExt();

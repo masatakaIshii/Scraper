@@ -70,14 +70,43 @@ static void testStrMallocCat() {
     free(result);
 }
 
+struct TestStr{
+    char *str;
+    int isStr;
+};
+
+static void testFreePointer() {
+    int *arrayInt = calloc(5, sizeof(int));
+    int isArrayInt = 1;
+    struct TestStr *testStr = malloc(sizeof(struct TestStr));
+
+    freePointer((void**)&arrayInt, &isArrayInt);
+    CU_ASSERT_EQUAL(isArrayInt, 0);
+    CU_ASSERT_PTR_NULL_FATAL(arrayInt);
+
+    testStr->str = calloc(strlen("titi") + 1, sizeof(char));
+    strcpy(testStr->str, "titi");
+    testStr->isStr = 1;
+
+    freePointer((void**)&testStr->str, &testStr->isStr);
+
+    CU_ASSERT_EQUAL(testStr->isStr, 0);
+    CU_ASSERT_PTR_NULL_FATAL(testStr->str);
+
+    free(testStr);
+
+    freePointer((void**)&arrayInt, &isArrayInt);
+    CU_ASSERT_EQUAL(isArrayInt, 0);
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
     if ((NULL == CU_add_test(pSuite, "testGetIndexAfterOccurStr", testGetIndexAfterOccurStr)) ||
         (NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy)) ||
         (NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate)) ||
-        (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat))) {
-
+        (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat)) ||
+        (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer))) {
         CU_cleanup_registry();
         return CU_get_error();
     }
