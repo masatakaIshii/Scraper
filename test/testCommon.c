@@ -70,7 +70,7 @@ static void testStrMallocCat() {
     free(result);
 }
 
-struct TestStr{
+struct TestStr {
     char *str;
     int isStr;
 };
@@ -80,7 +80,7 @@ static void testFreePointer() {
     int isArrayInt = 1;
     struct TestStr *testStr = malloc(sizeof(struct TestStr));
 
-    freePointer((void**)&arrayInt, (short*)&isArrayInt);
+    freePointer((void **) &arrayInt, (short *) &isArrayInt);
     CU_ASSERT_EQUAL(isArrayInt, 0);
     CU_ASSERT_PTR_NULL_FATAL(arrayInt);
 
@@ -88,15 +88,52 @@ static void testFreePointer() {
     strcpy(testStr->str, "titi");
     testStr->isStr = 1;
 
-    freePointer((void**)&testStr->str, (short*)&testStr->isStr);
+    freePointer((void **) &testStr->str, (short *) &testStr->isStr);
 
     CU_ASSERT_EQUAL(testStr->isStr, 0);
     CU_ASSERT_PTR_NULL_FATAL(testStr->str);
 
     free(testStr);
 
-    freePointer((void**)&arrayInt, (short*)&isArrayInt);
+    freePointer((void **) &arrayInt, (short *) &isArrayInt);
     CU_ASSERT_EQUAL(isArrayInt, 0);
+}
+
+
+static int checkIfDirExist(char *dirPath) {
+    DIR* dir = opendir(dirPath);
+    if (dir) {
+        closedir(dir);
+        return 1;
+    } else if (ENOENT == errno) {
+        return 0;
+    } else {
+        fprintf(stderr, "Problem to open dir : %s\n", dirPath);
+        return 0;
+    }
+}
+
+static void testMkdirPCreateDirectories() {
+
+    CU_ASSERT_EQUAL(mkdirP("toto"), 0);
+    CU_ASSERT_EQUAL(checkIfDirExist("toto"), 1);
+    rmdir("toto");
+
+    CU_ASSERT_EQUAL(mkdirP("tata/toto"), 0);
+    CU_ASSERT_EQUAL(checkIfDirExist("tata"), 1);
+    CU_ASSERT_EQUAL(checkIfDirExist("tata/toto"), 1);
+    rmdir("tata/toto");
+    rmdir("tata");
+
+    CU_ASSERT_EQUAL(mkdirP("la tata/le tonton"), 0);
+    CU_ASSERT_EQUAL(checkIfDirExist("la tata"), 1);
+    CU_ASSERT_EQUAL(checkIfDirExist("la tata/le tonton"), 1);
+    rmdir("la tata/le tonton");
+    rmdir("la tata");
+
+    CU_ASSERT_EQUAL(mkdirP("////"), -1);
+
+    CU_ASSERT_EQUAL(mkdirP("tonton?/non|tata"), -1);
 }
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
@@ -106,7 +143,9 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy)) ||
         (NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate)) ||
         (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat)) ||
-        (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer))) {
+        (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer)) ||
+        (NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories))) {
+
         CU_cleanup_registry();
         return CU_get_error();
     }
