@@ -47,6 +47,7 @@ static void testSetDirAndOutputPath() {
     strcpy(filePath, pResource->outputPath);
     strcpy(dirPath, pResource->dirResourcePath);
     destroyResource(pResource);
+    unlink(filePath);
     rmdir(dirPath);
 
     pResource = initResource("https://example.com/", 0, 0);
@@ -60,6 +61,11 @@ static void testSetDirAndOutputPath() {
 }
 
 static void testSetDirectoriesAndOutputPath() {
+
+    mkdir("titi/tata");
+    FILE *fp = fopen("titi/tata/tonton.txt", "w");
+
+    fclose(fp);
     pResource = initResource("https://static.openfoodfacts.org/data/delta/index.txt", 5, 10);
     verifyPointer(pResource, "Problem initResource in testResource for google.com\n");
     CU_ASSERT_EQUAL(createFileResource(pResource, "toto/tata"), 0); // TODO : manage maybe in Common, for create directory recursively like mkdir -p
