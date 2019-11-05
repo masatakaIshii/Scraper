@@ -65,7 +65,7 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
     char *startOccur = strstr(strCheck, strOccur);
 
     if (startOccur != NULL) {
-        return startOccur - strCheck + strlen(strOccur);
+        return (int)(startOccur - strCheck + strlen(strOccur));
     }
 
     return 0;
@@ -87,10 +87,9 @@ char *getCurrentTime() {
     }
 
     temp = ctime(&currentTime);
-    strCurrentTime = strMallocCpy(temp, strlen(temp));
+    strCurrentTime = strMallocCpy(temp, (int)strlen(temp));
 
     verifyPointer(strCurrentTime, "Problem get current time\n");
-
 
     return strCurrentTime;
 }
@@ -106,6 +105,68 @@ void freePointer(void **pointer, short *isMalloc) {
         *pointer = NULL;
         *isMalloc = 0;
     }
+}
+
+/**
+ * Check if directory path is correct
+ * DEBT : the backslash is include in forbidden chars because the function below depend to mkdirP
+ * @param dirPath
+ * @return
+ * 1 : dirPath is correct
+ * 0 : dirPath contain forbidden Chars
+ */
+static int checkIfDirPathIsCorrect(char *dirPath) {
+    char *arrayForbiddenChars = "\\<>?\":*|";
+
+    return strpbrk(dirPath, arrayForbiddenChars) == NULL;
+}
+
+/**
+ * function to create directories step by step thanks to token
+ * @param dirPath
+ * @return
+ * 0 : operation success
+ * -1 : problem with token
+ */
+static int  createDirectories(const char *dirPath) {
+    const char s[2] = "/";
+    unsigned length = strlen(dirPath);
+    char temp[length];
+    char currentDirPath[length];
+    char *token;
+
+    strcpy(temp, dirPath);
+    token = strtok(temp, s);
+    if (token == NULL) {
+        return -1;
+    }
+
+    strcpy(currentDirPath, token);
+    while( token != NULL) {
+        mkdir(currentDirPath);
+        token = strtok(NULL, s);
+        if (token != NULL) {
+            strcat(currentDirPath, "/");
+            strcat(currentDirPath, token);
+        }
+    }
+    return 0;
+}
+
+/**
+ * function to create directories recursively like mkdirP
+ * @param dirPath
+ * @return
+ * 0 : correct value and directories created
+ * -1 : error value, because of directory path wrong value
+ */
+int mkdirP(char *dirPath) {
+
+    if (checkIfDirPathIsCorrect(dirPath) == 0) {
+        return -1;
+    }
+
+    return createDirectories(dirPath);
 }
 
 //

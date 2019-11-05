@@ -41,6 +41,8 @@ char *strMallocCat(const char *str1, const char *str2);
 
 void freePointer(void **pointer, short *isMalloc);
 
+int mkdirP(char *dirPath);
+
 //int getCountListMimeType();
 //
 //char **getListMimeTypeFileExt();
