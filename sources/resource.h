@@ -14,4 +14,6 @@ int createFileResource(Resource *pResource, const char *dirResourcePath);
 
 void addResourceInformationInResourcesFile(Resource *pResource, const char *resourcesFile);
 
+void destroyResource(Resource *pResource);
+
 #endif //SCRAPER_RESOURCE_H

@@ -2,6 +2,7 @@
 // Created by masat on 16/10/2019.
 //
 
+#include <io.h>
 #include "resource.h"
 
 static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
@@ -21,6 +22,10 @@ static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
     pResource->type = NULL;
 
     pResource->isRequest = 0;
+
+    pResource->size = 0;
+    pResource->numberLinks = 0;
+    pResource->links = NULL;
 }
 
 Resource *initResource(const char *url, int depth, int maxDepth) {
@@ -44,10 +49,12 @@ Resource *initResource(const char *url, int depth, int maxDepth) {
 
 static int setOutputPath(Resource *pResource) {
     UrlHelper *pUrlHelper = pResource->pRequest->pUrlHelper;
+    char *dirResourcePathWithSlash = NULL;
     char *fileNameWithExt = NULL;
 
     if (pUrlHelper->isExtFile == 1) {
-        pResource->outputPath = strMallocCat(pResource->dirResourcePath, pUrlHelper->fileName);
+        dirResourcePathWithSlash = strMallocCat(pResource->dirResourcePath, "/");
+        pResource->outputPath = strMallocCat(dirResourcePathWithSlash, pUrlHelper->fileName);
         verifyPointer(pResource->outputPath, "Problem malloc output file path in resource\n");
     } else {
         if (getExtFileByMimeType(pUrlHelper)) { // fetch extension file by mime type search in conditions and list extFile / mimeType
@@ -67,7 +74,7 @@ static int setOutputPath(Resource *pResource) {
 
 static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath) {
     int result = 0;
-    pResource->dirResourcePath = strMallocCpy(dirResourcePath, strlen(dirResourcePath));
+    pResource->dirResourcePath = strMallocCpy(dirResourcePath, (int)strlen(dirResourcePath));
     verifyPointer(pResource->dirResourcePath, "Problem malloc directory path of resource");
 
     pResource->isDirResourcePath = 1;
@@ -82,9 +89,11 @@ int createFileResource(Resource *pResource, const char *dirResourcePath) {
 
     result = setDirAndOutputPath(pResource, dirResourcePath);
     if (result != 0) {
-        fprintf(stderr, "Don't found file extention of resource with url '%s'", pResource->pRequest->pUrlHelper->url);
+        fprintf(stderr, "Don't found file extention of resource with url '%s'\n", pResource->pRequest->pUrlHelper->url);
         return -1;
     }
+
+    mkdir(pResource->dirResourcePath);
 
     if (saveRequestInFile(pResource->pRequest, pResource->outputPath) != CURLE_OK) {
         fprintf(stderr, "ERROR request : %s\n", pResource->pRequest->errBuf);
@@ -104,11 +113,13 @@ void addResourceInfoInFile(Resource *pResource, const char *resourcesFile) {
 
 void destroyResource(Resource *pResource) {
     if (pResource->isCreatedDate == 1) {
+        //freePointer((void**)pResource->createdDate, &pResource->isCreatedDate);
         free(pResource->createdDate);
         pResource->isCreatedDate = 0;
     }
 
     if (pResource->isOutputPath == 1) {
+        //freePointer((void**)pResource->outputPath, &pResource->isOutputPath);
         free(pResource->outputPath);
         pResource->isOutputPath = 0;
     }
@@ -116,6 +127,7 @@ void destroyResource(Resource *pResource) {
     if (pResource->isDirResourcePath == 1) {
         free(pResource->dirResourcePath);
         pResource->isDirResourcePath = 0;
+        //freePointer((void**)pResource->dirResourcePath, &pResource->isDirResourcePath);
     }
 
     if (pResource->isRequest == 1) {
