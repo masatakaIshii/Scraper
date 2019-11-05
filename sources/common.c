@@ -95,7 +95,7 @@ char *getCurrentTime() {
  * @param pointer : the pointer to free
  * @param isMalloc : variable of boolean to check if pointer is already malloc and put to 0
  */
-void freePointer(void **pointer, int *isMalloc) {
+void freePointer(void **pointer, short *isMalloc) {
     if (*isMalloc == 1) {
         free(*pointer);
         *pointer = NULL;

@@ -80,7 +80,7 @@ static void testFreePointer() {
     int isArrayInt = 1;
     struct TestStr *testStr = malloc(sizeof(struct TestStr));
 
-    freePointer((void**)&arrayInt, &isArrayInt);
+    freePointer((void**)&arrayInt, (short*)&isArrayInt);
     CU_ASSERT_EQUAL(isArrayInt, 0);
     CU_ASSERT_PTR_NULL_FATAL(arrayInt);
 
@@ -88,14 +88,14 @@ static void testFreePointer() {
     strcpy(testStr->str, "titi");
     testStr->isStr = 1;
 
-    freePointer((void**)&testStr->str, &testStr->isStr);
+    freePointer((void**)&testStr->str, (short*)&testStr->isStr);
 
     CU_ASSERT_EQUAL(testStr->isStr, 0);
     CU_ASSERT_PTR_NULL_FATAL(testStr->str);
 
     free(testStr);
 
-    freePointer((void**)&arrayInt, &isArrayInt);
+    freePointer((void**)&arrayInt, (short*)&isArrayInt);
     CU_ASSERT_EQUAL(isArrayInt, 0);
 }
 
