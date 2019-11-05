@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <ftw.h>
 #include <CUnit/Basic.h>
 #include "../sources/common.h"
 #include "../sources/urlHelper.h"

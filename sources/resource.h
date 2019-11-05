@@ -5,6 +5,7 @@
 #ifndef SCRAPER_RESOURCE_H
 #define SCRAPER_RESOURCE_H
 
+#include <io.h>
 #include "common.h"
 #include "request.h"
 

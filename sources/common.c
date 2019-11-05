@@ -79,13 +79,18 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
 char *getCurrentTime() {
     time_t currentTime;
     char *strCurrentTime = NULL;
+    char *temp = NULL;
 
     currentTime = time(NULL);
     if (currentTime == (time_t) - 1) {
         return NULL;
     }
 
-    strCurrentTime = ctime(&currentTime);
+    temp = ctime(&currentTime);
+    strCurrentTime = strMallocCpy(temp, strlen(temp));
+
+    verifyPointer(strCurrentTime, "Problem get current time\n");
+
 
     return strCurrentTime;
 }

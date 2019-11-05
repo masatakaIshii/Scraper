@@ -1,8 +1,6 @@
 //
 // Created by masat on 16/10/2019.
 //
-
-#include <io.h>
 #include "resource.h"
 
 static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
