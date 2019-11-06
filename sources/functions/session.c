@@ -6,7 +6,7 @@
  *  Description : file to manage the session of action
  */
 
-#include "session.h"
+#include "../headers/session.h"
 
 Session *initSession(Action *action, char *sessionName) {
     Session *pSession = malloc(sizeof(Session));

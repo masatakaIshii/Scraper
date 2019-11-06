@@ -199,7 +199,8 @@ static void checkContentType() {
 static void notSaveWhenStatusNot200() {
     char temp[100];
 
-    pRequest = initRequest("https://clients6.google.com/drive/v2internal/viewerimpressions?key=AIzaSyAy9VVXHSpS2IJpptzYtGbLP3-3_l0aBk4&alt=json");
+    pRequest = initRequest(
+            "https://clients6.google.com/drive/v2internal/viewerimpressions?key=AIzaSyAy9VVXHSpS2IJpptzYtGbLP3-3_l0aBk4&alt=json");
     CU_ASSERT(saveRequestInFile(pRequest, filePath4) != 0);
     CU_ASSERT_PTR_NULL_FATAL(pRequest->contentType);
     CU_ASSERT(access(filePath4, F_OK) != -1);
@@ -209,12 +210,12 @@ CU_ErrorCode requestSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testRequest", NULL, cleanRequest);
 
     if ((NULL == CU_add_test(pSuite, "checkWhenUrlNotExist", checkWhenUrlNotExist) ||
-        (NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
-        (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
-        (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
-        (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
-        (NULL == CU_add_test(pSuite, "checkContentType", checkContentType)) ||
-            (NULL == CU_add_test(pSuite, "notSaveWhenStatusNot200", notSaveWhenStatusNot200)))) {
+         (NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
+         (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
+         (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
+         (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
+         (NULL == CU_add_test(pSuite, "checkContentType", checkContentType)) ||
+         (NULL == CU_add_test(pSuite, "notSaveWhenStatusNot200", notSaveWhenStatusNot200)))) {
 
         CU_cleanup_registry();
         return CU_get_error();

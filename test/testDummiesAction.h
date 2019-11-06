@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../sources/common.h"
-#include "../sources/action.h"
+#include "../sources/headers/common.h"
+#include "../sources/headers/action.h"
 
 Action *dummySimpleAction();
 void destroyDummyAction(Action *dummyAction);

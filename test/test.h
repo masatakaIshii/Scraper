@@ -11,12 +11,12 @@
 #include <ftw.h>
 #include <dirent.h>
 #include <CUnit/Basic.h>
-#include "../sources/common.h"
-#include "../sources/urlHelper.h"
-#include "../sources/request.h"
-#include "../sources/resource.h"
-#include "../sources/session.h"
-#include "../sources/app.h"
+#include "../sources/headers/common.h"
+#include "../sources/headers/urlHelper.h"
+#include "../sources/headers/request.h"
+#include "../sources/headers/resource.h"
+#include "../sources/headers/session.h"
+#include "../sources/headers/app.h"
 #include "testDummiesAction.h"
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite);

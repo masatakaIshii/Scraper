@@ -5,7 +5,7 @@
  *
  *  Description : common functions for application
  */
-#include "common.h"
+#include "../headers/common.h"
 
 /**
  * verify the pointer and if its null, show message and quit program with exit status '1'

@@ -6,7 +6,7 @@
  *  Description : file to manage app structure and functions to init, start and quit Scraper
  */
 
-#include "app.h"
+#include "../headers/app.h"
 
 /**
  * function to get singleton pointer App structure

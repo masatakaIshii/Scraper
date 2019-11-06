@@ -68,7 +68,7 @@ static void testSetDirectoriesAndOutputPath() {
     fclose(fp);
     pResource = initResource("https://static.openfoodfacts.org/data/delta/index.txt", 5, 10);
     verifyPointer(pResource, "Problem initResource in testResource for google.com\n");
-    CU_ASSERT_EQUAL(createFileResource(pResource, "toto/tata"), 0); // TODO : manage maybe in Common, for create directory recursively like mkdir -p
+    CU_ASSERT_EQUAL(createFileResource(pResource, "toto/tata"), 0);
     CU_ASSERT_STRING_EQUAL(pResource->outputPath, "toto/tata/index.txt");
     file = fopen(pResource->outputPath, "r");
     CU_ASSERT_PTR_NOT_NULL_FATAL(file);
