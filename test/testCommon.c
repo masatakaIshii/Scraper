@@ -99,20 +99,6 @@ static void testFreePointer() {
     CU_ASSERT_EQUAL(isArrayInt, 0);
 }
 
-
-static int checkIfDirExist(char *dirPath) {
-    DIR* dir = opendir(dirPath);
-    if (dir) {
-        closedir(dir);
-        return 1;
-    } else if (ENOENT == errno) {
-        return 0;
-    } else {
-        fprintf(stderr, "Problem to open dir : %s\n", dirPath);
-        return 0;
-    }
-}
-
 static void testMkdirPCreateDirectories() {
 
     CU_ASSERT_EQUAL(mkdirP("toto"), 0);
@@ -136,6 +122,20 @@ static void testMkdirPCreateDirectories() {
     CU_ASSERT_EQUAL(mkdirP("tonton?/non|tata"), -1);
 }
 
+static void testMkdirPNotEraseExitContent() {
+    mkdir("tata");
+    mkdir("tata/toto");
+    FILE *fp = fopen("tata/file.txt", "w");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fclose(fp);
+    CU_ASSERT_EQUAL(mkdirP("tata"), 0);
+    CU_ASSERT_EQUAL(checkIfDirExist("tata/toto"), 1);
+    CU_ASSERT_NOT_EQUAL(access("tata/file.txt", F_OK), -1);
+    unlink("tata/file.txt");
+    rmdir("tata/toto");
+    rmdir("tata");
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
@@ -144,7 +144,8 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate)) ||
         (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat)) ||
         (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer)) ||
-        (NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories))) {
+        (NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories)) ||
+        (NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent))) {
 
         CU_cleanup_registry();
         return CU_get_error();

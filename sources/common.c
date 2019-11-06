@@ -169,6 +169,25 @@ int mkdirP(char *dirPath) {
     return createDirectories(dirPath);
 }
 
+/**
+ * Function to verify if the directory exist
+ * @param dirPath
+ * @return
+ * 1 : directory that have dirPath value exist
+ * 0 : directory that is dirPath not exist
+ */
+int checkIfDirExist(char *dirPath) {
+    DIR *dir = opendir(dirPath);
+    if (dir) {
+        closedir(dir);
+        return 1;
+    } else if (ENOENT == errno) {
+        return 0;
+    } else {
+        fprintf(stderr, "Problem to open dir : %s\n", dirPath);
+        return 0;
+    }
+}
 //
 //int getCountListMimeType() {
 //

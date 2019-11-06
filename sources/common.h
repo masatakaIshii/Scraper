@@ -8,6 +8,7 @@
 #ifndef SCRAPER_COMMON_H
 #define SCRAPER_COMMON_H
 #include <curl/curl.h>
+#include <dirent.h>
 #include "struct.h"
 #include "app.h"
 
@@ -42,6 +43,8 @@ char *strMallocCat(const char *str1, const char *str2);
 void freePointer(void **pointer, short *isMalloc);
 
 int mkdirP(char *dirPath);
+
+int checkIfDirExist(char *dirPath);
 
 //int getCountListMimeType();
 //
