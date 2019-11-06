@@ -6,7 +6,7 @@
  *  Description : request structure and functions
  */
 
-#include "request.h"
+#include "../headers/request.h"
 
 /**
  * Initialise Request structure
@@ -37,7 +37,7 @@ Request *initRequest(const char *url) {
  * @return : writtin : number character of file
  */
 static int writeDataInFile(void *ptr, int size, int numberElements, void *stream) {
-    int written = fwrite(ptr, size, numberElements, (FILE *) stream);
+    int written = (int)fwrite(ptr, size, numberElements, (FILE *) stream);
 
     return written;
 }
@@ -79,6 +79,32 @@ static int saveContentType(Request *pRequest) {
 }
 
 /**
+ * Function to check if response code is 200
+ * @param pRequest : pointer of structure response
+ * @param result : result of curl perform
+ * @return
+ * 0 : response code is 200
+ * -1 : response code is not 200 so not OK
+ */
+static int checkIfResponseCodeIsOk(Request *pRequest, CURLcode result) {
+    long responseCode = 0;
+    curl_easy_getinfo(pRequest->pHandle, CURLINFO_RESPONSE_CODE, &responseCode);
+    if (responseCode == 200 && result != CURLE_ABORTED_BY_CALLBACK) {
+        return 0;
+    }
+
+    return -1;
+}
+
+static int fetchResponseInfo(Request *pRequest, CURLcode result) {
+    if (checkIfResponseCodeIsOk(pRequest, result) == -1) {
+        return -1;
+    }
+
+    return saveContentType(pRequest);
+}
+
+/**
  * function to set stream file and handle to save request in file
  */
 static void setStreamAndHandle(Request *pRequest, char *fileName) {
@@ -112,7 +138,7 @@ int saveRequestInFile(Request *pRequest, char *fileName) {
 
     result = curl_easy_perform(pRequest->pHandle);
     if (result == CURLE_OK) {
-        result = saveContentType(pRequest);
+        result = fetchResponseInfo(pRequest, result);
     } else {
         clearPHandle(pRequest->pHandle);
         clearPFile(pRequest);
