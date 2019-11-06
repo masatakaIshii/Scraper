@@ -96,6 +96,14 @@ static int checkIfResponseCodeIsOk(Request *pRequest, CURLcode result) {
     return -1;
 }
 
+/**
+ * fetch few response informations
+ * @param pRequest
+ * @param result
+ * @return
+ * -1 : the response code is not 200
+ * CURLcode number : depend to the result of curl_easy_getinfo function;
+ */
 static int fetchResponseInfo(Request *pRequest, CURLcode result) {
     if (checkIfResponseCodeIsOk(pRequest, result) == -1) {
         return -1;
