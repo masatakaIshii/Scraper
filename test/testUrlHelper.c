@@ -85,18 +85,14 @@ static void testCheckFileExt() {
     CU_ASSERT(pUrlHelper->isExtFile == 1);
     destroyUrlHelper(pUrlHelper);
 
-    pUrlHelper = initUrlHelper("http://");
-
     pUrlHelper = initUrlHelper("http://www.google.fr/form.google.doc");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
     CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, "doc");
-    CU_ASSERT(pUrlHelper->isExtFile == 1);
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://deezer.com/servietsky.funkytown.wav?petard=true&artist=lippsInc.info");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
     CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, "wav");
-    CU_ASSERT(pUrlHelper->isExtFile == 1);
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://deezer.com/servietsky.funkytown.");

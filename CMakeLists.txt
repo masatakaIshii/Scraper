@@ -5,38 +5,43 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 set(SRCS
-    sources/app.c
-    sources/request.c
-    sources/config.c
-    sources/option.c
-    sources/resource.c
-    sources/request.c
-    sources/session.c
-    sources/task.c
-    sources/version.c
-    sources/common.c
-    sources/urlHelper.c)
+        sources/functions/app.c
+        sources/functions/request.c
+        sources/functions/config.c
+        sources/functions/option.c
+        sources/functions/resource.c
+        sources/functions/request.c
+        sources/functions/session.c
+        sources/functions/task.c
+        sources/functions/version.c
+        sources/functions/common.c
+        sources/functions/urlHelper.c)
 
 set(HEADERS
-    sources/app.h
-    sources/request.h
-    sources/config.h
-    sources/option.h
-    sources/resource.h
-    sources/request.h
-    sources/session.h
-    sources/task.h
-    sources/version.h
-    sources/common.h
-    sources/urlHelper.h)
+        sources/headers/app.h
+        sources/headers/request.h
+        sources/headers/config.h
+        sources/headers/option.h
+        sources/headers/resource.h
+        sources/headers/request.h
+        sources/headers/session.h
+        sources/headers/task.h
+        sources/headers/version.h
+        sources/headers/common.h
+        sources/headers/urlHelper.h)
 
 set(TESTSRCS
+    test/testDummiesAction.c
     test/testCommon.c
     test/testRequest.c
+    test/testRequest.c
+    test/testResource.c
     test/testApp.c
+    test/testSession.c
     test/testUrlHelper.c)
 
 set(TESTHEADERS
+    test/testDummiesAction.h
     test/test.h)
 
 add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
