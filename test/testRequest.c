@@ -58,13 +58,6 @@ static char *exampleFIle = "<!doctype html>\n"
                            "</html>\n";
 
 int cleanRequest(void) {
-
-    if (fp != NULL) {
-        fclose(fp);
-    }
-    if (pRequest != NULL) {
-        destroyRequest(pRequest);
-    }
     remove(filePath1);
     remove(filePath2);
     remove(filePath3);
@@ -204,18 +197,46 @@ static void notSaveWhenStatusNot200() {
     CU_ASSERT(saveRequestInFile(pRequest, filePath4) != 0);
     CU_ASSERT_PTR_NULL_FATAL(pRequest->contentType);
     CU_ASSERT(access(filePath4, F_OK) != -1);
+
+    destroyRequest(pRequest);
+}
+
+static void testGetExtFileByMimeType() {
+    pRequest = initRequest("http://example.com");
+    CU_ASSERT_EQUAL(getExtFileByMimeType(pRequest), 0);
+    CU_ASSERT_EQUAL(pRequest->isContentType, 1);
+    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html; charset=UTF-8");
+
+    destroyRequest(pRequest);
+
+
+
+}
+
+static void testSetExtFileInFileName() {
+//    pRequest = initRequest("http://example.com");
+//    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileName, 1);
+//    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isExtFile, 1);
+//    CU_ASSERT_PTR_NOT_NULL(pRequest->pUrlHelper->fileName);
+//    if (pRequest->pUrlHelper->fileName != NULL) {
+//        CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_0.html");
+//    }
+//    destroyRequest(pRequest);
+//    pRequest = initRequest("https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
 }
 
 CU_ErrorCode requestSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testRequest", NULL, cleanRequest);
 
-    if ((NULL == CU_add_test(pSuite, "checkWhenUrlNotExist", checkWhenUrlNotExist) ||
-         (NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
-         (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
-         (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
-         (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
-         (NULL == CU_add_test(pSuite, "checkContentType", checkContentType)) ||
-         (NULL == CU_add_test(pSuite, "notSaveWhenStatusNot200", notSaveWhenStatusNot200)))) {
+    if (NULL == CU_add_test(pSuite, "checkWhenUrlNotExist", checkWhenUrlNotExist) ||
+        (NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||
+        (NULL == CU_add_test(pSuite, "checkContentFile", checkContentFile)) ||
+        (NULL == CU_add_test(pSuite, "getFileWithRedirectUrl", getFileWithRedirectUrl)) ||
+        (NULL == CU_add_test(pSuite, "getHtmlEncodedFile", getHtmlEncodedFile)) ||
+        (NULL == CU_add_test(pSuite, "checkContentType", checkContentType)) ||
+        (NULL == CU_add_test(pSuite, "notSaveWhenStatusNot200", notSaveWhenStatusNot200)) ||
+        (NULL == CU_add_test(pSuite, "testGetExtFileByMimeType", testGetExtFileByMimeType)) ||
+        (NULL == CU_add_test(pSuite, "testSetExtFileInFileName", testSetExtFileInFileName))) {
 
         CU_cleanup_registry();
         return CU_get_error();

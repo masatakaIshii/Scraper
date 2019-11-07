@@ -55,7 +55,7 @@ static int setOutputPath(Resource *pResource) {
         pResource->outputPath = strMallocCat(dirResourcePathWithSlash, pUrlHelper->fileName);
         verifyPointer(pResource->outputPath, "Problem malloc output file path in resource\n");
     } else {
-        if (getExtFileByMimeType(pUrlHelper)) { // fetch extension file by mime type search in conditions and list extFile / mimeType
+        if (getExtFileByMimeType(pResource->pRequest)) { // fetch extension file by mime type search in conditions and list extFile / mimeType
             fileNameWithExt = strMallocCat(pUrlHelper->fileName, pUrlHelper->extFile);
             verifyPointer(fileNameWithExt, "Problem malloc string fileNameWithExt path in resource\n");
 
@@ -73,7 +73,7 @@ static int setOutputPath(Resource *pResource) {
 static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath) {
     int result = 0;
     pResource->dirResourcePath = strMallocCpy(dirResourcePath, (int)strlen(dirResourcePath));
-    verifyPointer(pResource->dirResourcePath, "Problem malloc directory path of resource");
+    verifyPointer(pResource->dirResourcePath, "Problem malloc directory path of resource\n");
 
     pResource->isDirResourcePath = 1;
 
@@ -87,14 +87,14 @@ int createFileResource(Resource *pResource, const char *dirResourcePath) {
 
     result = setDirAndOutputPath(pResource, dirResourcePath);
     if (result != 0) {
-        fprintf(stderr, "Don't found file extention of resource with url '%s'\n", pResource->pRequest->pUrlHelper->url);
+        fprintf(stderr, "\nDon't found file extention of resource with url '%s'\n", pResource->pRequest->pUrlHelper->url);
         return -1;
     }
 
-    mkdir(pResource->dirResourcePath);
+    mkdirP(pResource->dirResourcePath);
 
     if (saveRequestInFile(pResource->pRequest, pResource->outputPath) != CURLE_OK) {
-        fprintf(stderr, "ERROR request : %s\n", pResource->pRequest->errBuf);
+        fprintf(stderr, "\nERROR request : %s\n", pResource->pRequest->errBuf);
         return -1;
     }
 

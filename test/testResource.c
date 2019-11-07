@@ -55,6 +55,8 @@ static void testSetDirAndOutputPath() {
     CU_ASSERT_PTR_NOT_NULL_FATAL(pResource);
     CU_ASSERT_NOT_EQUAL(createFileResource(pResource, "example"), 0);
     CU_ASSERT_EQUAL(access(pResource->outputPath, F_OK), -1);
+
+    printf("content type : %s\n", pResource->pRequest->contentType);
     destroyResource(pResource);
 
     // TODO : test if file is save in directory
@@ -71,10 +73,13 @@ static void testSetDirectoriesAndOutputPath() {
     CU_ASSERT_EQUAL(createFileResource(pResource, "toto/tata"), 0);
     CU_ASSERT_STRING_EQUAL(pResource->outputPath, "toto/tata/index.txt");
     file = fopen(pResource->outputPath, "r");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(file);
+    CU_ASSERT_PTR_NOT_NULL(file);
 
     fclose(file);
     destroyResource(pResource);
+    unlink("toto/tata/index.txt");
+    rmdir("toto/tata");
+    rmdir("toto");
 }
 
 CU_ErrorCode resourceSpec(CU_pSuite pSuite) {

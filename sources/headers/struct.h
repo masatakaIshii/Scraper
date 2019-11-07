@@ -73,7 +73,9 @@ typedef struct Request {
     FILE *pFile;
     int isFileOpen;
     UrlHelper *pUrlHelper;
+    short isUrlHelper;
     char *contentType;
+    short isContentType;
     char errBuf[CURL_ERROR_SIZE];
 } Request;
 

@@ -22,27 +22,13 @@
 Request *initRequest(const char *url);
 
 /**
- * Callback function to write get data in file during response of curl
- * @param ptr : pointer of data to write in file
- * @param size : size of the data
- * @param numberElements : number of one data's elements
- * @param stream : file's stream
- * @return : writtin : number character of file
+ * Get the file extension depends to mime type
+ * @param pRequest
+ * @return
+ * 1 : Success to set extention file in structure UrlHelper
+ * 0 : not set because of not found extention file depend to mime type
  */
-static int writeDataInFile(void *ptr, int size, int numberElements, void *stream);
-
-/**
- * Function to set all options before perform curl request
- * @param pRequest : pointer of structure Request
- */
-static void setOptionsCurl(Request *pRequest);
-
-/**
- * Function to save content type name of request GET
- * @param pRequest : structure of request
- * @return : result : result of request curl
- */
-static int saveContentType(Request *pRequest);
+int getExtFileByMimeType(Request *pRequest);
 
 /**
  * Function to save request GET content in file

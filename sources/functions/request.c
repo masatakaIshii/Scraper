@@ -18,14 +18,21 @@ Request *initRequest(const char *url) {
     verifyPointer(pRequest, "Problem malloc pRequest\n");
     pRequest->isFileOpen = 0;
     pRequest->isHandleInit = 0;
+    pRequest->isUrlHelper = 0;
+
     pRequest->pUrlHelper = initUrlHelper(url);
     verifyPointer(pRequest->pUrlHelper->url, "problem pRequest\n");
-
-    strcpy(pRequest->pUrlHelper->url, url);
+    pRequest->isUrlHelper = 1;
 
     pRequest->contentType = NULL;
+    pRequest->isContentType = 0;
 
     return pRequest;
+}
+
+static int writeDataInNothing(void *ptr, int size, int numberElements, char *str) {
+
+    return size * numberElements;
 }
 
 /**
@@ -37,16 +44,26 @@ Request *initRequest(const char *url) {
  * @return : writtin : number character of file
  */
 static int writeDataInFile(void *ptr, int size, int numberElements, void *stream) {
-    int written = (int)fwrite(ptr, size, numberElements, (FILE *) stream);
+    int written = (int) fwrite(ptr, size, numberElements, (FILE *) stream);
 
     return written;
+}
+
+static void setOptionsCurlGetMimeType(Request *pRequest) {
+    char *str = NULL;
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_URL, pRequest->pUrlHelper->url);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_ACCEPT_ENCODING, "");
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_ERRORBUFFER, pRequest->errBuf);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEFUNCTION, writeDataInNothing);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEDATA, str);
 }
 
 /**
  * Function to set all options before perform curl request
  * @param pRequest : pointer of structure Request
  */
-static void setOptionsCurl(Request *pRequest) {
+static void setOptionsCurlSaveFile(Request *pRequest) {
     curl_easy_setopt(pRequest->pHandle, CURLOPT_URL, pRequest->pUrlHelper->url);
     curl_easy_setopt(pRequest->pHandle, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(pRequest->pHandle, CURLOPT_ACCEPT_ENCODING, "");
@@ -66,13 +83,15 @@ static int saveContentType(Request *pRequest) {
 
     result = curl_easy_getinfo(pRequest->pHandle, CURLINFO_CONTENT_TYPE, &contentType);
 
-    if (result == CURLE_OK) {
+    if (result == CURLE_OK && pRequest->isContentType == 0) {
         pRequest->contentType = calloc(strlen(contentType) + 1, sizeof(char));
         if (pRequest->contentType == NULL) {
             destroyRequest(pRequest);
             exit(1);
         }
         strcpy(pRequest->contentType, contentType);
+        pRequest->isContentType = 1;
+
     }
 
     return result;
@@ -112,15 +131,43 @@ static int fetchResponseInfo(Request *pRequest, CURLcode result) {
     return saveContentType(pRequest);
 }
 
+static void setHandle(Request *pRequest) {
+    pRequest->pHandle = curl_easy_init();
+    verifyPointer(pRequest->pHandle, "Problem curl easy init\n");
+
+    pRequest->isHandleInit = 1;
+}
+
+/**
+ * Function to get ext file by mime type
+ * @param pRequest
+ * @return
+ */
+int getExtFileByMimeType(Request *pRequest) {
+    // TODO : get the ext file by mime type when the file extension is not in url
+    //fprintf(stderr, "The function to get file extention by mime type is not implemented, maybe soon\n");
+    int result;
+    setHandle(pRequest);
+
+    setOptionsCurlGetMimeType(pRequest);
+    result = curl_easy_perform(pRequest->pHandle);
+    if (result == CURLE_OK) {
+        result = saveContentType(pRequest);
+        result = (result == CURLE_OK) ? setExtFileInFileName(pRequest->pUrlHelper, pRequest->contentType) : result;
+    } else {
+        clearPHandle(pRequest->pHandle);
+        return (int) result;
+    }
+
+    return result;
+}
+
 /**
  * function to set stream file and handle to save request in file
  */
 static void setStreamAndHandle(Request *pRequest, char *fileName) {
 
-    pRequest->pHandle = curl_easy_init();
-    verifyPointer(pRequest->pHandle, "Problem curl easy init\n");
-
-    pRequest->isHandleInit = 1;
+    setHandle(pRequest);
 
     pRequest->pFile = fopen(fileName, "wb");
     verifyPointer(pRequest->pFile, "Problem with open file\n");
@@ -142,7 +189,7 @@ int saveRequestInFile(Request *pRequest, char *fileName) {
         return CURLE_URL_MALFORMAT;
     }
     setStreamAndHandle(pRequest, fileName);
-    setOptionsCurl(pRequest);
+    setOptionsCurlSaveFile(pRequest);
 
     result = curl_easy_perform(pRequest->pHandle);
     if (result == CURLE_OK) {
