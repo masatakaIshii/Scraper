@@ -71,6 +71,34 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
     return 0;
 }
 
+char *getContentInFile(const char *filePath, const char *mode) {
+    int length = 0;
+    char *result = NULL;
+    FILE *fp;
+    if (strcmp("r", mode) != 0 && strcmp("rb", mode) != 0) {
+        return NULL;
+    }
+    fp = fopen(filePath, mode);
+    if (fp == NULL) {
+        return NULL;
+    }
+
+    fseek(fp, 0, SEEK_END);
+    length = ftell(fp);
+    result = calloc(length + 1, sizeof(char));
+    if (result == NULL) {
+        fprintf(stderr, "Problem with calloc to get content file of %s in common.c\n", filePath);
+        fclose(fp);
+        return NULL;
+    }
+    rewind(fp);
+
+    fread(result, sizeof(char), length, fp);
+    fclose(fp);
+
+    return result;
+}
+
 /**
  * Get current time format "strDate strMonth intDate intHours:intMin:intSec intYears"
  * Example : "Sun Oct 01 13:12:00 2019"
