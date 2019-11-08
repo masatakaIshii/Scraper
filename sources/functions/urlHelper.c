@@ -4,37 +4,6 @@
 
 #include "../headers/urlHelper.h"
 
-static char *getListMimeTypeExtFile() {
-    char *listMimeTypeExtFile = "text/html .html\n"
-                                "application/javascript .js\n"
-                                "application/json .json\n"
-                                "text/javascript .js\n"
-                                "text/css .css\n"
-                                "font/ttf .ttf\n"
-                                "font/woff .woff\n"
-                                "font/woff2 .woff2\n"
-                                "font/otf .otf\n"
-                                "image/jpeg jpeg\n"
-                                "image/png .png\n"
-                                "image/svg+xml .svg\n"
-                                "audio/mpeg .mp3\n"
-                                "audio/x-wav .wav\n"
-                                "audio/acc .aac\n"
-                                "application/typescript .ts\n"
-                                "application/pdf .pdf\n"
-                                "application/xml .xml\n"
-                                "application/zip .zip\n"
-                                "application/x-rar-compressed .rar\n"
-                                "application/octet-stream .bin\n"
-                                "application/xhtml+xml .xhtml\n"
-                                "application/msword .doc\n"
-                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx\n"
-                                "application/vnd.ms-excel .xls\n"
-                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet .xlsx\n";
-
-    return listMimeTypeExtFile;
-}
-
 /**
  * Set the file name in UrlHelper
  * @param pUrlHelper
@@ -152,7 +121,7 @@ UrlHelper *initUrlHelper(const char *url) {
 }
 
 int setExtFileInFileName(UrlHelper *pUrlHelper, char *mimeType) {
-    char *listMimeTypeExtFile = getListMimeTypeExtFile();
+    
     //printf("%s", listMimeTypeExtFile);
     // TODO : add test in urlHelper and manage set ext file depend to mimeType
     return 0;
