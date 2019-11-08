@@ -41,9 +41,8 @@ static char *getLineListExtFileMimeType(const char *mimeType) {
     int length = 0;
 
     allList = getContentInFile(LIST_EXT_FILE_TYPE_MIME, "r");
-
     // TODO : get correspond line that contain mimeType
-
+    
 
 }
 

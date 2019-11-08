@@ -121,7 +121,7 @@ UrlHelper *initUrlHelper(const char *url) {
 }
 
 int setExtFileInFileName(UrlHelper *pUrlHelper, char *mimeType) {
-    
+
     //printf("%s", listMimeTypeExtFile);
     // TODO : add test in urlHelper and manage set ext file depend to mimeType
     return 0;

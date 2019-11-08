@@ -14,15 +14,14 @@
 .eot:application/vnd.ms-fontobject
 .epub:application/epub+zip
 .gif:image/gif
-.htm,.html:text/html
+.html,.htm:text/html
 .ico:image/x-icon
 .ics:text/calendar
 .jar:application/java-archive
 .jpeg,.jpg:image/jpeg
 .js:application/javascript
 .json:application/json
-.mid 
-.midi:audio/midi
+.midi,.mid:audio/midi
 .mpeg:video/mpeg
 .mpkg:application/vnd.apple.installer+xml
 .odp:application/vnd.oasis.opendocument.presentation
