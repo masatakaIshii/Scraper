@@ -31,6 +31,8 @@ char *strMallocCpy(const char *str, int length);
  */
 int getIndexAfterOccurStr(const char *strCheck, const char *strOccur);
 
+char *getContentInFile(const char *filePath, const char *mode);
+
 /**
  * Get current time format "strDate strMonth intDate intHours:intMin:intSec intYears"
  * Example : "Sun Oct 01 13:12:00 2019"
