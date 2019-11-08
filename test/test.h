@@ -17,6 +17,7 @@
 #include "../sources/headers/resource.h"
 #include "../sources/headers/session.h"
 #include "../sources/headers/app.h"
+#include "../sources/headers/extFileTypeMime.h"
 #include "testDummiesAction.h"
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite);
@@ -25,5 +26,6 @@ CU_ErrorCode appSpec(CU_pSuite pSuite);
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite);
 CU_ErrorCode sessionSpec(CU_pSuite pSuite);
 CU_ErrorCode resourceSpec(CU_pSuite pSuite);
+CU_ErrorCode extFileTypeMimeSpec(CU_pSuite pSuite);
 
 #endif //SCRAPER_TESTREQUEST_H
