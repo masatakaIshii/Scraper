@@ -80,18 +80,20 @@ static void setOptionsCurlSaveFile(Request *pRequest) {
 static int saveContentType(Request *pRequest) {
     CURLcode result;
     char *contentType;
+    char *strInSemiColon = NULL;
+    int length = 0;
 
     result = curl_easy_getinfo(pRequest->pHandle, CURLINFO_CONTENT_TYPE, &contentType);
 
     if (result == CURLE_OK && pRequest->isContentType == 0) {
-        pRequest->contentType = calloc(strlen(contentType) + 1, sizeof(char));
+        strInSemiColon = strchr(contentType, ';');
+        length = (strInSemiColon == NULL) ? strlen(contentType) : (int)(strInSemiColon - contentType);
+        pRequest->contentType = strMallocCpy(contentType, length);
         if (pRequest->contentType == NULL) {
             destroyRequest(pRequest);
             exit(1);
         }
-        strcpy(pRequest->contentType, contentType);
         pRequest->isContentType = 1;
-
     }
 
     return result;

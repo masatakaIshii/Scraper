@@ -172,7 +172,8 @@ static void checkContentType() {
     pRequest = initRequest("https://yahoo.com/");
     CU_ASSERT(saveRequestInFile(pRequest, filePath4) == 0);
     (pRequest->contentType != NULL) ? strcpy(contentType1, pRequest->contentType) : strcpy(contentType1, "");
-    CU_ASSERT_STRING_EQUAL(contentType1, "text/html; charset=UTF-8");
+    CU_ASSERT_EQUAL(strlen(contentType1), strlen("text/html"));
+    CU_ASSERT_STRING_EQUAL(contentType1, "text/html");
     destroyRequest(pRequest);
 
     pRequest = initRequest("https://blog-fr.orson.io/wp-content/uploads/2017/06/jpeg-ou-png.jpg");
@@ -205,7 +206,7 @@ static void testGetExtFileByMimeType() {
     pRequest = initRequest("http://example.com");
     CU_ASSERT_EQUAL(getExtFileByMimeType(pRequest), 0);
     CU_ASSERT_EQUAL(pRequest->isContentType, 1);
-    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html; charset=UTF-8");
+    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html");
 
     destroyRequest(pRequest);
 }
@@ -220,7 +221,7 @@ static void testSetExtFileInFileName() {
     CU_ASSERT_EQUAL(pRequest->pUrlHelper->isExtFile, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->extFile);
     CU_ASSERT_EQUAL(pRequest->isContentType, 1);
-    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/javascript; charset=UTF-8");
+    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/javascript");
     //printf("content type  %s\n", pRequest->contentType);
 //    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->extFile, "js")
 //    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "cb=gapi.loaded_0.js");
