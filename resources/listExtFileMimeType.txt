@@ -14,14 +14,14 @@
 .eot:application/vnd.ms-fontobject
 .epub:application/epub+zip
 .gif:image/gif
-.html,.htm:text/html
+.html|.htm:text/html
 .ico:image/x-icon
 .ics:text/calendar
 .jar:application/java-archive
-.jpeg,.jpg:image/jpeg
-.js:application/javascript
+.jpeg|.jpg:image/jpeg
+.js:application/javascript|text/javascript
 .json:application/json
-.midi,.mid:audio/midi
+.midi|.mid:audio/midi
 .mpeg:video/mpeg
 .mpkg:application/vnd.apple.installer+xml
 .odp:application/vnd.oasis.opendocument.presentation
@@ -41,7 +41,7 @@
 .svg:image/svg+xml
 .swf:application/x-shockwave-flash
 .tar:application/x-tar
-.tif,.tiff:image/tiff
+.tif|.tiff:image/tiff
 .ts:application/typescript
 .ttf:font/ttf
 .vsd:application/vnd.visio
@@ -57,6 +57,6 @@
 .xml:application/xml
 .xul:application/vnd.mozilla.xul+xml
 .zip:application/zip
-.3gp:video/3gpp,audio/3gpp 
-.3g2:video/3gpp2,audio/3gpp2 
+.3gp:video/3gpp|audio/3gpp
+.3g2:video/3gpp2|audio/3gpp2
 .7z:application/x-7z-compressed
