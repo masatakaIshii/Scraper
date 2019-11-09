@@ -6,42 +6,42 @@
 static ListFData *list = NULL;
 
 static void testSearchExtFileByTypeMime() {
-    list = fillListFData("text/html", EXT_FILE);
+    list = fillListFData("text/html", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
     CU_ASSERT(access("listExtFileMimeType.txt", F_OK) != -1);
     CU_ASSERT_EQUAL(list->numberData, 2);
-    CU_ASSERT_EQUAL(list->fileDataInfo, EXT_FILE);
+    CU_ASSERT_EQUAL(list->fileDataInfo, FILE_EXT);
     destroyListFData(list);
 
-    list = fillListFData("audio/aac", EXT_FILE);
+    list = fillListFData("audio/aac", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
     CU_ASSERT(access("listExtFileMimeType.txt", F_OK) != -1);
     CU_ASSERT_EQUAL(list->numberData, 1);
     CU_ASSERT_STRING_EQUAL(list->data[0], ".aac");
-    CU_ASSERT_EQUAL(list->fileDataInfo, EXT_FILE);
+    CU_ASSERT_EQUAL(list->fileDataInfo, FILE_EXT);
     destroyListFData(list);
 
-    list = fillListFData("application/x-7z-compressed", EXT_FILE);
+    list = fillListFData("application/x-7z-compressed", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
     CU_ASSERT_STRING_EQUAL(list->data[0], ".7z");
     destroyListFData(list);
 
-    list = fillListFData("text/javascript", EXT_FILE);
+    list = fillListFData("text/javascript", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
     CU_ASSERT_EQUAL(list->numberData, 1);
     CU_ASSERT_STRING_EQUAL(list->data[0], ".js");
     destroyListFData(list);
 
-    list = fillListFData("application/javascript", EXT_FILE);
+    list = fillListFData("application/javascript", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
     CU_ASSERT_EQUAL(list->numberData, 1);
     CU_ASSERT_STRING_EQUAL(list->data[0], ".js");
     destroyListFData(list);
 
-    list = fillListFData("toto/tata", EXT_FILE);
+    list = fillListFData("toto/tata", FILE_EXT);
     CU_ASSERT_PTR_NULL_FATAL(list);
 
-    list = fillListFData(".js", EXT_FILE);
+    list = fillListFData(".js", FILE_EXT);
     CU_ASSERT_PTR_NULL_FATAL(list);
 }
 

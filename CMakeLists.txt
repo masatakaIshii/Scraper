@@ -5,32 +5,32 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 set(SRCS
-        sources/functions/app.c
-        sources/functions/request.c
-        sources/functions/config.c
-        sources/functions/option.c
-        sources/functions/resource.c
-        sources/functions/request.c
-        sources/functions/session.c
-        sources/functions/task.c
-        sources/functions/version.c
-        sources/functions/common.c
-        sources/functions/urlHelper.c
-        sources/functions/extFileTypeMime.c)
+    sources/functions/app.c
+    sources/functions/request.c
+    sources/functions/config.c
+    sources/functions/option.c
+    sources/functions/resource.c
+    sources/functions/request.c
+    sources/functions/session.c
+    sources/functions/task.c
+    sources/functions/version.c
+    sources/functions/common.c
+    sources/functions/urlHelper.c
+    sources/functions/fileExtTypeMime.c)
 
 set(HEADERS
-        sources/headers/app.h
-        sources/headers/request.h
-        sources/headers/config.h
-        sources/headers/option.h
-        sources/headers/resource.h
-        sources/headers/request.h
-        sources/headers/session.h
-        sources/headers/task.h
-        sources/headers/version.h
-        sources/headers/common.h
-        sources/headers/urlHelper.h
-        sources/headers/extFileTypeMime.h)
+    sources/headers/app.h
+    sources/headers/request.h
+    sources/headers/config.h
+    sources/headers/option.h
+    sources/headers/resource.h
+    sources/headers/request.h
+    sources/headers/session.h
+    sources/headers/task.h
+    sources/headers/version.h
+    sources/headers/common.h
+    sources/headers/urlHelper.h
+    sources/headers/fileExtTypeMime.h)
 
 set(TESTSRCS
     test/testDummiesAction.c
@@ -41,7 +41,7 @@ set(TESTSRCS
     test/testApp.c
     test/testSession.c
     test/testUrlHelper.c
-    test/testExtFileTypeMime.c)
+    test/testFileExtTypeMime.c)
 
 set(TESTHEADERS
     test/testDummiesAction.h

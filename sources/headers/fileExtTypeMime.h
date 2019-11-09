@@ -12,7 +12,7 @@
 #define LIST_EXT_FILE_TYPE_MIME "listExtFileMimeType.txt"
 
 enum FileDataInfo{
-    EXT_FILE,
+    FILE_EXT,
     MIME_TYPE
 };
 
