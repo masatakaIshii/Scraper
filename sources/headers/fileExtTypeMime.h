@@ -2,8 +2,8 @@
 // Created by masat on 07/11/2019.
 //
 
-#ifndef SCRAPER_EXTFILETYPEMIME_H
-#define SCRAPER_EXTFILETYPEMIME_H
+#ifndef SCRAPER_FILEEXTTYPEMIME_H
+#define SCRAPER_FILEEXTTYPEMIME_H
 
 #include <stdio.h>
 #include <io.h>
@@ -11,19 +11,42 @@
 
 #define LIST_EXT_FILE_TYPE_MIME "listExtFileMimeType.txt"
 
+/**
+ * @brief Enumeration to inform which data to fetch in list of file extension and mime type : <br>
+ * -FILE_EXT : correspond to value to get file extension depend to one mime type<br>
+ * -MIME_TYPE : correspond to value to get file extension depend to one mime type
+ */
 enum FileDataInfo{
-    FILE_EXT,
-    MIME_TYPE
+    FILE_EXT, /**< correspond to value to get file extension depend to one mime type */
+    MIME_TYPE /**< correspond to value to get file extension depend to one mime type */
 };
 
+/**
+ * @brief the structure to fetch appropriated data in list of file extension / mime type <br>
+ * -numberData : correspond to the number of data links to the near data in list of file extension / mime type <br>
+ * -data : array of string correspond to file extension or mime type <br>
+ * -fileDataInfo : Enumeration to inform which data to fetch in list of file extension and mime type
+ */
 typedef struct ListFileData{
-    int numberData;
-    char **data;
-    enum FileDataInfo fileDataInfo;
+    int numberData; /**< correspond to the number of data links to the near data in list of file extension / mime type */
+    char **data; /**< array of string correspond to file extension or mime type */
+    enum FileDataInfo fileDataInfo; /**< Enumeration to inform which data to fetch in list of file extension and mime type */
 } ListFData;
 
+/**
+ * Fill structure depend to string 'nearData' and the dataInfo :<br>
+ * -if dataInfo is FILE_EXT, the structure get extension file depend to mime type in 'nearData'<br>
+ * -if dataInfo is MIME_TYPE, tje structure get mime type depend to extension file in 'nearData'
+ * @param nearData : string correspond to mime type or extension file
+ * @param dataInfo : enum to call the good function:<br>-get file extension<br>-get mime type
+ * @return OK pointer of structure ListFData, ERROR NULL
+ */
 ListFData *fillListFData(const char *data, enum FileDataInfo dataInfo);
 
+/**
+ * Free pointer of structure ListFData and all of pointer fields
+ * @param pListFData : pointer of structure ListFData
+ */
 void destroyListFData(ListFData *pListFData);
 
-#endif //SCRAPER_EXTFILETYPEMIME_H
+#endif //SCRAPER_FILEEXTTYPEMIME_H

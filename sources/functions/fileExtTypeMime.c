@@ -2,20 +2,20 @@
 // Created by masat on 07/11/2019.
 //
 
-#include "../headers/extFileTypeMime.h"
+#include "../headers/fileExtTypeMime.h"
 
 static ListFData *initFData();
 static void searchCorrespondingData(ListFData *pListFData, const char *nearData, const char *allList, enum FileDataInfo dataInfo);
 static char *getExtFilesPart(const char *allList, const char *mimeType);
-static char *getMimeTypesPart(const char *allList, const char *extFile);
+static char *getMimeTypesPart(const char *allList, const char *fileExt);
 
 /**
- * fill structure depend to string 'nearData' and the dataInfo :<br>
+ * Fill structure depend to string 'nearData' and the dataInfo :<br>
  * -if dataInfo is FILE_EXT, the structure get extension file depend to mime type in 'nearData'<br>
- * -if dataInfo is MIME_TYPE, tje strictire get mime type depend to extension file in 'nearData'
+ * -if dataInfo is MIME_TYPE, tje structure get mime type depend to extension file in 'nearData'
  * @param nearData : string correspond to mime type or extension file
  * @param dataInfo : enum to call the good function:<br>-get file extension<br>-get mime type
- * @return pointer of structure ListFData.
+ * @return OK pointer of structure ListFData, ERROR NULL
  */
 ListFData *fillListFData(const char *nearData, enum FileDataInfo dataInfo) {
     char *allList = NULL;
@@ -41,7 +41,7 @@ ListFData *fillListFData(const char *nearData, enum FileDataInfo dataInfo) {
 
 /**
  * Function to init structure ListFData
- * @return pointer of structure ListFData
+ * @return OK pointer of structure ListFData, ERROR NULL
  */
 static ListFData *initFData() {
 
@@ -63,7 +63,7 @@ static ListFData *initFData() {
  * @param pListFData : pointer of structure ListFData
  * @param nearData : string correspond to landmark to get info and fill structure pListFData
  * @param allList : string contains list of file extension / mime type
- * @param dataInfo : enum to call the good function:<br>-get file extension<br>-get mime type
+ * @param dataInfo : enum to call the good function
  */
 static void searchCorrespondingData(ListFData *pListFData, const char *nearData, const char *allList, enum FileDataInfo dataInfo){
     char *concernedPart = NULL;
@@ -76,39 +76,49 @@ static void searchCorrespondingData(ListFData *pListFData, const char *nearData,
 }
 
 /**
- * get the file extension depend to the mime type
- * @param allList :
- * @param mimeType
+ * Get the file extension depend to the mime type
+ * @param allList : string content list of file extension / mime type
+ * @param mimeType : the landmark to get file extension(s)
  * @return
+ * OK fileExtPart : the line extention part linked to the mime type,<br>
+ * ERROR NULL : if the mime type is empty or if its not in file 'listExtFileMimeType.txt'
  */
 static char *getExtFilesPart(const char *allList, const char *mimeType) {
-    char *extFilePart = NULL;
-    char *strExtFileType = NULL;
+    char *fileExtPart = NULL;
+    char *strFileExtType = NULL;
     char *endMimeType = NULL;
 
-    strExtFileType = strstr(allList, mimeType);
-    if (strExtFileType == NULL) {
+    strFileExtType = strstr(allList, mimeType);
+    if (strFileExtType == NULL) {
         return NULL;
     }
-    while(strExtFileType > allList && *(strExtFileType - 1) != '\n') {
-        if (*strExtFileType == ':') {
-            endMimeType = strExtFileType;
+    while(strFileExtType > allList && *(strFileExtType - 1) != '\n') {
+        if (*strFileExtType == ':') {
+            endMimeType = strFileExtType;
         }
-        strExtFileType -= 1;
+        strFileExtType -= 1;
     }
 
-    extFilePart = strMallocCpy(strExtFileType, (int)(endMimeType - strExtFileType));
+    fileExtPart = strMallocCpy(strFileExtType, (int)(endMimeType - strFileExtType));
 
-    return extFilePart;
+    return fileExtPart;
 }
 
-static char *getMimeTypesPart(const char *allList, const char *extFile) {
+/**
+ * Get the mime type part depend to file extention
+ * @param allList : string content list of file extension / mime type
+ * @param fileExt : the landmark to get mime type(s)
+ * @return
+ * OK fileExtPart : the line extention part linked to the file extensions,<br>
+ * ERROR NULL : if the mime type is empty or if its not in file 'listExtFileMimeType.txt'
+ */
+static char *getMimeTypesPart(const char *allList, const char *fileExt) {
     char *mimeTypePart = NULL;
     char *strMimeType = NULL;
     char *endMimeType = NULL;
 
-    if (strchr(extFile, '/') == NULL) { // check if extension file don't contain '/' that is forbidden in file name
-        strMimeType = strstr(allList, extFile);
+    if (strchr(fileExt, '/') == NULL) { // check if extension file don't contain '/' that is forbidden in file name
+        strMimeType = strstr(allList, fileExt);
         if (strMimeType != NULL) {
             strMimeType = strchr(strMimeType, ':') + 1;
             if (strMimeType != NULL) {
@@ -121,6 +131,10 @@ static char *getMimeTypesPart(const char *allList, const char *extFile) {
     return mimeTypePart;
 }
 
+/**
+ * Free pointer of structure ListFData and all of pointer fields
+ * @param pListFData : pointer of structure ListFData
+ */
 void destroyListFData(ListFData *pListFData) {
     int i;
     if (pListFData->numberData > 0) {
