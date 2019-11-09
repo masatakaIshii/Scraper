@@ -4,10 +4,11 @@
 #include "test.h"
 
 static void testGetLineByTypeMime() {
-    ListFData *list = searchExtFileByMimeType("toto/tata");
+    ListFData *list = searchExtFileByMimeType("text/html");
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
     CU_ASSERT(access("listExtFileMimeType.txt", F_OK) != -1);
+    CU_ASSERT_EQUAL(list->numberData, 2);
 
     destroyListFData(list);
 }

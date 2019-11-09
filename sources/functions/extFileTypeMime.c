@@ -34,27 +34,43 @@ static ListFData *initFData() {
     return pListFData;
 }
 
-static char *getLineListExtFileMimeType(const char *mimeType) {
+static char *getExtFilesPart(const char *mimeType) {
     FILE *fp = NULL;
     char *allList = NULL;
-    char *concernedLine = NULL;
+    char *extFilePart = NULL;
+    char *strMimeType = NULL;
+    char *endMimeType = NULL;
     int length = 0;
 
     allList = getContentInFile(LIST_EXT_FILE_TYPE_MIME, "r");
-    // TODO : get correspond line that contain mimeType
-    
+    verifyPointer(allList, "Problem getContentInFile\n");
+    strMimeType = strstr(allList, mimeType);
+    if (strMimeType == NULL) {
+        return NULL;
+    }
+    while(strMimeType > allList && *(strMimeType - 1) != '\n') {
+        if (*strMimeType == ':') {
+            endMimeType = strMimeType;
+        }
+        strMimeType -= 1;
+    }
 
+    extFilePart = strMallocCpy(strMimeType, (int)(endMimeType - strMimeType));
+
+    return extFilePart;
 }
 
 ListFData *searchExtFileByMimeType(const char *mimeType) {
-    char *concernedLine = NULL;
+    char *extFilesPart = NULL;
     ListFData *pListFData = initFData();
     verifyPointer(pListFData, "Problem init FData");
 
-    concernedLine = getLineListExtFileMimeType(mimeType);
+    extFilesPart = getExtFilesPart(mimeType);
+    pListFData->data = strSplit(extFilesPart, ",", &pListFData->numberData);
 
-    printf("concernedLine : %s\n", concernedLine);
+    free(extFilesPart);
 
+    return pListFData;
 }
 
 void destroyListFData(ListFData *pListFData) {

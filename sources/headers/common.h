@@ -23,6 +23,10 @@ void verifyPointer(void *pointer, const char *message);
  */
 char *strMallocCpy(const char *str, int length);
 
+int getNbrOccurInStr(const char *str, const char *occur);
+
+char **strSplit(const char *str, const char *delimiter, int *pCount);
+
 /**
  * get index of array of char strCheck after the occurrence of string strOccur
  * @param strCheck : string to search if there are occurrence
@@ -31,6 +35,12 @@ char *strMallocCpy(const char *str, int length);
  */
 int getIndexAfterOccurStr(const char *strCheck, const char *strOccur);
 
+/**
+ * get content of file content in filePath
+ * @param filePath
+ * @param mode : can be 'r' or 'rb'
+ * @return
+ */
 char *getContentInFile(const char *filePath, const char *mode);
 
 /**

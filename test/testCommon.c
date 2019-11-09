@@ -173,6 +173,52 @@ static void testGetContentFile() {
     remove("tonton.txt");
 }
 
+static void testGetNumberOccurrenceInStr() {
+    CU_ASSERT_EQUAL(getNbrOccurInStr("tata", "ton"), 0);
+    CU_ASSERT_EQUAL(getNbrOccurInStr("tatata", "ta"), 3);
+    CU_ASSERT_EQUAL(getNbrOccurInStr("text:html", ","), 0);
+    CU_ASSERT_EQUAL(getNbrOccurInStr(".html,.htm",","), 1);
+    CU_ASSERT_EQUAL(getNbrOccurInStr("tata;toto;titi",";"), 2);
+}
+
+static void freeArrayStr(char **arrayStr, int count) {
+    int i;
+    for (i = 0; i < count; i++) {
+        free(arrayStr[i]);
+    }
+
+    free(arrayStr);
+};
+
+static void testStrSplit() {
+    int count = 0;
+    char **result = strSplit("tata;toto", ";", &count);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(count, 2);
+    CU_ASSERT_STRING_EQUAL(result[0], "tata");
+    CU_ASSERT_STRING_EQUAL(result[1], "toto");
+    freeArrayStr(result, count);
+
+    result = strSplit("", "dada", &count);
+    CU_ASSERT_PTR_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(count, 0);
+
+    count = 0;
+    result = strSplit("text/javascript", ",", &count);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(count, 1);
+    CU_ASSERT_STRING_EQUAL(result[0], "text/javascript");
+    freeArrayStr(result, count);
+
+    count = 0;
+    result = strSplit(".html,.htm,.ntm", ",", &count);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(count, 3);
+    CU_ASSERT_STRING_EQUAL(result[0], ".html");
+    CU_ASSERT_STRING_EQUAL(result[1], ".htm");
+    freeArrayStr(result, count);
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
@@ -183,7 +229,9 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer)) ||
         (NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories)) ||
         (NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent)) ||
-        (NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile))) {
+        (NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile)) ||
+        (NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr)) ||
+        (NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit))) {
 
         CU_cleanup_registry();
         return CU_get_error();

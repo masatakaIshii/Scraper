@@ -55,6 +55,64 @@ char *strMallocCpy(const char *str, int length) {
     return newStr;
 }
 
+int getNbrOccurInStr(const char *str, const char *occur) {
+    char *temp = NULL;
+    int result = 0;
+
+    temp = strstr(str, occur);
+    while(temp != NULL) {
+        result++;
+        if (strstr(temp, occur) != NULL) {
+            temp = strstr(temp + 1, occur);
+        }
+    }
+    return result;
+}
+
+static char **fillArraySplitStr(const char *str, const char *delimiter, int count) {
+    char *token = NULL;
+    int i = 0;
+    char *temp;
+    char **result = malloc(sizeof(char*) * count);
+    verifyPointer(result, "Problem malloc result in fillArraySplitStr\n");
+
+    temp = strMallocCpy(str, strlen(str));
+    verifyPointer(temp, "Problem strMallocCpy temp in fillArraySplitStr\n");
+
+    token = strtok(temp, delimiter);
+    while(token != NULL) {
+        result[i] = strMallocCpy(token, strlen(token));
+        verifyPointer(result[i], "Problem result[i] in fillArraySplitStr\n");
+        token = strtok(NULL, delimiter);
+        i++;
+    }
+
+    free(temp);
+
+    return result;
+}
+
+/**
+ * function to split string to array of string by delimitor
+ * @param str : string to copy to split in array
+ * @param pCount : count of array string
+ * @return
+ * arrayStr : array of string
+ * NULL : if str is empty
+ */
+char **strSplit(const char *str, const char *delimiter, int *pCount) {
+    char **arrayStr = NULL;
+    if (strlen(str) == 0 && strlen(delimiter)) {
+        fprintf(stderr, "WARNING : strSplit parameter can't be empty string\n");
+        return NULL;
+    }
+    *pCount = getNbrOccurInStr(str, delimiter) + 1;
+
+    arrayStr = fillArraySplitStr(str, delimiter, *pCount);
+
+    return arrayStr;
+}
+
 /**
  * get index of array of char strCheck after the occurrence of string strOccur
  * @param strCheck : string to search if there are occurrence
@@ -71,6 +129,12 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
     return 0;
 }
 
+/**
+ * get content of file content in filePath
+ * @param filePath
+ * @param mode : can be 'r' or 'rb'
+ * @return
+ */
 char *getContentInFile(const char *filePath, const char *mode) {
     int length = 0;
     char *result = NULL;
