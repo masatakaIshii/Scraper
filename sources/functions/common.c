@@ -8,7 +8,7 @@
 #include "../headers/common.h"
 
 /**
- * verify the pointer and if its null, show message and quit program with exit status '1'
+ * Verify the pointer and if its null, show message and quit program with exit status '1'
  * @param pointer
  * @param message
  */
@@ -22,7 +22,7 @@ void verifyPointer(void *pointer, const char *message) {
 }
 
 /**
- * strcat with proper malloc and not static array of character
+ * Strcat with proper malloc and not static array of character
  * @param str1
  * @param str2
  * @return newStr : string that is concat with str1 and str2
@@ -40,7 +40,7 @@ char *strMallocCat(const char *str1, const char *str2) {
 }
 
 /**
- * malloc and copy string with precise length
+ * Malloc and copy string with precise length
  * @param str
  * @param length
  * @return newStr : new string that is malloc
@@ -56,7 +56,7 @@ char *strMallocCpy(const char *str, int length) {
 }
 
 /**
- * function to get the number of occurence in string
+ * Function to get the number of occurence in string
  * @param str : string to view of there are occurence
  * @param occur : occur
  * @return result : number of occurence in string 'str'
@@ -76,7 +76,7 @@ int getNbrOccurInStr(const char *str, const char *occur) {
 }
 
 /**
- * function to operate split of string to array of string by delimiter
+ * Function to operate split of string to array of string by delimiter
  * @param str
  * @param delimiter
  * @param count
@@ -106,7 +106,7 @@ static char **fillArraySplitStr(const char *str, const char *delimiter, int coun
 }
 
 /**
- * function to split string to array of string by delimitor
+ * Function to split string to array of string by delimitor
  * @param str : string to copy to split in array
  * @param pCount : count of array string
  * @return
@@ -127,7 +127,7 @@ char **strSplit(const char *str, const char *delimiter, int *pCount) {
 }
 
 /**
- * get index of array of char strCheck after the occurrence of string strOccur
+ * Get index of array of char strCheck after the occurrence of string strOccur
  * @param strCheck : string to search if there are occurrence
  * @param strOccur : string correspond to occurrence
  * @return index : index after occurrence strOccur
@@ -143,7 +143,7 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
 }
 
 /**
- * function to write content and manage line break depend to OS
+ * Function to write content and manage line break depend to OS
  * @param fp
  * @param lengthFile
  * @return : string that correspond to content of file
@@ -172,7 +172,7 @@ static char *writeContentOfFile(FILE *fp, int lengthFile) {
 }
 
 /**
- * get content of file content in filePath
+ * Get content of file content in filePath
  * @param filePath
  * @param mode : can be 'r' or 'rb'
  * @return
@@ -223,7 +223,7 @@ char *getCurrentTime() {
 }
 
 /**
- * destroy pointer if boolean of field is == 1, and affect boolean to 0
+ * Destroy pointer if boolean of field is == 1, and affect boolean to 0
  * @param pointer : the pointer to free
  * @param isMalloc : variable of boolean to check if pointer is already malloc and put to 0
  */
@@ -250,7 +250,7 @@ static int checkIfDirPathIsCorrect(char *dirPath) {
 }
 
 /**
- * function to create directories step by step thanks to token
+ * Function to create directories step by step thanks to token
  * @param dirPath
  * @return
  * 0 : operation success
@@ -282,7 +282,7 @@ static int  createDirectories(const char *dirPath) {
 }
 
 /**
- * function to create directories recursively like mkdirP
+ * Function to create directories recursively like mkdirP
  * @param dirPath
  * @return
  * 0 : correct value and directories created
