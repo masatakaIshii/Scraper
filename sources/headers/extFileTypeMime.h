@@ -22,7 +22,7 @@ typedef struct ListFileData{
     enum FileDataInfo fileDataInfo;
 } ListFData;
 
-ListFData *searchExtFileByMimeType(const char *mimeType);
+ListFData *fillListFData(const char *data, enum FileDataInfo dataInfo);
 
 void destroyListFData(ListFData *pListFData);
 
