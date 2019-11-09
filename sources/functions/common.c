@@ -55,6 +55,12 @@ char *strMallocCpy(const char *str, int length) {
     return newStr;
 }
 
+/**
+ * function to get the number of occurence in string
+ * @param str : string to view of there are occurence
+ * @param occur : occur
+ * @return result : number of occurence in string 'str'
+ */
 int getNbrOccurInStr(const char *str, const char *occur) {
     char *temp = NULL;
     int result = 0;
@@ -69,19 +75,26 @@ int getNbrOccurInStr(const char *str, const char *occur) {
     return result;
 }
 
+/**
+ * function to operate split of string to array of string by delimiter
+ * @param str
+ * @param delimiter
+ * @param count
+ * @return : array of string
+ */
 static char **fillArraySplitStr(const char *str, const char *delimiter, int count) {
     char *token = NULL;
     int i = 0;
-    char *temp;
+    char *temp; // string to malloc, to use strtok without affect param str
     char **result = malloc(sizeof(char*) * count);
     verifyPointer(result, "Problem malloc result in fillArraySplitStr\n");
 
-    temp = strMallocCpy(str, strlen(str));
+    temp = strMallocCpy(str, (int)strlen(str));
     verifyPointer(temp, "Problem strMallocCpy temp in fillArraySplitStr\n");
 
     token = strtok(temp, delimiter);
     while(token != NULL) {
-        result[i] = strMallocCpy(token, strlen(token));
+        result[i] = strMallocCpy(token, (int)strlen(token));
         verifyPointer(result[i], "Problem result[i] in fillArraySplitStr\n");
         token = strtok(NULL, delimiter);
         i++;
@@ -102,13 +115,13 @@ static char **fillArraySplitStr(const char *str, const char *delimiter, int coun
  */
 char **strSplit(const char *str, const char *delimiter, int *pCount) {
     char **arrayStr = NULL;
-    if (strlen(str) == 0 && strlen(delimiter)) {
-        fprintf(stderr, "WARNING : strSplit parameter can't be empty string\n");
+
+    if (str == NULL || delimiter == NULL ||strlen(str) == 0 || strlen(delimiter) == 0) {
         return NULL;
     }
     *pCount = getNbrOccurInStr(str, delimiter) + 1;
 
-    arrayStr = fillArraySplitStr(str, delimiter, *pCount);
+    arrayStr = fillArraySplitStr(str, delimiter, *pCount); // operate split of string 'str'
 
     return arrayStr;
 }
@@ -130,6 +143,35 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
 }
 
 /**
+ * function to write content and manage line break depend to OS
+ * @param fp
+ * @param lengthFile
+ * @return : string that correspond to content of file
+ */
+static char *writeContentOfFile(FILE *fp, int lengthFile) {
+    char checkChar;
+    char *result = NULL;
+    int i = 0;
+
+    result = calloc(lengthFile + 1, sizeof(char));
+    if (result == NULL) {
+        fprintf(stderr, "Problem with calloc to get content file in common.c\n");
+        fclose(fp);
+        return NULL;
+    }
+
+    while(fread(&checkChar, sizeof(char), 1, fp), !feof(fp)) {
+        // TODO : manage depend to OS
+        if (checkChar != '\r') {
+            result[i] = checkChar;
+            i++;
+        }
+    }
+
+    return result;
+}
+
+/**
  * get content of file content in filePath
  * @param filePath
  * @param mode : can be 'r' or 'rb'
@@ -146,18 +188,12 @@ char *getContentInFile(const char *filePath, const char *mode) {
     if (fp == NULL) {
         return NULL;
     }
-
     fseek(fp, 0, SEEK_END);
     length = ftell(fp);
-    result = calloc(length + 1, sizeof(char));
-    if (result == NULL) {
-        fprintf(stderr, "Problem with calloc to get content file of %s in common.c\n", filePath);
-        fclose(fp);
-        return NULL;
-    }
-    rewind(fp);
 
-    fread(result, sizeof(char), length, fp);
+    rewind(fp);
+    result = writeContentOfFile(fp, length);
+
     fclose(fp);
 
     return result;
@@ -280,15 +316,3 @@ int checkIfDirExist(char *dirPath) {
         return 0;
     }
 }
-//
-//int getCountListMimeType() {
-//
-//}
-//
-//char **getListMimeTypeFileExt() {
-//
-//}
-//
-//char *getFileNameByUrl(char *url, char *mimeType) {
-//
-//}

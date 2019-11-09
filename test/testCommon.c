@@ -198,6 +198,7 @@ static void testStrSplit() {
     CU_ASSERT_STRING_EQUAL(result[0], "tata");
     CU_ASSERT_STRING_EQUAL(result[1], "toto");
     freeArrayStr(result, count);
+    count = 0;
 
     result = strSplit("", "dada", &count);
     CU_ASSERT_PTR_NULL_FATAL(result);
@@ -216,6 +217,7 @@ static void testStrSplit() {
     CU_ASSERT_EQUAL(count, 3);
     CU_ASSERT_STRING_EQUAL(result[0], ".html");
     CU_ASSERT_STRING_EQUAL(result[1], ".htm");
+    CU_ASSERT_STRING_EQUAL(result[2], ".ntm");
     freeArrayStr(result, count);
 }
 
