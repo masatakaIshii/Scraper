@@ -17,7 +17,7 @@
 #include "../sources/headers/resource.h"
 #include "../sources/headers/session.h"
 #include "../sources/headers/app.h"
-#include "../sources/headers/extFileTypeMime.h"
+#include "../sources/headers/fileExtTypeMime.h"
 #include "testDummiesAction.h"
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite);
