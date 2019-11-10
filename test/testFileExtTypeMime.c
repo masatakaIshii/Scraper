@@ -73,13 +73,23 @@ static void testSearchMimeTypeByExtFile() {
 
     list = fillListFData("text/html", MIME_TYPE);
     CU_ASSERT_PTR_NULL_FATAL(list);
+
+    list = fillListFData(".7", MIME_TYPE);
+    CU_ASSERT_PTR_NULL_FATAL(list);
+}
+
+static void testIsFileExtExistsInList() {
+    CU_ASSERT_EQUAL(isFileExtExistsInList(".html"), 1);
+    CU_ASSERT_EQUAL(isFileExtExistsInList(".loaded_0"), 0);
+    CU_ASSERT_EQUAL(isFileExtExistsInList(".ht"), 0);
 }
 
 CU_ErrorCode extFileTypeMimeSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testExtFileTypeMime", NULL, NULL);
 
     if ((NULL == CU_add_test(pSuite, "testSearchExtFileByTypeMime", testSearchExtFileByTypeMime)) ||
-            (NULL == CU_add_test(pSuite, "testSearchMimeTypeByExtFile", testSearchMimeTypeByExtFile))) {
+        (NULL == CU_add_test(pSuite, "testSearchMimeTypeByExtFile", testSearchMimeTypeByExtFile)) ||
+        (NULL == CU_add_test(pSuite, "testIsFileExtExistsInList", testIsFileExtExistsInList))) {
 
         CU_cleanup_registry();
         return CU_get_error();

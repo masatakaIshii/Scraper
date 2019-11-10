@@ -44,6 +44,13 @@ typedef struct ListFileData{
 ListFData *fillListFData(const char *data, enum FileDataInfo dataInfo);
 
 /**
+ * Function to check if file extension exist in list file extension / mime type
+ * @param fileExt : file extension to check
+ * @return TRUE 1, FALSE 0
+ */
+int isFileExtExistsInList(const char *fileExt);
+
+/**
  * Free pointer of structure ListFData and all of pointer fields
  * @param pListFData : pointer of structure ListFData
  */

@@ -8,6 +8,7 @@ static ListFData *initFData();
 static void searchCorrespondingData(ListFData *pListFData, const char *nearData, const char *allList, enum FileDataInfo dataInfo);
 static char *getExtFilesPart(const char *allList, const char *mimeType);
 static char *getMimeTypesPart(const char *allList, const char *fileExt);
+static int checkIfFileExtIsValid();
 
 /**
  * Fill structure depend to string 'nearData' and the dataInfo :<br>
@@ -23,7 +24,7 @@ ListFData *fillListFData(const char *nearData, enum FileDataInfo dataInfo) {
     verifyPointer(pListFData, "Problem init FData");
 
     allList = getContentInFile(LIST_EXT_FILE_TYPE_MIME, "rb");
-    verifyPointer(allList, "Problem getContentInFile\n");
+    verifyPointer(allList, "Problem getContentInFile for function fillListFData\n");
 
     if (strlen(nearData) > 0 && (dataInfo == FILE_EXT || dataInfo == MIME_TYPE)) {
         searchCorrespondingData(pListFData, nearData, allList, dataInfo);
@@ -117,7 +118,8 @@ static char *getMimeTypesPart(const char *allList, const char *fileExt) {
     char *strMimeType = NULL;
     char *endMimeType = NULL;
 
-    if (strchr(fileExt, '/') == NULL) { // check if extension file don't contain '/' that is forbidden in file name
+    if (checkIfFileExtIsValid(allList, fileExt)) {
+
         strMimeType = strstr(allList, fileExt);
         if (strMimeType != NULL) {
             strMimeType = strchr(strMimeType, ':') + 1;
@@ -129,6 +131,40 @@ static char *getMimeTypesPart(const char *allList, const char *fileExt) {
     }
 
     return mimeTypePart;
+}
+
+static int checkIfFileExtIsValid(const char *allList, const char *fileExt) {
+    int indexAfter = 0;
+
+    if (strchr(fileExt, '/') != NULL) { // check if extension file don't contain '/' that is forbidden in file name
+        return 0;
+    }
+
+    indexAfter = getIndexAfterOccurStr(allList, fileExt);
+    if (allList[indexAfter] != '|' && allList[indexAfter] != ':') {
+        return 0;
+    }
+    return 1;
+}
+
+/**
+ * Function to check if file extension exist in list file extension / mime type
+ * @param fileExt : file extension to check
+ * @return TRUE 1, FALSE 0
+ */
+int isFileExtExistsInList(const char *fileExt) {
+    int result = 0;
+    char *allList = NULL;
+    char *mimeTypePart = NULL;
+    allList = getContentInFile(LIST_EXT_FILE_TYPE_MIME, "rb");
+    verifyPointer(allList, "Problem getContentInFile of allList in function isFileExistsInList\n");
+
+    mimeTypePart = getMimeTypesPart(allList, fileExt);
+    result = mimeTypePart != NULL;
+
+    free(mimeTypePart);
+
+    return result;
 }
 
 /**
