@@ -13,6 +13,9 @@ static void setHandle(Request *pRequest);
 static void setOptionsCurlSaveFile(Request *pRequest);
 static int writeDataInNothing(void *ptr, int size, int numberElements, char *str);
 static int fetchResponseInfo(Request *pRequest, CURLcode result);
+static int setContentType(Request *pRequest);
+
+static void setOptionsCurlGetMimeType(Request *pRequest);
 
 /**
  * Initialise Request structure
@@ -84,16 +87,6 @@ static void setHandle(Request *pRequest) {
     verifyPointer(pRequest->pHandle, "Problem curl easy init\n");
 
     pRequest->isHandleInit = 1;
-}
-
-static void setOptionsCurlGetMimeType(Request *pRequest) {
-    char *str = NULL;
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_URL, pRequest->pUrlHelper->url);
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_ACCEPT_ENCODING, "");
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_ERRORBUFFER, pRequest->errBuf);
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEFUNCTION, writeDataInNothing);
-    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEDATA, str);
 }
 
 static int writeDataInNothing(void *ptr, int size, int numberElements, char *str) {
@@ -190,12 +183,12 @@ static int fetchResponseInfo(Request *pRequest, CURLcode result) {
 }
 
 /**
- * Function to get ext file by mime type
+ * Function to get mime type by request and set concerned file extension in file name
  * @param pRequest
  * @return
  */
-int getExtFileByMimeType(Request *pRequest) {
-    // TODO : get the ext file by mime type when the file extension is not in url
+int getFileExtByMimeType(Request *pRequest) {
+    // TODO : get the file extension by mime type when the file extension is not in url
     //fprintf(stderr, "The function to get file extention by mime type is not implemented, maybe soon\n");
     int result;
     setHandle(pRequest);
@@ -203,8 +196,7 @@ int getExtFileByMimeType(Request *pRequest) {
     setOptionsCurlGetMimeType(pRequest);
     result = curl_easy_perform(pRequest->pHandle);
     if (result == CURLE_OK) {
-        result = saveContentType(pRequest);
-        result = (result == CURLE_OK) ? setFileExtInFileName(pRequest->pUrlHelper, pRequest->contentType) : result;
+        result = setContentType(pRequest);
     } else {
         clearPHandle(pRequest->pHandle);
         return (int) result;
@@ -212,6 +204,32 @@ int getExtFileByMimeType(Request *pRequest) {
 
     return result;
 }
+
+static int setContentType(Request *pRequest) {
+    int result;
+
+    result = saveContentType(pRequest);
+    if (result == CURLE_OK) {
+        if (pRequest->isContentType == 1) {
+            if (pRequest->pUrlHelper->isFileName == 1) {
+                result = setFileExtInFileName(pRequest->pUrlHelper, pRequest->contentType);
+            }
+        }
+    }
+
+    return result;
+}
+
+static void setOptionsCurlGetMimeType(Request *pRequest) {
+    char *str = NULL;
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_URL, pRequest->pUrlHelper->url);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_ACCEPT_ENCODING, "");
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_ERRORBUFFER, pRequest->errBuf);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEFUNCTION, writeDataInNothing);
+    curl_easy_setopt(pRequest->pHandle, CURLOPT_WRITEDATA, str);
+}
+
 
 /**
  * Function to clean pointer of type curl in Request structure

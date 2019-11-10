@@ -163,7 +163,7 @@ int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType) {
     ListFData *pList = NULL;
 
     if (pUrlHelper->isFileName == 0) {
-        fprintf(stderr, "ERROR : No file name, not possible de set file extension\n");
+        fprintf(stderr, "ERROR : In function setFileExtInFileName, no file name, not possible de set file extension for URL : %s\n", pUrlHelper->url);
         return 0;
     }
 

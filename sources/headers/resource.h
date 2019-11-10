@@ -11,7 +11,7 @@
 
 Resource *initResource(const char *url, int depth, int maxDepth);
 
-int createFileResource(Resource *pResource, const char *dirResourcePath);
+int createFileResource(Resource *pResource, const char *dirResourcePath, const char **filter, int depth);
 
 void addResourceInformationInResourcesFile(Resource *pResource, const char *resourcesFile);
 

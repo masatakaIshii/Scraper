@@ -5,17 +5,17 @@
 
 static ListFData *list = NULL;
 
-static void testSearchExtFileByTypeMime() {
+static void testSearchFileExtByTypeMime() {
     list = fillListFData("text/html", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
-    CU_ASSERT(access("listFileExtMimeType.txt", F_OK) != -1);
+    CU_ASSERT(access("list_file_ext_mime_type.txt", F_OK) != -1);
     CU_ASSERT_EQUAL(list->numberData, 2);
     CU_ASSERT_EQUAL(list->fileDataInfo, FILE_EXT);
     destroyListFData(list);
 
     list = fillListFData("audio/aac", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
-    CU_ASSERT(access("listFileExtMimeType.txt", F_OK) != -1);
+    CU_ASSERT(access("list_file_ext_mime_type.txt", F_OK) != -1);
     CU_ASSERT_EQUAL(list->numberData, 1);
     CU_ASSERT_STRING_EQUAL(list->data[0], ".aac");
     CU_ASSERT_EQUAL(list->fileDataInfo, FILE_EXT);
@@ -45,7 +45,7 @@ static void testSearchExtFileByTypeMime() {
     CU_ASSERT_PTR_NULL_FATAL(list);
 }
 
-static void testSearchMimeTypeByExtFile() {
+static void testSearchMimeTypeByFileExt() {
     list = fillListFData(".html", MIME_TYPE);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
     CU_ASSERT_EQUAL(list->numberData, 1);
@@ -84,11 +84,11 @@ static void testIsFileExtExistsInList() {
     CU_ASSERT_EQUAL(isFileExtExistsInList(".ht"), 0);
 }
 
-CU_ErrorCode extFileTypeMimeSpec(CU_pSuite pSuite) {
-    pSuite = CU_add_suite("testExtFileTypeMime", NULL, NULL);
+CU_ErrorCode fileExtTypeMimeSpec(CU_pSuite pSuite) {
+    pSuite = CU_add_suite("testFileExtTypeMime", NULL, NULL);
 
-    if ((NULL == CU_add_test(pSuite, "testSearchExtFileByTypeMime", testSearchExtFileByTypeMime)) ||
-        (NULL == CU_add_test(pSuite, "testSearchMimeTypeByExtFile", testSearchMimeTypeByExtFile)) ||
+    if ((NULL == CU_add_test(pSuite, "testSearchFileExtByTypeMime", testSearchFileExtByTypeMime)) ||
+        (NULL == CU_add_test(pSuite, "testSearchMimeTypeByFileExt", testSearchMimeTypeByFileExt)) ||
         (NULL == CU_add_test(pSuite, "testIsFileExtExistsInList", testIsFileExtExistsInList))) {
 
         CU_cleanup_registry();

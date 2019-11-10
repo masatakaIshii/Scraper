@@ -38,12 +38,13 @@ static void testSetDirAndOutputPath() {
     //TODO : test dir and output paths
     pResource = initResource("https://static.openfoodfacts.org/data/delta/index.txt", 5, 10);
     verifyPointer(pResource, "Problem initResource in testResource");
-    CU_ASSERT_EQUAL(createFileResource(pResource, "toto"), 0);
+    CU_ASSERT_EQUAL(createFileResource(pResource, "toto", NULL, 0), 0);
     CU_ASSERT_EQUAL(pResource->isDirResourcePath, 1);
     CU_ASSERT_STRING_EQUAL(pResource->dirResourcePath, "toto");
     CU_ASSERT_EQUAL(pResource->isOutputPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pResource->outputPath);
     CU_ASSERT_STRING_EQUAL(pResource->outputPath, "toto/index.txt");
-    CU_ASSERT_NOT_EQUAL(access(pResource->outputPath, F_OK), -1);   
+    CU_ASSERT_NOT_EQUAL(access(pResource->outputPath, F_OK), -1);
     strcpy(filePath, pResource->outputPath);
     strcpy(dirPath, pResource->dirResourcePath);
     destroyResource(pResource);
@@ -53,7 +54,7 @@ static void testSetDirAndOutputPath() {
     pResource = initResource("https://example.com/", 0, 0);
     verifyPointer(pResource, "Problem initResource of example.com in testResource");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pResource);
-    CU_ASSERT_NOT_EQUAL(createFileResource(pResource, "example"), 0);
+    CU_ASSERT_NOT_EQUAL(createFileResource(pResource, "example", NULL, 0), 0);
     CU_ASSERT_EQUAL(access(pResource->outputPath, F_OK), -1);
 
     printf("content type : %s\n", pResource->pRequest->contentType);
@@ -70,7 +71,8 @@ static void testSetDirectoriesAndOutputPath() {
     fclose(fp);
     pResource = initResource("https://static.openfoodfacts.org/data/delta/index.txt", 5, 10);
     verifyPointer(pResource, "Problem initResource in testResource for google.com\n");
-    CU_ASSERT_EQUAL(createFileResource(pResource, "toto/tata"), 0);
+    CU_ASSERT_EQUAL(createFileResource(pResource, "toto/tata", NULL, 0), 0);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pResource->outputPath);
     CU_ASSERT_STRING_EQUAL(pResource->outputPath, "toto/tata/index.txt");
     file = fopen(pResource->outputPath, "r");
     CU_ASSERT_PTR_NOT_NULL(file);
@@ -82,13 +84,18 @@ static void testSetDirectoriesAndOutputPath() {
     rmdir("toto");
 }
 
+static void testFilterUrlByContentType() {
+
+}
+
 CU_ErrorCode resourceSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testResource", NULL, NULL);
 
     if ((NULL == CU_add_test(pSuite, "testNotInitResource", testNotInitResource)) ||
         (NULL == CU_add_test(pSuite, "testInitResource", testInitResource)) ||
         (NULL == CU_add_test(pSuite, "testSetDirAndOutputPath", testSetDirAndOutputPath)) ||
-        (NULL == CU_add_test(pSuite, "testSetDirectoriesAndOutputPath", testSetDirectoriesAndOutputPath))) {
+        (NULL == CU_add_test(pSuite, "testSetDirectoriesAndOutputPath", testSetDirectoriesAndOutputPath)) ||
+        (NULL == CU_add_test(pSuite, "testFilterUrlByContentType", testFilterUrlByContentType))) {
         CU_cleanup_registry();
         return CU_get_error();
     }

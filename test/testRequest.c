@@ -204,27 +204,28 @@ static void notSaveWhenStatusNot200() {
 
 static void testGetExtFileByMimeType() {
     pRequest = initRequest("http://example.com");
-    CU_ASSERT_EQUAL(getExtFileByMimeType(pRequest), 0);
+    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest), 1);
     CU_ASSERT_EQUAL(pRequest->isContentType, 1);
     CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html");
+    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileName, 1);
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_0.html");
 
     destroyRequest(pRequest);
 }
 
 static void testSetExtFileInFileName() {
-//    pRequest = initRequest(
-//            "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
-//    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 0);
-//    CU_ASSERT_EQUAL(getExtFileByMimeType(pRequest), 0);
-//    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 1);
-//    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "cb=gapi.loaded_0.js");
-//    CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
-//    CU_ASSERT_EQUAL(pRequest->isContentType, 1);
-//    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/javascript");
-//    printf("content type  %s\n", pRequest->contentType);
-//    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, "js")
-//    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "cb=gapi.loaded_0.js");
-//    destroyRequest(pRequest);
+    pRequest = initRequest(
+            "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
+    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 0);
+    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest), 1);
+    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 1);
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "cb=gapi.loaded_0.js");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
+    CU_ASSERT_EQUAL(pRequest->isContentType, 1);
+    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/javascript");
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".js")
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "cb=gapi.loaded_0.js");
+    destroyRequest(pRequest);
 
 //    pRequest = initRequest("http://example.com");
 //    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileName, 1);

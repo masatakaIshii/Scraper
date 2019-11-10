@@ -3,7 +3,7 @@
  *
  *  Made by     : Masataka ISHII
  *
- *  Description : Service to search file extension or mime type in listFileExtMimeType.txt and give the appropriate data.
+ *  Description : Service to search file extension or mime type in list_file_ext_mime_type.txt and give the appropriate data.
  *                  Check also if the data linked of file extensions / mime type are correct.
  */
 #ifndef SCRAPER_FILEEXTTYPEMIME_H
@@ -13,7 +13,7 @@
 #include <io.h>
 #include "common.h"
 
-#define LIST_EXT_FILE_TYPE_MIME "listFileExtMimeType.txt"
+#define LIST_EXT_FILE_TYPE_MIME "list_file_ext_mime_type.txt"
 
 /**
  * @brief Enumeration to inform which data to fetch in list of file extension and mime type : <br>

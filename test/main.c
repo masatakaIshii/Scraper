@@ -56,7 +56,8 @@ CU_ErrorCode listSpecs(CU_pSuite pSuite) {
         CUE_SUCCESS != appSpec(pSuite) ||
         CUE_SUCCESS != urlHelperSpec(pSuite) ||
         CUE_SUCCESS != sessionSpec(pSuite) ||
-        CUE_SUCCESS != extFileTypeMimeSpec(pSuite)) {
+        CUE_SUCCESS != fileExtTypeMimeSpec(pSuite) ||
+        CUE_SUCCESS != fileNameManagerSpec(pSuite)) {
         CU_cleanup_registry();
     }
 

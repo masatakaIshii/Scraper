@@ -146,7 +146,7 @@ static void testSetNewFileNameWhenIsNotInUrl() {
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("http://www.test.com/");
-    CU_ASSERT_EQUAL(setFileNameWhenNoOneInUrl(pUrlHelper, "index_1", "text/xml"), 0);
+    CU_ASSERT_EQUAL(setFileNameWhenNoOneInUrl(pUrlHelper, "index_1", "text/xml"), 2);
     CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
     CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->fileExt);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);

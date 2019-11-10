@@ -2,6 +2,27 @@
 // Created by masat on 16/10/2019.
 //
 #include "../headers/resource.h"
+static void initFieldsResource(Resource *pResource, int depth, int maxDepth);
+static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath);
+
+Resource *initResource(const char *url, int depth, int maxDepth) {
+    Resource *pResource = NULL;
+    if (maxDepth >= 0 && depth >= 0 && maxDepth >= depth) {
+        pResource = malloc(sizeof(Resource));
+        if (pResource == NULL) {
+            return NULL;
+        }
+        initFieldsResource(pResource, depth, maxDepth);
+        pResource->pRequest = initRequest(url);
+        if (pResource->pRequest == NULL) {
+            free(pResource);
+            return NULL;
+        }
+        pResource->isRequest = 1;
+    }
+
+    return pResource;
+}
 
 static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
     pResource->depth = depth;
@@ -26,23 +47,27 @@ static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
     pResource->links = NULL;
 }
 
-Resource *initResource(const char *url, int depth, int maxDepth) {
-    Resource *pResource = NULL;
-    if (maxDepth >= 0 && depth >= 0 && maxDepth >= depth) {
-        pResource = malloc(sizeof(Resource));
-        if (pResource == NULL) {
-            return NULL;
-        }
-        initFieldsResource(pResource, depth, maxDepth);
-        pResource->pRequest = initRequest(url);
-        if (pResource->pRequest == NULL) {
-            free(pResource);
-            return NULL;
-        }
-        pResource->isRequest = 1;
+int createFileResource(Resource *pResource, const char *dirResourcePath, const char **filter, int depth) {
+    int result;
+
+    result = setDirAndOutputPath(pResource, dirResourcePath);
+    if (result != 0) {
+        fprintf(stderr, "\nDon't found file extention of resource with url '%s'\n", pResource->pRequest->pUrlHelper->url);
+        return -1;
     }
 
-    return pResource;
+    mkdirP(pResource->dirResourcePath);
+
+    if (saveRequestInFile(pResource->pRequest, pResource->outputPath) != CURLE_OK) {
+        fprintf(stderr, "\nERROR request : %s\n", pResource->pRequest->errBuf);
+        return -1;
+    }
+
+    pResource->createdDate = getCurrentTime();
+    verifyPointer(pResource->createdDate, "Problem get current time in createFileResource\n");
+    pResource->isCreatedDate = 1;
+
+    return 0;
 }
 
 static int setOutputPath(Resource *pResource) {
@@ -55,7 +80,14 @@ static int setOutputPath(Resource *pResource) {
         pResource->outputPath = strMallocCat(dirResourcePathWithSlash, pUrlHelper->fileName);
         verifyPointer(pResource->outputPath, "Problem malloc output file path in resource\n");
     } else {
-        if (getExtFileByMimeType(pResource->pRequest)) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
+        if (pUrlHelper->isFileName == 0) {
+            // TODO: searchAvailableFileName : to search available filename and set to the resource
+            if (pResource->isDirResourcePath == 1) {
+                //pUrlHelper->fileName = getAvailableFileName(pResource->dirResourcePath);
+            }
+
+        }
+        if (getFileExtByMimeType(pResource->pRequest) == 1) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
             fileNameWithExt = strMallocCat(pUrlHelper->fileName, pUrlHelper->fileExt);
             verifyPointer(fileNameWithExt, "Problem malloc string fileNameWithExt path in resource\n");
 
@@ -80,29 +112,6 @@ static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath)
     result = setOutputPath(pResource);
 
     return result;
-}
-
-int createFileResource(Resource *pResource, const char *dirResourcePath) {
-    int result;
-
-    result = setDirAndOutputPath(pResource, dirResourcePath);
-    if (result != 0) {
-        fprintf(stderr, "\nDon't found file extention of resource with url '%s'\n", pResource->pRequest->pUrlHelper->url);
-        return -1;
-    }
-
-    mkdirP(pResource->dirResourcePath);
-
-    if (saveRequestInFile(pResource->pRequest, pResource->outputPath) != CURLE_OK) {
-        fprintf(stderr, "\nERROR request : %s\n", pResource->pRequest->errBuf);
-        return -1;
-    }
-
-    pResource->createdDate = getCurrentTime();
-    verifyPointer(pResource->createdDate, "Problem get current time in createFileResource\n");
-    pResource->isCreatedDate = 1;
-
-    return 0;
 }
 
 void addResourceInfoInFile(Resource *pResource, const char *resourcesFile) {

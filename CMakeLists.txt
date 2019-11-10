@@ -16,7 +16,8 @@ set(SRCS
     sources/functions/version.c
     sources/functions/common.c
     sources/functions/urlHelper.c
-    sources/functions/fileExtTypeMime.c)
+    sources/functions/fileExtTypeMime.c
+    sources/functions/fileNameManager.c)
 
 set(HEADERS
     sources/headers/app.h
@@ -30,7 +31,8 @@ set(HEADERS
     sources/headers/version.h
     sources/headers/common.h
     sources/headers/urlHelper.h
-    sources/headers/fileExtTypeMime.h)
+    sources/headers/fileExtTypeMime.h
+    sources/headers/fileNameManager.h)
 
 set(TESTSRCS
     test/testDummiesAction.c
@@ -41,7 +43,8 @@ set(TESTSRCS
     test/testApp.c
     test/testSession.c
     test/testUrlHelper.c
-    test/testFileExtTypeMime.c)
+    test/testFileExtTypeMime.c
+    test/testFileNameManager.c)
 
 set(TESTHEADERS
     test/testDummiesAction.h
@@ -50,7 +53,7 @@ set(TESTHEADERS
 add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
 add_executable(TestScraper test/main.c ${SRCS} ${TESTSRCS} ${HEADERS} ${TESTHEADERS})
 
-file(INSTALL resources/listFileExtMimeType.txt DESTINATION ${CMAKE_BINARY_DIR}/)
+file(INSTALL resources/list_file_ext_mime_type.txt DESTINATION ${CMAKE_BINARY_DIR}/)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     file(INSTALL ${CMAKE_BINARY_DIR}/Scraper.exe DESTINATION ../bin)

@@ -28,7 +28,7 @@ Request *initRequest(const char *url);
  * 1 : Success to set extention file in structure UrlHelper
  * 0 : not set because of not found extention file depend to mime type
  */
-int getExtFileByMimeType(Request *pRequest);
+int getFileExtByMimeType(Request *pRequest);
 
 /**
  * Function to save request GET content in file
