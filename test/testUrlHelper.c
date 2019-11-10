@@ -72,44 +72,63 @@ static void testCheckFileName() {
 
 static void testCheckFileExt() {
     pUrlHelper = initUrlHelper("http://www.youtube.com/video?id=16");
-    CU_ASSERT_PTR_NULL(pUrlHelper->extFile);
+    CU_ASSERT_PTR_NULL(pUrlHelper->fileExt);
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://yahoo.org/index.html");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, ".html");
-    CU_ASSERT(pUrlHelper->isExtFile == 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileExt);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".html");
+    CU_ASSERT(pUrlHelper->isFileExt == 1);
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("http://www.google.fr/form.google.doc");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, ".doc");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileExt);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".doc");
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://deezer.com/servietsky.funkytown.wav?petard=true&artist=lippsInc.info");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->extFile, ".wav");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileExt);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".wav");
     destroyUrlHelper(pUrlHelper);
 }
 
 static void testCheckFileNotExit() {
     pUrlHelper = initUrlHelper("http://www.youtube.com/");
-    CU_ASSERT_PTR_NULL(pUrlHelper->extFile);
+    CU_ASSERT_PTR_NULL(pUrlHelper->fileExt);
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://deezer.com/servietsky.funkytown.");
-    CU_ASSERT_PTR_NULL(pUrlHelper->extFile);
-    CU_ASSERT(pUrlHelper->isExtFile == 0);
+    CU_ASSERT_PTR_NULL(pUrlHelper->fileExt);
+    CU_ASSERT(pUrlHelper->isFileExt == 0);
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper(
             "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
-    CU_ASSERT_EQUAL(pUrlHelper->isExtFile, 0);
-    CU_ASSERT_PTR_NULL(pUrlHelper->extFile);
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
+    CU_ASSERT_PTR_NULL(pUrlHelper->fileExt);
     CU_ASSERT_EQUAL(pUrlHelper->isFileName, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
     CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "cb=gapi.loaded_0");
     destroyUrlHelper(pUrlHelper);
+}
+
+static void testSetFileExtInFileName() {
+    pUrlHelper = initUrlHelper(
+            "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
+    CU_ASSERT_PTR_NULL(pUrlHelper->fileExt);
+    CU_ASSERT_EQUAL(setFileExtInFileName(pUrlHelper, "text/javascript"), 1);
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileExt);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".js");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "cb=gapi.loaded_0.js");
+    destroyUrlHelper(pUrlHelper);
+
+//    pUrlHelper = initUrlHelper("http://www.youtube.com/");
+//    CU_ASSERT_EQUAL(setFileExtInFileName(pUrlHelper, "text/html"), 1);
+//    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
+//    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".html");
+//    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "index_0.html");
 }
 
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
@@ -119,7 +138,8 @@ CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "testCheckDomainName", testCheckDomainName)) ||
         (NULL == CU_add_test(pSuite, "testCheckFileName", testCheckFileName)) ||
         (NULL == CU_add_test(pSuite, "testCheckFileExt", testCheckFileExt)) ||
-        (NULL == CU_add_test(pSuite, "testCheckFileNotExit", testCheckFileNotExit))) {
+        (NULL == CU_add_test(pSuite, "testCheckFileNotExit", testCheckFileNotExit)) ||
+        (NULL == CU_add_test(pSuite, "testSetFileExtInFileName", testSetFileExtInFileName))) {
 
         CU_cleanup_registry();
         return CU_get_error();

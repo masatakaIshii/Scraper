@@ -19,7 +19,7 @@
  */
 UrlHelper *initUrlHelper(const char *url);
 
-int setExtFileInFileName(UrlHelper *pUrlHelper, char *mimeType);
+int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType);
 
 /**
  * Destroy the pointer of structure UrlHelper

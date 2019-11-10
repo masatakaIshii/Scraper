@@ -60,10 +60,10 @@ typedef struct UrlHelper {
     char *url;
     char *domainName;
     char *fileName;
-    char *extFile;
+    char *fileExt;
     int isDomainName;
     int isFileName;
-    int isExtFile;
+    int isFileExt;
     UHRes result;
 } UrlHelper;
 

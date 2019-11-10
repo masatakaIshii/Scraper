@@ -50,13 +50,13 @@ static int setOutputPath(Resource *pResource) {
     char *dirResourcePathWithSlash = NULL;
     char *fileNameWithExt = NULL;
 
-    if (pUrlHelper->isExtFile == 1) {
+    if (pUrlHelper->isFileExt == 1) {
         dirResourcePathWithSlash = strMallocCat(pResource->dirResourcePath, "/");
         pResource->outputPath = strMallocCat(dirResourcePathWithSlash, pUrlHelper->fileName);
         verifyPointer(pResource->outputPath, "Problem malloc output file path in resource\n");
     } else {
-        if (getExtFileByMimeType(pResource->pRequest)) { // fetch extension file by mime type search in conditions and list extFile / mimeType
-            fileNameWithExt = strMallocCat(pUrlHelper->fileName, pUrlHelper->extFile);
+        if (getExtFileByMimeType(pResource->pRequest)) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
+            fileNameWithExt = strMallocCat(pUrlHelper->fileName, pUrlHelper->fileExt);
             verifyPointer(fileNameWithExt, "Problem malloc string fileNameWithExt path in resource\n");
 
             pResource->outputPath = strMallocCat(pResource->dirResourcePath, fileNameWithExt);

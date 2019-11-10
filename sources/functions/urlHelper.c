@@ -20,11 +20,11 @@ UrlHelper *initUrlHelper(const char *url) {
 
     pUrlHelper->domainName = NULL;
     pUrlHelper->fileName = NULL;
-    pUrlHelper->extFile = NULL;
+    pUrlHelper->fileExt = NULL;
 
     pUrlHelper->isDomainName = 0;
     pUrlHelper->isFileName = 0;
-    pUrlHelper->isExtFile = 0;
+    pUrlHelper->isFileExt = 0;
     pUrlHelper->result = UH_OK;
 
     fillUrlHelper(pUrlHelper, url);
@@ -118,19 +118,23 @@ static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
         extFile = strrchr(pUrlHelper->fileName, '.');
         if (extFile != NULL && strlen(extFile) > 1) {
             if (isFileExtExistsInList(extFile)) {
-                pUrlHelper->extFile = strMallocCpy(extFile, (int) strlen(extFile));
-                verifyPointer(pUrlHelper->extFile, "Problem strMallocCpy exitFile UrlHelper\n");
+                pUrlHelper->fileExt = strMallocCpy(extFile, (int) strlen(extFile));
+                verifyPointer(pUrlHelper->fileExt, "Problem strMallocCpy exitFile UrlHelper\n");
 
-                pUrlHelper->isExtFile = 1;
+                pUrlHelper->isFileExt = 1;
             }
         }
     }
 }
 
-int setExtFileInFileName(UrlHelper *pUrlHelper, char *mimeType) {
+int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType) {
 
     //printf("%s", listMimeTypeExtFile);
     // TODO : add test in urlHelper and manage set ext file depend to mimeType
+
+    if (pUrlHelper->isFileName == 0) {
+        // TODO : setFileName index_n, 'n' is the current number of resource that don't have file name in url
+    }
     return 0;
 }
 
@@ -147,9 +151,9 @@ void destroyUrlHelper(UrlHelper *pUrlHelper) {
         pUrlHelper->isFileName = 0;
         free(pUrlHelper->fileName);
     }
-    if (pUrlHelper->isExtFile == 1) {
-        pUrlHelper->isExtFile = 0;
-        free(pUrlHelper->extFile);
+    if (pUrlHelper->isFileExt == 1) {
+        pUrlHelper->isFileExt = 0;
+        free(pUrlHelper->fileExt);
     }
 
     free(pUrlHelper);
