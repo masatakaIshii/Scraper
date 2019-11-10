@@ -1,7 +1,10 @@
-//
-// Created by masat on 27/10/2019.
-//
-
+/*
+ *  Filename    : urlHelper.c
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : Service to decompose and manage parts of URL
+ */
 #include "../headers/urlHelper.h"
 
 static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url);
@@ -9,7 +12,7 @@ static void urlHelperSetDomainName(UrlHelper *pUrlHelper);
 static void urlHelperSetFileName(UrlHelper *pUrlHelper);
 static void urlHelperSetExtFile(UrlHelper *pUrlHelper);
 
-void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList);
+static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList);
 
 /**
  * Initialize the structure UrlHelper to get few parts of url
@@ -114,13 +117,13 @@ static void urlHelperSetFileName(UrlHelper *pUrlHelper) {
  * @param pHelper
  */
 static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
-    char *extFile = NULL; // extension file in file name of url
+    char *fileExt = NULL; // file extensions in file name of url
 
     if (pUrlHelper->isFileName == 1) {
-        extFile = strrchr(pUrlHelper->fileName, '.');
-        if (extFile != NULL && strlen(extFile) > 1) {
-            if (isFileExtExistsInList(extFile)) {
-                pUrlHelper->fileExt = strMallocCpy(extFile, (int) strlen(extFile));
+        fileExt = strrchr(pUrlHelper->fileName, '.');
+        if (fileExt != NULL && strlen(fileExt) > 1) {
+            if (isFileExtExistsInList(fileExt)) { // function in fileExtTypeMime to check if fileExt exists in list
+                pUrlHelper->fileExt = strMallocCpy(fileExt, (int) strlen(fileExt));
                 verifyPointer(pUrlHelper->fileExt, "Problem strMallocCpy exitFile UrlHelper\n");
 
                 pUrlHelper->isFileExt = 1;
@@ -129,10 +132,17 @@ static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
     }
 }
 
+/**
+ * Function to set file name when there are not indicated in URL
+ * @param pUrlHelper
+ * @param fileNameNoExt
+ * @param mimeType
+ * @return OK 1, ERROR 0, WARNING 2
+ */
 int setFileNameWhenNoOneInUrl(UrlHelper *pUrlHelper, const char *fileNameNoExt, char *mimeType) {
     if (pUrlHelper->isFileName > 0) {
         fprintf(stderr, "WARNING : the file name in already implemented, fileName : %s\n", pUrlHelper->fileName);
-        return 0;
+        return 2;
     }
 
     pUrlHelper->fileName = strMallocCpy(fileNameNoExt, (int)strlen(fileNameNoExt));
@@ -142,11 +152,18 @@ int setFileNameWhenNoOneInUrl(UrlHelper *pUrlHelper, const char *fileNameNoExt, 
     return setFileExtInFileName(pUrlHelper, mimeType);
 }
 
+/**
+ * Function to set file extension in file name
+ * @param pUrlHelper : pointer of structure UrlHelper
+ * @param mimeType
+ * @return OK 1, ERROR 0, WARNING 2
+ *
+ */
 int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType) {
     ListFData *pList = NULL;
 
     if (pUrlHelper->isFileName == 0) {
-        fprintf(stderr, "ERROR : No file name, set new one first\n");
+        fprintf(stderr, "ERROR : No file name, not possible de set file extension\n");
         return 0;
     }
 
@@ -156,14 +173,19 @@ int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType) {
             catUrlHelperFileNameAndFileExt(pUrlHelper, pList);
         } else {
             fprintf(stderr, "\nWARNING : Mime %s is not in list\n", mimeType);
-            return 0;
+            return 2;
         }
     }
 
     return 1;
 }
 
-void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList) {
+/**
+ * Concat file name of UrlHelper and file extensions
+ * @param pUrlHelper
+ * @param pList
+ */
+static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList) {
     char *temp = NULL;
     int index = 0;
 
