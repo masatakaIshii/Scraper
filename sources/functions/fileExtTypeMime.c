@@ -1,7 +1,11 @@
-//
-// Created by masat on 07/11/2019.
-//
-
+/*
+ *  Filename    : fileExtTypeMime.c
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : Service to search file extension or mime type in listFileExtMimeType.txt and give the appropriate data.
+ *                  Check also if the data linked of file extensions / mime type are correct.
+ */
 #include "../headers/fileExtTypeMime.h"
 
 static ListFData *initFData();
