@@ -105,7 +105,10 @@ static void testCheckFileNotExit() {
     pUrlHelper = initUrlHelper(
             "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
     CU_ASSERT_EQUAL(pUrlHelper->isExtFile, 0);
-    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->extFile);
+    CU_ASSERT_PTR_NULL(pUrlHelper->extFile);
+    CU_ASSERT_EQUAL(pUrlHelper->isFileName, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "cb=gapi.loaded_0");
     destroyUrlHelper(pUrlHelper);
 }
 
