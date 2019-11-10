@@ -19,6 +19,8 @@
  */
 UrlHelper *initUrlHelper(const char *url);
 
+int setFileNameWhenNoOneInUrl(UrlHelper *pUrlHelper, const char *fileNameNoExt, char *mimeType);
+
 int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType);
 
 /**

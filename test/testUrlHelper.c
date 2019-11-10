@@ -124,12 +124,36 @@ static void testSetFileExtInFileName() {
     CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "cb=gapi.loaded_0.js");
     destroyUrlHelper(pUrlHelper);
 
-//    pUrlHelper = initUrlHelper("http://www.youtube.com/");
-//    CU_ASSERT_EQUAL(setFileExtInFileName(pUrlHelper, "text/html"), 1);
-//    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
-//    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".html");
-//    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "index_0.html");
+    pUrlHelper = initUrlHelper("http://www.youtube.com/");
+    CU_ASSERT_EQUAL(setFileExtInFileName(pUrlHelper, "text/html"), 0);
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
+    destroyUrlHelper(pUrlHelper);
 }
+
+static void testSetNewFileNameWhenIsNotInUrl() {
+    pUrlHelper = initUrlHelper("http://www.youtube.com/");
+    CU_ASSERT_EQUAL(setFileNameWhenNoOneInUrl(pUrlHelper, "index_0", "text/html"), 1);
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 1);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".html");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "index_0.html");
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("http://www.test.com/");
+    CU_ASSERT_EQUAL(setFileNameWhenNoOneInUrl(pUrlHelper, "index_1", "application/xml"), 1);
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 1);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".xml");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "index_1.xml");
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("http://www.test.com/");
+    CU_ASSERT_EQUAL(setFileNameWhenNoOneInUrl(pUrlHelper, "index_1", "text/xml"), 0);
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
+    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->fileExt);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "index_1");
+    destroyUrlHelper(pUrlHelper);
+}
+
 
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testUrlHelper", NULL, NULL);
@@ -139,7 +163,8 @@ CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "testCheckFileName", testCheckFileName)) ||
         (NULL == CU_add_test(pSuite, "testCheckFileExt", testCheckFileExt)) ||
         (NULL == CU_add_test(pSuite, "testCheckFileNotExit", testCheckFileNotExit)) ||
-        (NULL == CU_add_test(pSuite, "testSetFileExtInFileName", testSetFileExtInFileName))) {
+        (NULL == CU_add_test(pSuite, "testSetFileExtInFileName", testSetFileExtInFileName)) ||
+        (NULL == CU_add_test(pSuite, "testSetNewFileNameWhenIsNotInUrl", testSetNewFileNameWhenIsNotInUrl))) {
 
         CU_cleanup_registry();
         return CU_get_error();

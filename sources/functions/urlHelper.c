@@ -9,6 +9,8 @@ static void urlHelperSetDomainName(UrlHelper *pUrlHelper);
 static void urlHelperSetFileName(UrlHelper *pUrlHelper);
 static void urlHelperSetExtFile(UrlHelper *pUrlHelper);
 
+void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList);
+
 /**
  * Initialize the structure UrlHelper to get few parts of url
  * @param url : current url to view
@@ -127,15 +129,54 @@ static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
     }
 }
 
-int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType) {
+int setFileNameWhenNoOneInUrl(UrlHelper *pUrlHelper, const char *fileNameNoExt, char *mimeType) {
+    if (pUrlHelper->isFileName > 0) {
+        fprintf(stderr, "WARNING : the file name in already implemented, fileName : %s\n", pUrlHelper->fileName);
+        return 0;
+    }
 
-    //printf("%s", listMimeTypeExtFile);
-    // TODO : add test in urlHelper and manage set ext file depend to mimeType
+    pUrlHelper->fileName = strMallocCpy(fileNameNoExt, (int)strlen(fileNameNoExt));
+    verifyPointer(pUrlHelper->fileName, "Problem strMallocCpy pUrlHelper->fileName in function setFileNameWhenNoOneInUrl\n");
+    pUrlHelper->isFileName = 1;
+
+    return setFileExtInFileName(pUrlHelper, mimeType);
+}
+
+int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType) {
+    ListFData *pList = NULL;
 
     if (pUrlHelper->isFileName == 0) {
-        // TODO : setFileName index_n, 'n' is the current number of resource that don't have file name in url
+        fprintf(stderr, "ERROR : No file name, set new one first\n");
+        return 0;
     }
-    return 0;
+
+    if (pUrlHelper->isFileExt == 0) {
+        pList = fillListFData(mimeType, FILE_EXT);
+        if (pList != NULL && pList->numberData > 0) {
+            catUrlHelperFileNameAndFileExt(pUrlHelper, pList);
+        } else {
+            fprintf(stderr, "\nWARNING : Mime %s is not in list\n", mimeType);
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList) {
+    char *temp = NULL;
+    int index = 0;
+
+    index = (pList->numberData > 1) ? 1 : 0;
+
+    pUrlHelper->fileExt = strMallocCpy(pList->data[index], (int)strlen(pList->data[index]));
+    verifyPointer(pUrlHelper->fileExt, "Problem strMallocCpy fileExt");
+    pUrlHelper->isFileExt = 1;
+
+    temp = pUrlHelper->fileName;
+    pUrlHelper->fileName = strMallocCat(temp, pUrlHelper->fileExt);
+
+    free(temp);
 }
 
 /**
