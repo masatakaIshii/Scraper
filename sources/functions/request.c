@@ -87,7 +87,7 @@ static int saveContentType(Request *pRequest) {
 
     if (result == CURLE_OK && pRequest->isContentType == 0) {
         strInSemiColon = strchr(contentType, ';');
-        length = (strInSemiColon == NULL) ? strlen(contentType) : (int)(strInSemiColon - contentType);
+        length = (strInSemiColon == NULL) ? (int)strlen(contentType) : (int)(strInSemiColon - contentType);
         pRequest->contentType = strMallocCpy(contentType, length);
         if (pRequest->contentType == NULL) {
             destroyRequest(pRequest);
