@@ -1,0 +1,8 @@
+//
+// Created by masat on 10/11/2019.
+//
+
+#ifndef SCRAPER_FILENAMESEARCHER_H
+#define SCRAPER_FILENAMESEARCHER_H
+
+#endif //SCRAPER_FILENAMESEARCHER_H
