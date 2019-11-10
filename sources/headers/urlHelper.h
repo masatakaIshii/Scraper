@@ -10,6 +10,7 @@
 #include <curl/curl.h>
 #include "common.h"
 #include "app.h"
+#include "../headers/fileExtTypeMime.h"
 
 /**
  * Initialize the structure UrlHelper to get few parts of url
