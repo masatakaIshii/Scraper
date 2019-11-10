@@ -50,7 +50,7 @@ set(TESTHEADERS
 add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
 add_executable(TestScraper test/main.c ${SRCS} ${TESTSRCS} ${HEADERS} ${TESTHEADERS})
 
-file(INSTALL resources/listExtFileMimeType.txt DESTINATION ${CMAKE_BINARY_DIR}/)
+file(INSTALL resources/listFileExtMimeType.txt DESTINATION ${CMAKE_BINARY_DIR}/)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     file(INSTALL ${CMAKE_BINARY_DIR}/Scraper.exe DESTINATION ../bin)

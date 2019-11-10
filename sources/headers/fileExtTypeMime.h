@@ -9,7 +9,7 @@
 #include <io.h>
 #include "common.h"
 
-#define LIST_EXT_FILE_TYPE_MIME "listExtFileMimeType.txt"
+#define LIST_EXT_FILE_TYPE_MIME "listFileExtMimeType.txt"
 
 /**
  * @brief Enumeration to inform which data to fetch in list of file extension and mime type : <br>

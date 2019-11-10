@@ -8,7 +8,7 @@ static ListFData *initFData();
 static void searchCorrespondingData(ListFData *pListFData, const char *nearData, const char *allList, enum FileDataInfo dataInfo);
 static char *getExtFilesPart(const char *allList, const char *mimeType);
 static char *getMimeTypesPart(const char *allList, const char *fileExt);
-static int checkIfFileExtIsValid();
+static int checkIfFileExtIsInList(const char *allList, const char *fileExt);
 
 /**
  * Fill structure depend to string 'nearData' and the dataInfo :<br>
@@ -118,7 +118,7 @@ static char *getMimeTypesPart(const char *allList, const char *fileExt) {
     char *strMimeType = NULL;
     char *endMimeType = NULL;
 
-    if (checkIfFileExtIsValid(allList, fileExt)) {
+    if (checkIfFileExtIsInList(allList, fileExt)) {
 
         strMimeType = strstr(allList, fileExt);
         if (strMimeType != NULL) {
@@ -133,7 +133,13 @@ static char *getMimeTypesPart(const char *allList, const char *fileExt) {
     return mimeTypePart;
 }
 
-static int checkIfFileExtIsValid(const char *allList, const char *fileExt) {
+/**
+ * Function to check if the file extension don't contain '/' and is in listFileExtMimeType.txt
+ * @param allList
+ * @param fileExt
+ * @return
+ */
+static int checkIfFileExtIsInList(const char *allList, const char *fileExt) {
     int indexAfter = 0;
 
     if (strchr(fileExt, '/') != NULL) { // check if extension file don't contain '/' that is forbidden in file name

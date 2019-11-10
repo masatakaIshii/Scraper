@@ -8,14 +8,14 @@ static ListFData *list = NULL;
 static void testSearchExtFileByTypeMime() {
     list = fillListFData("text/html", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
-    CU_ASSERT(access("listExtFileMimeType.txt", F_OK) != -1);
+    CU_ASSERT(access("listFileExtMimeType.txt", F_OK) != -1);
     CU_ASSERT_EQUAL(list->numberData, 2);
     CU_ASSERT_EQUAL(list->fileDataInfo, FILE_EXT);
     destroyListFData(list);
 
     list = fillListFData("audio/aac", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
-    CU_ASSERT(access("listExtFileMimeType.txt", F_OK) != -1);
+    CU_ASSERT(access("listFileExtMimeType.txt", F_OK) != -1);
     CU_ASSERT_EQUAL(list->numberData, 1);
     CU_ASSERT_STRING_EQUAL(list->data[0], ".aac");
     CU_ASSERT_EQUAL(list->fileDataInfo, FILE_EXT);
