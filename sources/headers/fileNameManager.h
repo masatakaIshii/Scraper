@@ -9,7 +9,7 @@
 #ifndef SCRAPER_FILENAMESEARCHER_H
 #define SCRAPER_FILENAMESEARCHER_H
 
-#define ALL_FILES_NAMES "all_files_names.txt"
+#define ALL_FILES_NAMES "all_created_files_names.txt"
 
 #include <stdio.h>
 #include <stdlib.h>

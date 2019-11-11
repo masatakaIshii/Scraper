@@ -23,7 +23,17 @@ static int writeFileNameInListFileNames(const char *filesNamesPath, const char *
  */
 char *getAvailableFileName(const char *dirResourcePath, const char *fileNameNoExt) {
     char *newFileName = NULL;
-    char *filesNamesPath = strMallocCat(dirResourcePath, ALL_FILES_NAMES);
+    char *temp = NULL;
+    char *filesNamesPath = NULL;
+
+    if (strlen(dirResourcePath) > 0) {
+        mkdirP(dirResourcePath);
+        temp = strMallocCat(dirResourcePath, "/");
+        filesNamesPath = strMallocCat(temp, ALL_FILES_NAMES);
+        free(temp);
+    } else {
+        filesNamesPath = strMallocCpy(ALL_FILES_NAMES, strlen(ALL_FILES_NAMES));
+    }
 
     if (access(filesNamesPath, F_OK) != -1) {
         newFileName = createAllFilesNames(filesNamesPath);
