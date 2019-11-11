@@ -89,7 +89,7 @@ static void testFilterUrlByContentType() {
 }
 
 CU_ErrorCode resourceSpec(CU_pSuite pSuite) {
-    pSuite = CU_add_suite("testResource", NULL, NULL);
+    pSuite = CU_add_suite("testResource", initManageStderr, cleanManageStderr);
 
     if ((NULL == CU_add_test(pSuite, "testNotInitResource", testNotInitResource)) ||
         (NULL == CU_add_test(pSuite, "testInitResource", testInitResource)) ||

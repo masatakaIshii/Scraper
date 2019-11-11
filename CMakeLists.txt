@@ -35,6 +35,7 @@ set(HEADERS
     sources/headers/fileNameManager.h)
 
 set(TESTSRCS
+    test/testShare.c
     test/testDummiesAction.c
     test/testCommon.c
     test/testRequest.c
@@ -47,6 +48,7 @@ set(TESTSRCS
     test/testFileNameManager.c)
 
 set(TESTHEADERS
+    test/testShare.h
     test/testDummiesAction.h
     test/test.h)
 

@@ -11,6 +11,8 @@
 #include <ftw.h>
 #include <dirent.h>
 #include <CUnit/Basic.h>
+#include "testShare.h"
+#include "testDummiesAction.h"
 #include "../sources/headers/common.h"
 #include "../sources/headers/urlHelper.h"
 #include "../sources/headers/request.h"
@@ -19,7 +21,7 @@
 #include "../sources/headers/app.h"
 #include "../sources/headers/fileExtTypeMime.h"
 #include "../sources/headers/fileNameManager.h"
-#include "testDummiesAction.h"
+
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite);
 CU_ErrorCode requestSpec(CU_pSuite pSuite) ;

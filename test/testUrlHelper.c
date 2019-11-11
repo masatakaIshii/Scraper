@@ -4,6 +4,7 @@
 #include "test.h"
 
 static UrlHelper *pUrlHelper = NULL;
+static FILE *fpError = NULL;
 
 static void testCheckUrl() {
     pUrlHelper = initUrlHelper("h.ttoigejorg/ijhifez///iufzheiuf.hziefu");
@@ -156,7 +157,7 @@ static void testSetNewFileNameWhenIsNotInUrl() {
 
 
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
-    pSuite = CU_add_suite("testUrlHelper", NULL, NULL);
+    pSuite = CU_add_suite("testUrlHelper", initManageStderr, cleanManageStderr);
 
     if ((NULL == CU_add_test(pSuite, "testCheckUrl", testCheckUrl)) ||
         (NULL == CU_add_test(pSuite, "testCheckDomainName", testCheckDomainName)) ||
