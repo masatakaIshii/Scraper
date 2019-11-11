@@ -211,15 +211,14 @@ static int setContentType(Request *pRequest, const char *dirPath) {
     result = saveContentType(pRequest);
     if (result == CURLE_OK) {
         if (pRequest->isContentType == 1) {
-            if (pRequest->pUrlHelper->isFileName == 1) {
-                result = setFileExtInFileName(pRequest->pUrlHelper, pRequest->contentType);
-            } else {
+            if (pRequest->pUrlHelper->isFileName == 0) {
                 pRequest->pUrlHelper->fileName = getAvailableFileName(dirPath, NULL);
                 if (pRequest->pUrlHelper->fileName == NULL) {
                     return 0;
                 }
                 pRequest->pUrlHelper->isFileName = 1;
             }
+            result = setFileExtInFileName(pRequest->pUrlHelper, pRequest->contentType);
         }
     }
 

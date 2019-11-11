@@ -211,6 +211,8 @@ static void testGetExtFileByMimeType() {
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".html");
 
+    deleteAllFilesNamesFiles("");
+
     destroyRequest(pRequest);
 }
 
@@ -227,16 +229,30 @@ static void testSetExtFileInFileName() {
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".js")
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "cb=gapi.loaded_0.js");
     destroyRequest(pRequest);
+    deleteAllFilesNamesFiles("");
+}
 
-//    pRequest = initRequest("http://example.com");
-//    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileName, 1);
-//    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 1);
-//    CU_ASSERT_PTR_NOT_NULL(pRequest->pUrlHelper->fileName);
-//    if (pRequest->pUrlHelper->fileName != NULL) {
-//        CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_0.html");
-//    }
-//    destroyRequest(pRequest);
+static void testGetUniqueNameWhenNoFileName() {
+    pRequest = initRequest("http://example.com");
+    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, ""), 1);
+    CU_ASSERT_EQUAL(pRequest->isContentType, 1);
+    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html");
+    CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".html");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileName);
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_sc_0.html");
+    destroyRequest(pRequest);
 
+    pRequest = initRequest("http://yahoo.com");
+    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, ""), 1);
+    CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".html");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileName);
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_sc_1.html");
+    destroyRequest(pRequest);
+    deleteAllFilesNamesFiles("");
 }
 
 CU_ErrorCode requestSpec(CU_pSuite pSuite) {
@@ -250,7 +266,8 @@ CU_ErrorCode requestSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "checkContentType", checkContentType)) ||
         (NULL == CU_add_test(pSuite, "notSaveWhenStatusNot200", notSaveWhenStatusNot200)) ||
         (NULL == CU_add_test(pSuite, "testGetExtFileByMimeType", testGetExtFileByMimeType)) ||
-        (NULL == CU_add_test(pSuite, "testSetExtFileInFileName", testSetExtFileInFileName))) {
+        (NULL == CU_add_test(pSuite, "testSetExtFileInFileName", testSetExtFileInFileName)) ||
+        (NULL == CU_add_test(pSuite, "testGetUniqueNameWhenNoFileName", testGetUniqueNameWhenNoFileName))) {
 
         CU_cleanup_registry();
         return CU_get_error();
