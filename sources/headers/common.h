@@ -90,7 +90,7 @@ void freePointer(void **pointer, short *isMalloc);
  * 0 : correct value and directories created
  * -1 : error value, because of directory path wrong value
  */
-int mkdirP(char *dirPath);
+int mkdirP(const char *dirPath);
 
 /**
  * Function to verify if the directory exist

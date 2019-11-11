@@ -243,7 +243,7 @@ void freePointer(void **pointer, short *isMalloc) {
  * 1 : dirPath is correct
  * 0 : dirPath contain forbidden Chars
  */
-static int checkIfDirPathIsCorrect(char *dirPath) {
+static int checkIfDirPathIsCorrect(const char *dirPath) {
     char *arrayForbiddenChars = "\\<>?\":*|";
 
     return strpbrk(dirPath, arrayForbiddenChars) == NULL;
@@ -288,7 +288,7 @@ static int  createDirectories(const char *dirPath) {
  * 0 : correct value and directories created
  * -1 : error value, because of directory path wrong value
  */
-int mkdirP(char *dirPath) {
+int mkdirP(const char *dirPath) {
 
     if (checkIfDirPathIsCorrect(dirPath) == 0) {
         return -1;
