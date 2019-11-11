@@ -72,33 +72,19 @@ int createFileResource(Resource *pResource, const char *dirResourcePath, const c
 
 static int setOutputPath(Resource *pResource) {
     UrlHelper *pUrlHelper = pResource->pRequest->pUrlHelper;
-    char *dirResourcePathWithSlash = NULL;
-    char *fileNameWithExt = NULL;
+    char *dirResourcePathWithSlash = strMallocCat(pResource->dirResourcePath, "/");;
 
-    if (pUrlHelper->isFileExt == 1) {
-        dirResourcePathWithSlash = strMallocCat(pResource->dirResourcePath, "/");
-        pResource->outputPath = strMallocCat(dirResourcePathWithSlash, pUrlHelper->fileName);
-        verifyPointer(pResource->outputPath, "Problem malloc output file path in resource\n");
-    } else {
-        if (pUrlHelper->isFileName == 0) {
-            // TODO: searchAvailableFileName : to search available filename and set to the resource
-            if (pResource->isDirResourcePath == 1) {
-                //pUrlHelper->fileName = getAvailableFileName(pResource->dirResourcePath);
-            }
-
-        }
-        if (getFileExtByMimeType(pResource->pRequest, pResource->dirResourcePath) == 1) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
-            fileNameWithExt = strMallocCat(pUrlHelper->fileName, pUrlHelper->fileExt);
-            verifyPointer(fileNameWithExt, "Problem malloc string fileNameWithExt path in resource\n");
-
-            pResource->outputPath = strMallocCat(pResource->dirResourcePath, fileNameWithExt);
-            verifyPointer(pResource->outputPath, "Problem malloc outputPath in resource\n");
-            free(fileNameWithExt);
-        } else {
+    if (pUrlHelper->isFileExt == 0 || pUrlHelper->isFileName == 0) {
+        if (getFileExtByMimeType(pResource->pRequest, pResource->dirResourcePath) != 1) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
             return 1;
         }
     }
+    pResource->outputPath = strMallocCat(dirResourcePathWithSlash, pUrlHelper->fileName);
+    verifyPointer(pResource->outputPath, "Problem malloc output file path in resource\n");
     pResource->isOutputPath = 1;
+
+    free(dirResourcePathWithSlash);
+
     return 0;
 }
 
@@ -120,13 +106,11 @@ void addResourceInfoInFile(Resource *pResource, const char *resourcesFile) {
 
 void destroyResource(Resource *pResource) {
     if (pResource->isCreatedDate == 1) {
-        //freePointer((void**)pResource->createdDate, &pResource->isCreatedDate);
         free(pResource->createdDate);
         pResource->isCreatedDate = 0;
     }
 
     if (pResource->isOutputPath == 1) {
-        //freePointer((void**)pResource->outputPath, &pResource->isOutputPath);
         free(pResource->outputPath);
         pResource->isOutputPath = 0;
     }
@@ -134,7 +118,6 @@ void destroyResource(Resource *pResource) {
     if (pResource->isDirResourcePath == 1) {
         free(pResource->dirResourcePath);
         pResource->isDirResourcePath = 0;
-        //freePointer((void**)pResource->dirResourcePath, &pResource->isDirResourcePath);
     }
 
     if (pResource->isRequest == 1) {
