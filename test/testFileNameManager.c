@@ -54,11 +54,25 @@ static void testIfFileNamesExitAddNewFileName() {
     unlink(ALL_FILES_NAMES);
 }
 
+static void testIfFileIsCreatedInDirectories() {
+    char *result = getAvailableFileName("toto", NULL);
+    char *fileNamesPath = strMallocCat("toto/", ALL_FILES_NAMES);
+
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "index_sc_0");
+    CU_ASSERT_NOT_EQUAL(access(fileNamesPath, F_OK), -1);
+
+    free(fileNamesPath);
+    unlink(fileNamesPath);
+    rmdir("toto");
+}
+
 CU_ErrorCode fileNameManagerSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testFileNameManager", NULL, NULL);
 
     if ((NULL == CU_add_test(pSuite, "testCreateFileNamesAndGetFileName", testCreateFileNamesAndGetFileName)) ||
-        (NULL == CU_add_test(pSuite, "testIfFileNamesExitAddNewFileName", testIfFileNamesExitAddNewFileName))) {
+        (NULL == CU_add_test(pSuite, "testIfFileNamesExitAddNewFileName", testIfFileNamesExitAddNewFileName)) ||
+            (NULL == CU_add_test(pSuite, "testIfFileIsCreatedInDirectories", testIfFileIsCreatedInDirectories))) {
 
         CU_cleanup_registry();
         return CU_get_error();
