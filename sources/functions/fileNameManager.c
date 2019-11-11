@@ -102,3 +102,17 @@ static int writeFileNameInListFileNames(const char *filesNamesPath, const char *
 
     return 1;
 }
+
+/**
+ * Delete 'all_files_names.txt' by given the directory path that is contain
+ * @param dirPath
+ * @return OK 1, ERROR 0
+ */
+int deleteAllFilesNamesFiles(const char *dirPath) {
+    int result = 0;
+    char *allFilesNamesPath = strMallocCat(dirPath, ALL_FILES_NAMES);
+    result = unlink(allFilesNamesPath);
+    free(allFilesNamesPath);
+
+    return result == 0;
+}

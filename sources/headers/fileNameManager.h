@@ -25,4 +25,10 @@
  */
 char *getAvailableFileName(const char *dirPath, const char *fileNameNoExt);
 
+/**
+ * Delete 'all_files_names.txt' by given the directory path that is contain
+ * @param dirPath
+ * @return OK 1, ERROR 0
+ */
+int  deleteAllFilesNamesFiles(const char *dirPath);
 #endif //SCRAPER_FILENAMESEARCHER_H
