@@ -75,9 +75,7 @@ static void testSetDirectoriesAndOutputPath() {
 }
 
 static void testFilterUrlByContentType() {
-    char temp[100];
     char *allFilesNames = NULL;
-
     pResource = initResource("https://example.com/", 0, 0);
     verifyPointer(pResource, "Problem initResource of example.com in testResource");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pResource);
@@ -102,10 +100,11 @@ static void testFilterUrlByContentType() {
     CU_ASSERT_NOT_EQUAL(access(pResource->outputPath, F_OK), -1);
     destroyResource(pResource);
 
-    strcpy(temp, "example/yahoo/");
-    strcat(temp, ALL_FILES_NAMES);
+    strcpy(dirPath, "example/yahoo/");
+    strcat(filePath, dirPath);
+    strcat(filePath, ALL_FILES_NAMES);
 
-    allFilesNames = getContentInFile(temp, "rb");
+    allFilesNames = getContentInFile(filePath, "rb");
     verifyPointer(allFilesNames, "Problem allFilesNames in testResource\n");
     CU_ASSERT(strstr(allFilesNames, "index_sc_0") != NULL);
     CU_ASSERT(strstr(allFilesNames, "index_sc_1") != NULL);
