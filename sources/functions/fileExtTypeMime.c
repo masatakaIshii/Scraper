@@ -167,12 +167,16 @@ int isFileExtExistsInList(const char *fileExt) {
     char *allList = NULL;
     char *mimeTypePart = NULL;
     allList = getContentInFile(LIST_EXT_FILE_TYPE_MIME, "rb");
-    verifyPointer(allList, "Problem getContentInFile of allList in function isFileExistsInList\n");
+    if (allList == NULL) {
+        fprintf(stderr, "Problem getContentInFile of allList in function isFileExistsInList\n");
+        return 0;
+    }
 
     mimeTypePart = getMimeTypesPart(allList, fileExt);
-    result = mimeTypePart != NULL;
-
-    free(mimeTypePart);
+    if (mimeTypePart != NULL) {
+        result = 1;
+        free(mimeTypePart);
+    }
 
     return result;
 }
