@@ -1,65 +1,57 @@
-//
-// Created by masat on 27/10/2019.
-//
-
+/*
+ *  Filename    : urlHelper.c
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : Service to decompose and manage parts of URL
+ */
 #include "../headers/urlHelper.h"
 
-static char *getListMimeTypeExtFile() {
-    char *listMimeTypeExtFile = "text/html .html\n"
-                                "application/javascript .js\n"
-                                "application/json .json\n"
-                                "text/javascript .js\n"
-                                "text/css .css\n"
-                                "font/ttf .ttf\n"
-                                "font/woff .woff\n"
-                                "font/woff2 .woff2\n"
-                                "font/otf .otf\n"
-                                "image/jpeg jpeg\n"
-                                "image/png .png\n"
-                                "image/svg+xml .svg\n"
-                                "audio/mpeg .mp3\n"
-                                "audio/x-wav .wav\n"
-                                "audio/acc .aac\n"
-                                "application/typescript .ts\n"
-                                "application/pdf .pdf\n"
-                                "application/xml .xml\n"
-                                "application/zip .zip\n"
-                                "application/x-rar-compressed .rar\n"
-                                "application/octet-stream .bin\n"
-                                "application/xhtml+xml .xhtml\n"
-                                "application/msword .doc\n"
-                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx\n"
-                                "application/vnd.ms-excel .xls\n"
-                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet .xlsx\n";
+static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url);
+static void urlHelperSetDomainName(UrlHelper *pUrlHelper);
+static void urlHelperSetFileName(UrlHelper *pUrlHelper);
+static void urlHelperSetExtFile(UrlHelper *pUrlHelper);
 
-    return listMimeTypeExtFile;
+static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList);
+
+/**
+ * Initialize the structure UrlHelper to get few parts of url
+ * @param url : current url to view
+ * @return : pointer of structure UrlHelper
+ */
+UrlHelper *initUrlHelper(const char *url) {
+    UrlHelper *pUrlHelper = malloc(sizeof(UrlHelper));
+    verifyPointer(pUrlHelper, "Problem malloc in initUrlHelper\n");
+
+    pUrlHelper->domainName = NULL;
+    pUrlHelper->fileName = NULL;
+    pUrlHelper->fileExt = NULL;
+
+    pUrlHelper->isDomainName = 0;
+    pUrlHelper->isFileName = 0;
+    pUrlHelper->isFileExt = 0;
+    pUrlHelper->result = UH_OK;
+
+    fillUrlHelper(pUrlHelper, url);
+
+    return pUrlHelper;
 }
 
 /**
- * Set the file name in UrlHelper
- * @param pUrlHelper
+ * Fill the fields of UrlHelper
+ * @param pUrlHelper : pointer of structure UrlHelper
+ * @param url : the current url
  */
-static void urlHelperSetFileName(UrlHelper *pUrlHelper) {
-    int length = 0;
-    char *absPath = NULL; // the absolute path of url begin to '/' of url after domain name
-    char *fileName = NULL; // the file name of url after the last '/' of url without parameters
-    char *optionalData = NULL; // the parameters add with path of url after '?'
+static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url) {
+    pUrlHelper->url = strMallocCpy(url, (int) strlen(url));
+    verifyPointer(pUrlHelper->url, "Problem malloc url in fillUrlHelper\n");
 
-    if (pUrlHelper->isDomainName == 1) {
-        length = getIndexAfterOccurStr(pUrlHelper->url, pUrlHelper->domainName);
-        absPath = pUrlHelper->url + length;
-
-        if (strrchr(absPath, '/') != NULL && strlen(absPath) > 1) {
-            fileName = strrchr(absPath, '/') + 1;
-            optionalData = strchr(fileName, '?');
-            length = optionalData != NULL ? (int) (optionalData - fileName) : (int) strlen(fileName);
-
-            pUrlHelper->fileName = strMallocCpy(fileName, length);
-            verifyPointer(pUrlHelper->fileName, "Problem to strMallocCpy fileName if UrlHelper\n");
-
-            pUrlHelper->isFileName = 1;
-        }
+    urlHelperSetDomainName(pUrlHelper);
+    if (pUrlHelper->result == UH_NAME_PB) {
+        return;
     }
+    urlHelperSetFileName(pUrlHelper);
+    urlHelperSetExtFile(pUrlHelper);
 }
 
 /**
@@ -94,68 +86,118 @@ static void urlHelperSetDomainName(UrlHelper *pUrlHelper) {
 }
 
 /**
- * Function to set ext file of file name in url
- * @param pHelper
+ * Set the file name in UrlHelper
+ * @param pUrlHelper
  */
-static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
-    char *extFile = NULL; // extension file in file name of url
+static void urlHelperSetFileName(UrlHelper *pUrlHelper) {
+    int length = 0;
+    char *absPath = NULL; // the absolute path of url begin to '/' of url after domain name
+    char *fileName = NULL; // the file name of url after the last '/' of url without parameters
+    char *optionalData = NULL; // the parameters add with path of url after '?'
 
-    if (pUrlHelper->isFileName == 1) {
-        extFile = strrchr(pUrlHelper->fileName, '.');
-        if (extFile != NULL && strlen(extFile) > 1) {
-            pUrlHelper->extFile = strMallocCpy(extFile + 1, (int) strlen(extFile));
-            verifyPointer(pUrlHelper->extFile, "Problem strMallocCpy exitFile UrlHelper\n");
+    if (pUrlHelper->isDomainName == 1) {
+        length = getIndexAfterOccurStr(pUrlHelper->url, pUrlHelper->domainName);
+        absPath = pUrlHelper->url + length;
 
-            pUrlHelper->isExtFile = 1;
+        if (strrchr(absPath, '/') != NULL && strlen(absPath) > 1) {
+            fileName = strrchr(absPath, '/') + 1;
+            optionalData = strchr(fileName, '?');
+            length = optionalData != NULL ? (int) (optionalData - fileName) : (int) strlen(fileName);
+
+            pUrlHelper->fileName = strMallocCpy(fileName, length);
+            verifyPointer(pUrlHelper->fileName, "Problem to strMallocCpy fileName if UrlHelper\n");
+
+            pUrlHelper->isFileName = 1;
         }
     }
 }
 
 /**
- * Fill the fields of UrlHelper
- * @param pUrlHelper : pointer of structure UrlHelper
- * @param url : the current url
+ * Function to set ext file of file name in url
+ * @param pHelper
  */
-static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url) {
-    pUrlHelper->url = strMallocCpy(url, (int) strlen(url));
-    verifyPointer(pUrlHelper->url, "Problem malloc url in fillUrlHelper\n");
+static void urlHelperSetExtFile(UrlHelper *pUrlHelper) {
+    char *fileExt = NULL; // file extensions in file name of url
 
-    urlHelperSetDomainName(pUrlHelper);
-    if (pUrlHelper->result == UH_NAME_PB) {
-        return;
+    if (pUrlHelper->isFileName == 1) {
+        fileExt = strrchr(pUrlHelper->fileName, '.');
+        if (fileExt != NULL && strlen(fileExt) > 1) {
+            if (isFileExtExistsInList(fileExt)) { // function in fileExtTypeMime to check if fileExt exists in list
+                pUrlHelper->fileExt = strMallocCpy(fileExt, (int) strlen(fileExt));
+                verifyPointer(pUrlHelper->fileExt, "Problem strMallocCpy exitFile UrlHelper\n");
+
+                pUrlHelper->isFileExt = 1;
+            }
+        }
     }
-    urlHelperSetFileName(pUrlHelper);
-    urlHelperSetExtFile(pUrlHelper);
 }
 
 /**
- * Initialize the structure UrlHelper to get few parts of url
- * @param url : current url to view
- * @return : pointer of structure UrlHelper
+ * Function to set file name when there are not indicated in URL
+ * @param pUrlHelper
+ * @param fileNameNoExt
+ * @param mimeType
+ * @return OK 1, ERROR 0, WARNING 2
  */
-UrlHelper *initUrlHelper(const char *url) {
-    UrlHelper *pUrlHelper = malloc(sizeof(UrlHelper));
-    verifyPointer(pUrlHelper, "Problem malloc in initUrlHelper\n");
+int setFileNameWhenNoOneInUrl(UrlHelper *pUrlHelper, const char *fileNameNoExt, char *mimeType) {
+    if (pUrlHelper->isFileName > 0) {
+        fprintf(stderr, "WARNING : the file name in already implemented, fileName : %s\n", pUrlHelper->fileName);
+        return 2;
+    }
 
-    pUrlHelper->domainName = NULL;
-    pUrlHelper->fileName = NULL;
-    pUrlHelper->extFile = NULL;
+    pUrlHelper->fileName = strMallocCpy(fileNameNoExt, (int)strlen(fileNameNoExt));
+    verifyPointer(pUrlHelper->fileName, "Problem strMallocCpy pUrlHelper->fileName in function setFileNameWhenNoOneInUrl\n");
+    pUrlHelper->isFileName = 1;
 
-    pUrlHelper->isDomainName = 0;
-    pUrlHelper->isFileName = 0;
-    pUrlHelper->isExtFile = 0;
-    pUrlHelper->result = UH_OK;
-
-    fillUrlHelper(pUrlHelper, url);
-
-    return pUrlHelper;
+    return setFileExtInFileName(pUrlHelper, mimeType);
 }
 
-int setExtFileInFileName(UrlHelper *pUrlHelper, char *mimeType) {
-    char *listMimeTypeExtFile = getListMimeTypeExtFile();
-    //printf("%s", listMimeTypeExtFile);
-    // TODO : add test in urlHelper and manage set ext file depend to mimeType
-    return 0;
+/**
+ * Function to set file extension in file name
+ * @param pUrlHelper : pointer of structure UrlHelper
+ * @param mimeType : the mime type to get file extension
+ * @return OK 1, ERROR 0, WARNING 2
+ */
+int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType) {
+    ListFData *pList = NULL;
+
+    if (pUrlHelper->isFileName == 0) {
+        fprintf(stderr, "ERROR : In function setFileExtInFileName, no file name, not possible de set file extension for URL : %s\n", pUrlHelper->url);
+        return 0;
+    }
+
+    if (pUrlHelper->isFileExt == 0) {
+        pList = fillListFData(mimeType, FILE_EXT);
+        if (pList != NULL && pList->numberData > 0) {
+            catUrlHelperFileNameAndFileExt(pUrlHelper, pList);
+        } else {
+            fprintf(stderr, "\nWARNING : Mime %s is not in list\n", mimeType);
+            return 2;
+        }
+    }
+
+    return 1;
+}
+
+/**
+ * Concat file name of UrlHelper and file extensions
+ * @param pUrlHelper
+ * @param pList
+ */
+static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList) {
+    char *temp = NULL;
+    int index = 0;
+
+    index = (pList->numberData > 1) ? 1 : 0;
+
+    pUrlHelper->fileExt = strMallocCpy(pList->data[index], (int)strlen(pList->data[index]));
+    verifyPointer(pUrlHelper->fileExt, "Problem strMallocCpy fileExt");
+    pUrlHelper->isFileExt = 1;
+
+    temp = pUrlHelper->fileName;
+    pUrlHelper->fileName = strMallocCat(temp, pUrlHelper->fileExt);
+
+    free(temp);
 }
 
 /**
@@ -171,9 +213,9 @@ void destroyUrlHelper(UrlHelper *pUrlHelper) {
         pUrlHelper->isFileName = 0;
         free(pUrlHelper->fileName);
     }
-    if (pUrlHelper->isExtFile == 1) {
-        pUrlHelper->isExtFile = 0;
-        free(pUrlHelper->extFile);
+    if (pUrlHelper->isFileExt == 1) {
+        pUrlHelper->isFileExt = 0;
+        free(pUrlHelper->fileExt);
     }
 
     free(pUrlHelper);

@@ -2,6 +2,27 @@
 // Created by masat on 16/10/2019.
 //
 #include "../headers/resource.h"
+static void initFieldsResource(Resource *pResource, int depth, int maxDepth);
+static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath);
+
+Resource *initResource(const char *url, int depth, int maxDepth) {
+    Resource *pResource = NULL;
+    if (maxDepth >= 0 && depth >= 0 && maxDepth >= depth) {
+        pResource = malloc(sizeof(Resource));
+        if (pResource == NULL) {
+            return NULL;
+        }
+        initFieldsResource(pResource, depth, maxDepth);
+        pResource->pRequest = initRequest(url);
+        if (pResource->pRequest == NULL) {
+            free(pResource);
+            return NULL;
+        }
+        pResource->isRequest = 1;
+    }
+
+    return pResource;
+}
 
 static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
     pResource->depth = depth;
@@ -26,63 +47,7 @@ static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
     pResource->links = NULL;
 }
 
-Resource *initResource(const char *url, int depth, int maxDepth) {
-    Resource *pResource = NULL;
-    if (maxDepth >= 0 && depth >= 0 && maxDepth >= depth) {
-        pResource = malloc(sizeof(Resource));
-        if (pResource == NULL) {
-            return NULL;
-        }
-        initFieldsResource(pResource, depth, maxDepth);
-        pResource->pRequest = initRequest(url);
-        if (pResource->pRequest == NULL) {
-            free(pResource);
-            return NULL;
-        }
-        pResource->isRequest = 1;
-    }
-
-    return pResource;
-}
-
-static int setOutputPath(Resource *pResource) {
-    UrlHelper *pUrlHelper = pResource->pRequest->pUrlHelper;
-    char *dirResourcePathWithSlash = NULL;
-    char *fileNameWithExt = NULL;
-
-    if (pUrlHelper->isExtFile == 1) {
-        dirResourcePathWithSlash = strMallocCat(pResource->dirResourcePath, "/");
-        pResource->outputPath = strMallocCat(dirResourcePathWithSlash, pUrlHelper->fileName);
-        verifyPointer(pResource->outputPath, "Problem malloc output file path in resource\n");
-    } else {
-        if (getExtFileByMimeType(pResource->pRequest)) { // fetch extension file by mime type search in conditions and list extFile / mimeType
-            fileNameWithExt = strMallocCat(pUrlHelper->fileName, pUrlHelper->extFile);
-            verifyPointer(fileNameWithExt, "Problem malloc string fileNameWithExt path in resource\n");
-
-            pResource->outputPath = strMallocCat(pResource->dirResourcePath, fileNameWithExt);
-            verifyPointer(pResource->outputPath, "Problem malloc outputPath in resource\n");
-            free(fileNameWithExt);
-        } else {
-            return 1;
-        }
-    }
-    pResource->isOutputPath = 1;
-    return 0;
-}
-
-static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath) {
-    int result = 0;
-    pResource->dirResourcePath = strMallocCpy(dirResourcePath, (int)strlen(dirResourcePath));
-    verifyPointer(pResource->dirResourcePath, "Problem malloc directory path of resource\n");
-
-    pResource->isDirResourcePath = 1;
-
-    result = setOutputPath(pResource);
-
-    return result;
-}
-
-int createFileResource(Resource *pResource, const char *dirResourcePath) {
+int createFileResource(Resource *pResource, const char *dirResourcePath, const char **filter, int depth) {
     int result;
 
     result = setDirAndOutputPath(pResource, dirResourcePath);
@@ -105,19 +70,47 @@ int createFileResource(Resource *pResource, const char *dirResourcePath) {
     return 0;
 }
 
+static int setOutputPath(Resource *pResource) {
+    UrlHelper *pUrlHelper = pResource->pRequest->pUrlHelper;
+    char *dirResourcePathWithSlash = strMallocCat(pResource->dirResourcePath, "/");;
+
+    if (pUrlHelper->isFileExt == 0 || pUrlHelper->isFileName == 0) {
+        if (getFileExtByMimeType(pResource->pRequest, pResource->dirResourcePath) != 1) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
+            return 1;
+        }
+    }
+    pResource->outputPath = strMallocCat(dirResourcePathWithSlash, pUrlHelper->fileName);
+    verifyPointer(pResource->outputPath, "Problem malloc output file path in resource\n");
+    pResource->isOutputPath = 1;
+
+    free(dirResourcePathWithSlash);
+
+    return 0;
+}
+
+static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath) {
+    int result = 0;
+    pResource->dirResourcePath = strMallocCpy(dirResourcePath, (int)strlen(dirResourcePath));
+    verifyPointer(pResource->dirResourcePath, "Problem malloc directory path of resource\n");
+
+    pResource->isDirResourcePath = 1;
+
+    result = setOutputPath(pResource);
+
+    return result;
+}
+
 void addResourceInfoInFile(Resource *pResource, const char *resourcesFile) {
 
 }
 
 void destroyResource(Resource *pResource) {
     if (pResource->isCreatedDate == 1) {
-        //freePointer((void**)pResource->createdDate, &pResource->isCreatedDate);
         free(pResource->createdDate);
         pResource->isCreatedDate = 0;
     }
 
     if (pResource->isOutputPath == 1) {
-        //freePointer((void**)pResource->outputPath, &pResource->isOutputPath);
         free(pResource->outputPath);
         pResource->isOutputPath = 0;
     }
@@ -125,7 +118,6 @@ void destroyResource(Resource *pResource) {
     if (pResource->isDirResourcePath == 1) {
         free(pResource->dirResourcePath);
         pResource->isDirResourcePath = 0;
-        //freePointer((void**)pResource->dirResourcePath, &pResource->isDirResourcePath);
     }
 
     if (pResource->isRequest == 1) {

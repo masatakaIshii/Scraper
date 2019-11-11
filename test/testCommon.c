@@ -136,6 +136,91 @@ static void testMkdirPNotEraseExitContent() {
     rmdir("tata");
 }
 
+static void testGetContentFile() {
+    char *test1 = "test.testons\n";
+    char *test2 = "tata\n"
+                  "tititontons\n";
+    char *result = NULL;
+    FILE *fp = fopen("test.txt", "wb");
+    verifyPointer(fp, "Problem open file in testGetContentFile\n");
+
+    fprintf(fp, "%s", test1);
+    fclose(fp);
+
+    result = getContentInFile("test.txt", "rb");
+    CU_ASSERT_EQUAL(strlen(result), strlen(test1));
+    CU_ASSERT_STRING_EQUAL(result, test1);
+    free(result);
+
+    result = getContentInFile("test.txt", "a");
+    CU_ASSERT_PTR_NULL_FATAL(result);
+    result = getContentInFile("test.txt", "w");
+    CU_ASSERT_PTR_NULL_FATAL(result);
+    result = getContentInFile("tonton.txt", "r");
+    CU_ASSERT_PTR_NULL_FATAL(result);
+
+    fp = fopen("tonton.txt", "wb");
+    verifyPointer(fp, "Problem open file tonton.txt\n");
+
+    fwrite(test2, sizeof(char), strlen(test2), fp);
+    fclose(fp);
+
+    result = getContentInFile("tonton.txt", "rb");
+    CU_ASSERT_EQUAL(strlen(result), strlen(test2));
+    CU_ASSERT_STRING_EQUAL(result, test2);
+    free(result);
+    remove("test.txt");
+    remove("tonton.txt");
+}
+
+static void testGetNumberOccurrenceInStr() {
+    CU_ASSERT_EQUAL(getNbrOccurInStr("tata", "ton"), 0);
+    CU_ASSERT_EQUAL(getNbrOccurInStr("tatata", "ta"), 3);
+    CU_ASSERT_EQUAL(getNbrOccurInStr("text:html", ","), 0);
+    CU_ASSERT_EQUAL(getNbrOccurInStr(".html,.htm",","), 1);
+    CU_ASSERT_EQUAL(getNbrOccurInStr("tata;toto;titi",";"), 2);
+}
+
+static void freeArrayStr(char **arrayStr, int count) {
+    int i;
+    for (i = 0; i < count; i++) {
+        free(arrayStr[i]);
+    }
+
+    free(arrayStr);
+};
+
+static void testStrSplit() {
+    int count = 0;
+    char **result = strSplit("tata;toto", ";", &count);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(count, 2);
+    CU_ASSERT_STRING_EQUAL(result[0], "tata");
+    CU_ASSERT_STRING_EQUAL(result[1], "toto");
+    freeArrayStr(result, count);
+    count = 0;
+
+    result = strSplit("", "dada", &count);
+    CU_ASSERT_PTR_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(count, 0);
+
+    count = 0;
+    result = strSplit("text/javascript", ",", &count);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(count, 1);
+    CU_ASSERT_STRING_EQUAL(result[0], "text/javascript");
+    freeArrayStr(result, count);
+
+    count = 0;
+    result = strSplit(".html,.htm,.ntm", ",", &count);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(count, 3);
+    CU_ASSERT_STRING_EQUAL(result[0], ".html");
+    CU_ASSERT_STRING_EQUAL(result[1], ".htm");
+    CU_ASSERT_STRING_EQUAL(result[2], ".ntm");
+    freeArrayStr(result, count);
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
@@ -145,7 +230,10 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat)) ||
         (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer)) ||
         (NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories)) ||
-        (NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent))) {
+        (NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent)) ||
+        (NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile)) ||
+        (NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr)) ||
+        (NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit))) {
 
         CU_cleanup_registry();
         return CU_get_error();
