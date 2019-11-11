@@ -1,6 +1,10 @@
-//
-// Created by masat on 10/11/2019.
-//
+/*
+ *  Filename    : fileNameManager.h
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : Service to manage file names contain in 'all_files_names.txt' to give unique file name if the resource don't have in URL
+ */
 
 #ifndef SCRAPER_FILENAMESEARCHER_H
 #define SCRAPER_FILENAMESEARCHER_H
