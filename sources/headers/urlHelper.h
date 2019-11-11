@@ -34,8 +34,8 @@ int setFileNameWhenNoOneInUrl(UrlHelper *pUrlHelper, const char *fileNameNoExt, 
 /**
  * Function to set file extension in file name
  * @param pUrlHelper : pointer of structure UrlHelper
- * @param mimeType
- * @return
+ * @param mimeType : the mime type to get file extension
+ * @return OK 1, ERROR 0, WARNING 2
  */
 int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType);
 
