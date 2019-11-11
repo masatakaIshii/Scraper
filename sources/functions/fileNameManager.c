@@ -16,14 +16,14 @@ static int writeFileNameInListFileNames(const char *filesNamesPath, const char *
 /**
  * Function to get unique name for resource that not have file name in URL
  * DEBT : fileNameNoExt is for manage the case when 2 different url have the same file name, now it is not manage
- * @param dirPath : the directory path
+ * @param dirResourcePath : the directory path
  * @param fileNameNoExt : the file to add "_sc_n" where 'n' is number that is available
  * @return OK newFileName : unique file name,
  * ERROR NULL
  */
-char *getAvailableFileName(const char *dirPath, const char *fileNameNoExt) {
+char *getAvailableFileName(const char *dirResourcePath, const char *fileNameNoExt) {
     char *newFileName = NULL;
-    char *filesNamesPath = strMallocCat(dirPath, ALL_FILES_NAMES);
+    char *filesNamesPath = strMallocCat(dirResourcePath, ALL_FILES_NAMES);
 
     if (access(filesNamesPath, F_OK) != -1) {
         newFileName = createAllFilesNames(filesNamesPath);
