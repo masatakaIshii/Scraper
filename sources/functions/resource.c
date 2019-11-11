@@ -87,7 +87,7 @@ static int setOutputPath(Resource *pResource) {
             }
 
         }
-        if (getFileExtByMimeType(pResource->pRequest) == 1) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
+        if (getFileExtByMimeType(pResource->pRequest, pResource->dirResourcePath) == 1) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
             fileNameWithExt = strMallocCat(pUrlHelper->fileName, pUrlHelper->fileExt);
             verifyPointer(fileNameWithExt, "Problem malloc string fileNameWithExt path in resource\n");
 

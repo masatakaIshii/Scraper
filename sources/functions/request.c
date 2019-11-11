@@ -13,7 +13,7 @@ static void setHandle(Request *pRequest);
 static void setOptionsCurlSaveFile(Request *pRequest);
 static int writeDataInNothing(void *ptr, int size, int numberElements, char *str);
 static int fetchResponseInfo(Request *pRequest, CURLcode result);
-static int setContentType(Request *pRequest);
+static int setContentType(Request *pRequest, const char *dirPath);
 
 static void setOptionsCurlGetMimeType(Request *pRequest);
 
@@ -187,7 +187,7 @@ static int fetchResponseInfo(Request *pRequest, CURLcode result) {
  * @param pRequest
  * @return
  */
-int getFileExtByMimeType(Request *pRequest) {
+int getFileExtByMimeType(Request *pRequest, const char *dirPath) {
     // TODO : get the file extension by mime type when the file extension is not in url
     //fprintf(stderr, "The function to get file extention by mime type is not implemented, maybe soon\n");
     int result;
@@ -196,7 +196,7 @@ int getFileExtByMimeType(Request *pRequest) {
     setOptionsCurlGetMimeType(pRequest);
     result = curl_easy_perform(pRequest->pHandle);
     if (result == CURLE_OK) {
-        result = setContentType(pRequest);
+        result = setContentType(pRequest, dirPath);
     } else {
         clearPHandle(pRequest->pHandle);
         return (int) result;
@@ -205,14 +205,20 @@ int getFileExtByMimeType(Request *pRequest) {
     return result;
 }
 
-static int setContentType(Request *pRequest) {
-    int result;
+static int setContentType(Request *pRequest, const char *dirPath) {
+    int result = 0;
 
     result = saveContentType(pRequest);
     if (result == CURLE_OK) {
         if (pRequest->isContentType == 1) {
             if (pRequest->pUrlHelper->isFileName == 1) {
                 result = setFileExtInFileName(pRequest->pUrlHelper, pRequest->contentType);
+            } else {
+                pRequest->pUrlHelper->fileName = getAvailableFileName(dirPath, NULL);
+                if (pRequest->pUrlHelper->fileName == NULL) {
+                    return 0;
+                }
+                pRequest->pUrlHelper->isFileName = 1;
             }
         }
     }

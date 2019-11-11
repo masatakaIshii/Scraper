@@ -12,7 +12,7 @@
 #include <curl/curl.h>
 #include "common.h"
 #include "urlHelper.h"
-
+#include "../headers/fileNameManager.h"
 
 /**
  * Initialise Request structure
@@ -28,7 +28,7 @@ Request *initRequest(const char *url);
  * 1 : Success to set extention file in structure UrlHelper
  * 0 : not set because of not found extention file depend to mime type
  */
-int getFileExtByMimeType(Request *pRequest);
+int getFileExtByMimeType(Request *pRequest, const char *dirPath);
 
 /**
  * Function to save request GET content in file
