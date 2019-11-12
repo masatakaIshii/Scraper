@@ -54,7 +54,9 @@ char *strReallocCat(char *currentStr, const char *strToAdd) {
     if (currentStr == NULL) {
         return NULL;
     }
-
+    if (lengthCurrentStr == 0) {
+        memset(currentStr, 0, lengthCurrentStr + lengthStrToAdd + 1);
+    }
     if (strToAdd != NULL) {
         strcat(currentStr, strToAdd);
     }

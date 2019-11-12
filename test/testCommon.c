@@ -245,6 +245,7 @@ static void testStrReallocCat() {
     test = strReallocCat(test, NULL);
     CU_ASSERT_EQUAL(strlen(test), strlen("test"));
     CU_ASSERT_STRING_EQUAL(test, "test");
+    free(test);
 }
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
