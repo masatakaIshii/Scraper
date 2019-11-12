@@ -21,7 +21,8 @@
 #include "../sources/headers/app.h"
 #include "../sources/headers/fileExtTypeMime.h"
 #include "../sources/headers/fileNameManager.h"
-
+#include "../sources/headers/urlSearcher.h"
+#include "../sources/headers/listArray.h"
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite);
 CU_ErrorCode requestSpec(CU_pSuite pSuite) ;
@@ -31,5 +32,7 @@ CU_ErrorCode sessionSpec(CU_pSuite pSuite);
 CU_ErrorCode resourceSpec(CU_pSuite pSuite);
 CU_ErrorCode fileExtTypeMimeSpec(CU_pSuite pSuite);
 CU_ErrorCode fileNameManagerSpec(CU_pSuite pSuite);
+CU_ErrorCode urlSearcherSpec(CU_pSuite pSuite);
+CU_ErrorCode listArraySpec(CU_pSuite pSuite);
 
 #endif //SCRAPER_TESTREQUEST_H
