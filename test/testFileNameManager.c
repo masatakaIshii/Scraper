@@ -61,10 +61,9 @@ static void testIfFileIsCreatedInDirectories() {
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_STRING_EQUAL(result, "index_sc_0");
     CU_ASSERT_NOT_EQUAL(access(fileNamesPath, F_OK), -1);
-
-    free(fileNamesPath);
     unlink(fileNamesPath);
     rmdir("toto");
+    free(fileNamesPath);
 }
 
 CU_ErrorCode fileNameManagerSpec(CU_pSuite pSuite) {
