@@ -2,3 +2,88 @@
 // Created by masat on 12/11/2019.
 //
 
+#include "test.h"
+
+static ListStr *listStr = NULL;
+
+static void testInitListArray() {
+    listStr = initListStr(5);
+
+    CU_ASSERT_PTR_NOT_NULL_FATAL(listStr);
+    CU_ASSERT_EQUAL(listStr->capacity, 5);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(listStr->arrStr);
+
+    destroyListStr(listStr);
+}
+
+static void testAddStringInListArray() {
+    listStr = initListStr(5);
+
+    listStrAdd(listStr, "toto");
+    CU_ASSERT_EQUAL(listStr->count, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(listStr->arrStr[0]);
+    CU_ASSERT_STRING_EQUAL(listStr->arrStr[0], "toto");
+
+    destroyListStr(listStr);
+}
+
+static void testExceedCapacityMallocAgain() {
+    listStr = initListStr(1);
+
+    listStrAdd(listStr, "toto");
+    listStrAdd(listStr, "tata");
+    listStrAdd(listStr, "tonton");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(listStr->arrStr[1]);
+
+    CU_ASSERT_EQUAL(listStr->count, 3);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(listStr->arrStr[2]);
+    CU_ASSERT_STRING_EQUAL(listStr->arrStr[1], "tata");
+    CU_ASSERT_STRING_EQUAL(listStr->arrStr[2], "tonton");
+    CU_ASSERT(listStr->count <= listStr->capacity);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(listStr->arrStr[0]);
+    CU_ASSERT_STRING_EQUAL(listStr->arrStr[0], "toto");
+
+    destroyListStr(listStr);
+}
+
+static void testGetStringByIndex() {
+    listStr = initListStr(5);
+
+    if (!listStrAdd(listStr, "tata")) {
+        fprintf(stderr, "Problem to add in listStr");
+        return;
+    }
+
+    listStrAdd(listStr, "tonton");
+    listStrAdd(listStr, "testons");
+    listStrAdd(listStr, "testez");
+
+    CU_ASSERT_STRING_EQUAL(listStrGet(listStr, 3), "testez");
+    CU_ASSERT_STRING_EQUAL(listStrGet(listStr, 1), "tonton");
+    CU_ASSERT_STRING_EQUAL(listStrGet(listStr, 0), "tata");
+    CU_ASSERT_STRING_EQUAL(listStrGet(listStr, 2), "testons");
+
+    listStrAdd(listStr, "tonton");
+    listStrAdd(listStr, "testons");
+    listStrAdd(listStr, "testez");
+
+    CU_ASSERT(listStr->capacity > 5);
+    CU_ASSERT(listStr->capacity >= listStr->count);
+
+    destroyListStr(listStr);
+}
+
+CU_ErrorCode listArraySpec(CU_pSuite pSuite) {
+    pSuite = CU_add_suite("testListArray", NULL, NULL);
+
+    if (NULL == CU_add_test(pSuite, "testInitListArray", testInitListArray) ||
+        NULL == CU_add_test(pSuite, "testAddStringInListArray", testAddStringInListArray) ||
+        NULL == CU_add_test(pSuite, "testExceedCapacityMallocAgain", testExceedCapacityMallocAgain) ||
+        NULL ==CU_add_test(pSuite, "testGetStringByIndex", testGetStringByIndex)){
+
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    return CU_get_error();
+}
