@@ -63,6 +63,13 @@ int getNbrOccurInStr(const char *str, const char *occur);
 char **strSplit(const char *str, const char *delimiter, int *pCount);
 
 /**
+ * Free array of string
+ * @param arrayStr : array of string to free
+ * @param count : number of string in arrayStr
+ */
+void freeArrayString(char **arrayStr, int count);
+
+/**
  * get index of array of char strCheck after the occurrence of string strOccur
  * @param strCheck : string to search if there are occurrence
  * @param strOccur : string correspond to occurrence

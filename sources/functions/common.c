@@ -152,6 +152,20 @@ char **strSplit(const char *str, const char *delimiter, int *pCount) {
 }
 
 /**
+ * Free array of string
+ * @param arrayStr : array of string to free
+ * @param count : number of string in arrayStr
+ */
+void freeArrayString(char **arrayStr, int count) {
+    int i = 0;
+    for (i = 0; i < count; i++) {
+        free(arrayStr[i]);
+    }
+
+    free(arrayStr);
+}
+
+/**
  * Get index of array of char strCheck after the occurrence of string strOccur
  * @param strCheck : string to search if there are occurrence
  * @param strOccur : string correspond to occurrence
