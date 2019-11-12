@@ -31,7 +31,8 @@ char *strMallocCpy(const char *str, int length);
  * Function to realloc currentStr with string to add and concat
  * @param currentStr : current string to realloc
  * @param strToAdd : string to add in current string
- * @return currentStr : currentString with string that is add
+ * @return OK : currentStr : currentString with string that is add, <br>
+ * ERROR : NULL
  */
 char *strReallocCat(char *currentStr, const char *strToAdd);
 

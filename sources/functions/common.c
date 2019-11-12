@@ -43,14 +43,17 @@ char *strMallocCat(const char *str1, const char *str2) {
  * Function to realloc currentStr with string to add and concat
  * @param currentStr : current string to realloc
  * @param strToAdd : string to add in current string
- * @return currentStr : currentString with string that is add
+ * @return OK : currentStr : currentString with string that is add, <br>
+ * ERROR : NULL
  */
 char *strReallocCat(char *currentStr, const char *strToAdd) {
     int lengthCurrentStr = (currentStr != NULL) ? (int)strlen(currentStr) : 0;
     int lengthStrToAdd = (strToAdd != NULL) ? (int)strlen(strToAdd) : 0;
 
     currentStr = realloc(currentStr, lengthCurrentStr + lengthStrToAdd + 1);
-    verifyPointer(currentStr, "Problem calloc currentStr of strReallocCat in common.c\n");
+    if (currentStr == NULL) {
+        return NULL;
+    }
 
     if (strToAdd != NULL) {
         strcat(currentStr, strToAdd);
