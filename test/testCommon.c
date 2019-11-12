@@ -177,8 +177,8 @@ static void testGetNumberOccurrenceInStr() {
     CU_ASSERT_EQUAL(getNbrOccurInStr("tata", "ton"), 0);
     CU_ASSERT_EQUAL(getNbrOccurInStr("tatata", "ta"), 3);
     CU_ASSERT_EQUAL(getNbrOccurInStr("text:html", ","), 0);
-    CU_ASSERT_EQUAL(getNbrOccurInStr(".html,.htm",","), 1);
-    CU_ASSERT_EQUAL(getNbrOccurInStr("tata;toto;titi",";"), 2);
+    CU_ASSERT_EQUAL(getNbrOccurInStr(".html,.htm", ","), 1);
+    CU_ASSERT_EQUAL(getNbrOccurInStr("tata;toto;titi", ";"), 2);
 }
 
 static void freeArrayStr(char **arrayStr, int count) {
@@ -221,6 +221,32 @@ static void testStrSplit() {
     freeArrayStr(result, count);
 }
 
+static void testStrReallocCat() {
+    char *test = calloc(strlen("test") + 1, sizeof(char));
+    verifyPointer(test, "Problem to calloc test in testStrReallocCat in testCommon.c\n");
+
+    strcpy(test, "test");
+    test = strReallocCat(test, "ons");
+    CU_ASSERT_EQUAL(strlen(test), strlen("testons"));
+    CU_ASSERT_STRING_EQUAL(test, "testons");
+
+    test = strReallocCat(test, " son efficacite");
+    CU_ASSERT_EQUAL(strlen(test), strlen("testons son efficacite"));
+    CU_ASSERT_STRING_EQUAL(test, "testons son efficacite");
+
+    free(test);
+
+    test = NULL;
+    test = strReallocCat(test, "test");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(test);
+    CU_ASSERT_EQUAL(strlen(test), strlen("test"));
+    CU_ASSERT_STRING_EQUAL(test, "test");
+
+    test = strReallocCat(test, NULL);
+    CU_ASSERT_EQUAL(strlen(test), strlen("test"));
+    CU_ASSERT_STRING_EQUAL(test, "test");
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
@@ -228,6 +254,7 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         (NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy)) ||
         (NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate)) ||
         (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat)) ||
+        (NULL == CU_add_test(pSuite, "testStrReallocCat", testStrReallocCat)) ||
         (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer)) ||
         (NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories)) ||
         (NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent)) ||

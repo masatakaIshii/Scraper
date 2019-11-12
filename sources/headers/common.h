@@ -27,6 +27,12 @@ void verifyPointer(void *pointer, const char *message);
  */
 char *strMallocCpy(const char *str, int length);
 
+/**
+ * Function to realloc currentStr with string to add and concat
+ * @param currentStr : current string to realloc
+ * @param strToAdd : string to add in current string
+ * @return currentStr : currentString with string that is add
+ */
 char *strReallocCat(char *currentStr, const char *strToAdd);
 
 /**
