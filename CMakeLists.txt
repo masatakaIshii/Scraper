@@ -17,7 +17,9 @@ set(SRCS
     sources/functions/common.c
     sources/functions/urlHelper.c
     sources/functions/fileExtTypeMime.c
-    sources/functions/fileNameManager.c)
+    sources/functions/fileNameManager.c
+    sources/functions/urlSearcher.c
+    sources/functions/listArray.c)
 
 set(HEADERS
     sources/headers/app.h
@@ -32,7 +34,9 @@ set(HEADERS
     sources/headers/common.h
     sources/headers/urlHelper.h
     sources/headers/fileExtTypeMime.h
-    sources/headers/fileNameManager.h)
+    sources/headers/fileNameManager.h
+    sources/headers/urlSearcher.h
+    sources/headers/listArray.h)
 
 set(TESTSRCS
     test/testShare.c
@@ -45,12 +49,16 @@ set(TESTSRCS
     test/testSession.c
     test/testUrlHelper.c
     test/testFileExtTypeMime.c
-    test/testFileNameManager.c)
+    test/testFileNameManager.c
+    test/testUrlSearcher.c
+    test/testPageUrlDummies.c
+    test/testListArray.c)
 
 set(TESTHEADERS
     test/testShare.h
     test/testDummiesAction.h
-    test/test.h)
+    test/test.h
+    test/testPageUrlDummies.h)
 
 add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
 add_executable(TestScraper test/main.c ${SRCS} ${TESTSRCS} ${HEADERS} ${TESTHEADERS})
