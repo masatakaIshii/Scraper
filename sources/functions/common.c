@@ -39,6 +39,10 @@ char *strMallocCat(const char *str1, const char *str2) {
     return newStr;
 }
 
+char *strReallocCat(char *currentStr, const char *strToAdd) {
+
+}
+
 /**
  * Malloc and copy string with precise length
  * @param str

@@ -27,6 +27,8 @@ void verifyPointer(void *pointer, const char *message);
  */
 char *strMallocCpy(const char *str, int length);
 
+char *strReallocCat(char *currentStr, const char *strToAdd);
+
 /**
  * malloc and copy string with precise length
  * @param str
