@@ -9,12 +9,12 @@ static char **arrayUrl = NULL;
 static int count = 0;
 
 static void testGetUrlInPage() {
-    const char *pageUrl1 = getPageWithOneUrl();
-    arrayUrl = getAllUrlsInPage("https://www.google.com", "text/html",pageUrl1, &count);
+    char *pageUrl1 = getContentInFile("build/testPage.html", "rb");
+    arrayUrl = getAllUrlsInPage("https://www.google.com", "text/html", pageUrl1, &count);
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(arrayUrl);
     CU_ASSERT_EQUAL(count, 1);
-    CU_ASSERT_STRING_EQUAL(arrayUrl[0], "https://static.xx.fbcdn.net/rsrc.php/v3/yr/l/0,cross/CF6sxvstdG9.css?_nc_x=lw9L9KYJoRa");
+    CU_ASSERT_STRING_EQUAL(arrayUrl[0], "https://www.iana.org/domains/example");
 
     freeArrayString(arrayUrl, count);
     arrayUrl = NULL;

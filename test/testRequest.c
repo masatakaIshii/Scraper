@@ -169,7 +169,7 @@ static void checkContentType() {
     char contentType2[100];
     char contentType3[100];
 
-    pRequest = initRequest("https://yahoo.com/");
+    pRequest = initRequest("https://aurelia.io/docs/tutorials/creating-a-contact-manager#setting-up-your-machine");
     CU_ASSERT(saveRequestInFile(pRequest, filePath4) == 0);
     (pRequest->contentType != NULL) ? strcpy(contentType1, pRequest->contentType) : strcpy(contentType1, "");
     CU_ASSERT_EQUAL(strlen(contentType1), strlen("text/html"));
