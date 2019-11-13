@@ -6,7 +6,8 @@
 #define SCRAPER_URLSEARCHER_H
 
 #include <stdio.h>
+#include "../headers/listArray.h"
 
-char **getAllUrlsInPage(const char *UrlNoRes, const char *contentType, const char *page, int *count);
+char **getAllUrlsInPage(const char *urlNoRes, const char *contentType, const char *page, int *count);
 
 #endif //SCRAPER_URLSEARCHER_H
