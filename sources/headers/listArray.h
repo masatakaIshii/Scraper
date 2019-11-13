@@ -16,7 +16,7 @@ typedef struct ListString {
     int count;
 } ListStr;
 
-ListStr *initListStr(int stepCapacity);
+ListStr *initListStr(int initCapacity);
 
 int listStrAdd(ListStr *ListStr, const char *strToAdd);
 

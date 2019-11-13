@@ -3,18 +3,23 @@
 //
 
 #include "../headers/listArray.h"
-
 static int expandListStrCapacity(ListStr *listStr);
 
-ListStr *initListStr(int stepCapacity) {
+/**
+ * Initialize ListStr structure that represents list of string
+ * @param initCapacity : init capacity that grown * 2 when this is exceed
+ * @return OK listStr : pointer of list of string, ERROR NULL
+ */
+ListStr *initListStr(int initCapacity) {
     ListStr *listStr = malloc(sizeof(ListStr));
     if (listStr == NULL) {
         return NULL;
     }
-    listStr->capacity = stepCapacity;
+    listStr->capacity = initCapacity;
     listStr->count = 0;
-    listStr->arrStr = malloc(sizeof(char *) * listStr->capacity);
+    listStr->arrStr = (listStr->capacity > 0) ? malloc(sizeof(char *) * listStr->capacity) : NULL;
     if (listStr->arrStr == NULL) {
+        fprintf(stderr, "ERROR in initListStr : the capacity have to be more than 0\n");
         free(listStr);
         return NULL;
     }
@@ -22,6 +27,13 @@ ListStr *initListStr(int stepCapacity) {
     return listStr;
 }
 
+/**
+ * Add string in list
+ * @param listStr : pointer of structure ListStr
+ * @param strToAdd : string to add in list
+ * @return OK 1 : string is add to the list,<br>
+ * ERROR 0 : problem to add and listStr is destroy
+ */
 int listStrAdd(ListStr *listStr, const char *strToAdd) {
 
     if (listStr->count == listStr->capacity) {
@@ -43,6 +55,12 @@ int listStrAdd(ListStr *listStr, const char *strToAdd) {
     return 1;
 }
 
+/**
+ * Expand the list of string when the capacity is exceed
+ * @param listStr : the pointer of structure ListStr
+ * @return OK 1 : the capacity of list is expand, <br>
+ * ERROR 0 : problem to expand the capacity and list is destroy
+ */
 static int expandListStrCapacity(ListStr *listStr) {
     int i;
     char **newArrStr = NULL;
@@ -69,8 +87,12 @@ static int expandListStrCapacity(ListStr *listStr) {
 }
 
 const char* listStrGet(ListStr *listStr, int index) {
-    //char *string = calloc(strlen(listStr->arrStr[index]), sizeof(char));
-    return listStr->arrStr[index];
+    if (index >= listStr->count) {
+        fprintf(stderr, "ERROR in listStrGet : the value of index %d is to high, you have to choose unsigned int until %d\n", index, listStr->count - 1);
+        return NULL;
+    }
+
+    return  listStr->arrStr[index];
 }
 
 void destroyListStr(ListStr *ListStr) {

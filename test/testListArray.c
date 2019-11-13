@@ -71,15 +71,27 @@ static void testGetStringByIndex() {
     CU_ASSERT(listStr->capacity >= listStr->count);
 
     destroyListStr(listStr);
+    listStr = NULL;
+}
+
+static void testListStrErrorCases() {
+    listStr = initListStr(0);
+    CU_ASSERT_PTR_NULL_FATAL(listStr);
+
+    listStr = initListStr(1);
+    listStrAdd(listStr, "toto");
+    CU_ASSERT_PTR_NULL_FATAL(listStrGet(listStr, 100));
+    destroyListStr(listStr);
 }
 
 CU_ErrorCode listArraySpec(CU_pSuite pSuite) {
-    pSuite = CU_add_suite("testListArray", NULL, NULL);
+    pSuite = CU_add_suite("testListArray", initManageStderr, cleanManageStderr);
 
     if (NULL == CU_add_test(pSuite, "testInitListArray", testInitListArray) ||
         NULL == CU_add_test(pSuite, "testAddStringInListArray", testAddStringInListArray) ||
         NULL == CU_add_test(pSuite, "testExceedCapacityMallocAgain", testExceedCapacityMallocAgain) ||
-        NULL ==CU_add_test(pSuite, "testGetStringByIndex", testGetStringByIndex)){
+        NULL == CU_add_test(pSuite, "testGetStringByIndex", testGetStringByIndex) ||
+        NULL == CU_add_test(pSuite, "testListStrErrorCases", testListStrErrorCases)){
 
         CU_cleanup_registry();
         return CU_get_error();
