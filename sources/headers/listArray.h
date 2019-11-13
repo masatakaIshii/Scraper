@@ -24,4 +24,6 @@ const char* listStrGet(ListStr *listStr, int index);
 
 void destroyListStr(ListStr *listStr);
 
+char **destroyListStrAndReturnArrStr(ListStr *listStr, int *count);
+
 #endif //SCRAPER_LISTARRAY_H

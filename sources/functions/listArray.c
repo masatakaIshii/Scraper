@@ -95,12 +95,44 @@ const char* listStrGet(ListStr *listStr, int index) {
     return  listStr->arrStr[index];
 }
 
-void destroyListStr(ListStr *ListStr) {
+void destroyListStr(ListStr *listStr) {
     int i;
 
-    for (i = 0; i < ListStr->count; i++) {
-        free(ListStr->arrStr[i]);
+    for (i = 0; i < listStr->count; i++) {
+        free(listStr->arrStr[i]);
     }
-    free(ListStr->arrStr);
-    free(ListStr);
+    free(listStr->arrStr);
+    free(listStr);
+}
+
+char **copyArrStr(char **arrStr, int count) {
+    int i;
+    char **newArrStr = malloc(sizeof(char*) * count);
+    if (newArrStr == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        newArrStr[i] = calloc(strlen(arrStr[i]) + 1, sizeof(char));
+        if (newArrStr[i] == NULL) {
+            freeArrayString(newArrStr, i);
+            return NULL;
+        }
+        strcpy(newArrStr[i], arrStr[i]);
+    }
+
+    return newArrStr;
+}
+
+char **destroyListStrAndReturnArrStr(ListStr *listStr, int *count) {
+    char **arrStr = copyArrStr(listStr->arrStr, listStr->count);
+    if (arrStr == NULL) {
+        return NULL;
+    }
+
+    *count = listStr->count;
+
+    destroyListStr(listStr);
+
+    return arrStr;
 }
