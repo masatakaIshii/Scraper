@@ -40,6 +40,27 @@ static void testCheckDomainName() {
     destroyUrlHelper(pUrlHelper);
 }
 
+static void testAbsPath() {
+    pUrlHelper = initUrlHelper("http://google.com/");
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 0);
+    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->absPath);
+
+    pUrlHelper = initUrlHelper("http://google.fr/translate");
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/translate");
+
+    pUrlHelper = initUrlHelper("https://www.aol.org/main/about/information");
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/main/about/information");
+
+    pUrlHelper = initUrlHelper("https://www.deezer.com/search/hardtech/sample.mp3");
+        CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/search/hardtech");
+}
+
 static void testCheckFileName() {
     pUrlHelper = initUrlHelper("http://google.com/tata.txt");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
@@ -159,13 +180,14 @@ static void testSetNewFileNameWhenIsNotInUrl() {
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testUrlHelper", initManageStderr, cleanManageStderr);
 
-    if ((NULL == CU_add_test(pSuite, "testCheckUrl", testCheckUrl)) ||
-        (NULL == CU_add_test(pSuite, "testCheckDomainName", testCheckDomainName)) ||
-        (NULL == CU_add_test(pSuite, "testCheckFileName", testCheckFileName)) ||
-        (NULL == CU_add_test(pSuite, "testCheckFileExt", testCheckFileExt)) ||
-        (NULL == CU_add_test(pSuite, "testCheckFileNotExit", testCheckFileNotExit)) ||
-        (NULL == CU_add_test(pSuite, "testSetFileExtInFileName", testSetFileExtInFileName)) ||
-        (NULL == CU_add_test(pSuite, "testSetNewFileNameWhenIsNotInUrl", testSetNewFileNameWhenIsNotInUrl))) {
+    if (NULL == CU_add_test(pSuite, "testCheckUrl", testCheckUrl) ||
+        NULL == CU_add_test(pSuite, "testCheckDomainName", testCheckDomainName) ||
+        NULL == CU_add_test(pSuite, "testAbsPath", testAbsPath) ||
+        NULL == CU_add_test(pSuite, "testCheckFileName", testCheckFileName) ||
+        NULL == CU_add_test(pSuite, "testCheckFileExt", testCheckFileExt) ||
+        NULL == CU_add_test(pSuite, "testCheckFileNotExit", testCheckFileNotExit) ||
+        NULL == CU_add_test(pSuite, "testSetFileExtInFileName", testSetFileExtInFileName) ||
+        NULL == CU_add_test(pSuite, "testSetNewFileNameWhenIsNotInUrl", testSetNewFileNameWhenIsNotInUrl)) {
 
         CU_cleanup_registry();
         return CU_get_error();

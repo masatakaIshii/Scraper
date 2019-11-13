@@ -59,9 +59,11 @@ typedef enum UrlHelperResponse {
 typedef struct UrlHelper {
     char *url;
     char *domainName;
+    char *absPath;
     char *fileName;
     char *fileExt;
     int isDomainName;
+    int isAbsPath;
     int isFileName;
     int isFileExt;
     UHRes result;
