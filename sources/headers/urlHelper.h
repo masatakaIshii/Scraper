@@ -18,7 +18,8 @@
 /**
  * Initialize the structure UrlHelper to get few parts of url
  * @param url : current url to view
- * @return : pointer of structure UrlHelper
+ * @return OK pUrlHerper : pointer of structure UrlHelper,<br>
+ * ERROR NULL
  */
 UrlHelper *initUrlHelper(const char *url);
 
