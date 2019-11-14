@@ -8,9 +8,7 @@ static FILE *fpError = NULL;
 
 static void testCheckUrl() {
     pUrlHelper = initUrlHelper("h.ttoigejorg/ijhifez///iufzheiuf.hziefu");
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->url, "h.ttoigejorg/ijhifez///iufzheiuf.hziefu");
-    CU_ASSERT(pUrlHelper->result == UH_NAME_PB);
-    destroyUrlHelper(pUrlHelper);
+    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper);
 
     pUrlHelper = initUrlHelper("http://www.google.com");
     CU_ASSERT_STRING_EQUAL(pUrlHelper->url, "http://www.google.com");
@@ -32,8 +30,7 @@ static void testCheckDomainName() {
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://fzieoifjzoeif");
-    CU_ASSERT(pUrlHelper->isDomainName != 1);
-    destroyUrlHelper(pUrlHelper);
+    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper);
 
     pUrlHelper = initUrlHelper("http://www.toto.titi.org/tonton.png");
     CU_ASSERT_STRING_EQUAL(pUrlHelper->domainName, "www.toto.titi.org");
@@ -44,21 +41,38 @@ static void testAbsPath() {
     pUrlHelper = initUrlHelper("http://google.com/");
     CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 0);
     CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->absPath);
+    destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("http://google.fr/translate");
     CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/translate");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/translate/");
+    destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://www.aol.org/main/about/information");
     CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/main/about/information");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/main/about/information/");
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://www.deezer.com/search/hardtech?oijzeofijzo&oijzefoij&oijoirfmoer");
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/search/hardtech/");
+    destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://www.deezer.com/search/hardtech/sample.mp3");
-        CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/search/hardtech");
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/search/hardtech/");
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("https://www.example.com/example.html");
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_EQUAL(strlen(pUrlHelper->absPath), 1);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/");
+    destroyUrlHelper(pUrlHelper);
 }
 
 static void testCheckFileName() {
@@ -87,8 +101,8 @@ static void testCheckFileName() {
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("http://www.youtube.com/watch?v=MijmeoH9LT4");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "watch");
+    CU_ASSERT(pUrlHelper->isFileName != 1);
+    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->fileName);
     destroyUrlHelper(pUrlHelper);
 }
 
@@ -112,6 +126,12 @@ static void testCheckFileExt() {
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileExt);
     CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".wav");
     destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper(
+            "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
+    CU_ASSERT(pUrlHelper->isFileName != 1);
+    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->fileExt);
+    destroyUrlHelper(pUrlHelper);
 }
 
 static void testCheckFileNotExit() {
@@ -126,25 +146,13 @@ static void testCheckFileNotExit() {
 
     pUrlHelper = initUrlHelper(
             "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
-    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
     CU_ASSERT_PTR_NULL(pUrlHelper->fileExt);
-    CU_ASSERT_EQUAL(pUrlHelper->isFileName, 1);
-    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "cb=gapi.loaded_0");
+    CU_ASSERT(pUrlHelper->isFileExt == 0);
     destroyUrlHelper(pUrlHelper);
 }
 
 static void testSetFileExtInFileName() {
-    pUrlHelper = initUrlHelper(
-            "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
-    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
-    CU_ASSERT_PTR_NULL(pUrlHelper->fileExt);
-    CU_ASSERT_EQUAL(setFileExtInFileName(pUrlHelper, "text/javascript"), 1);
-    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 1);
-    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileExt);
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileExt, ".js");
-    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "cb=gapi.loaded_0.js");
-    destroyUrlHelper(pUrlHelper);
+
 
     pUrlHelper = initUrlHelper("http://www.youtube.com/");
     CU_ASSERT_EQUAL(setFileExtInFileName(pUrlHelper, "text/html"), 0);
@@ -168,11 +176,22 @@ static void testSetNewFileNameWhenIsNotInUrl() {
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("http://www.test.com/");
-    CU_ASSERT_EQUAL(setFileNameWhenNoOneInUrl(pUrlHelper, "index_1", "text/xml"), 2);
+    CU_ASSERT_EQUAL(setFileNameWhenNoOneInUrl(pUrlHelper, "index_1", "text/xml"), 2); // mime type that is not in list
     CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
     CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->fileExt);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
     CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "index_1");
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper(
+            "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 0);
+    CU_ASSERT_PTR_NULL(pUrlHelper->fileExt);
+    CU_ASSERT_EQUAL(setFileNameWhenNoOneInUrl(pUrlHelper, "created_name_scrap_2", "text/javascript"), 1);
+    CU_ASSERT_EQUAL(setFileExtInFileName(pUrlHelper, "text/javascript"), 1);
+    CU_ASSERT_EQUAL(pUrlHelper->isFileExt, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->fileName);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->fileName, "created_name_scrap_2.js");
     destroyUrlHelper(pUrlHelper);
 }
 

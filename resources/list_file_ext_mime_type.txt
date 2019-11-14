@@ -22,6 +22,7 @@
 .js:application/javascript|text/javascript
 .json:application/json
 .mid|.midi:audio/midi
+.mp3:audio/mpeg|audio/mp3
 .mpeg:video/mpeg
 .mpkg:application/vnd.apple.installer+xml
 .odp:application/vnd.oasis.opendocument.presentation
