@@ -30,6 +30,7 @@ UrlHelper *initUrlHelper(const char *url) {
     pUrlHelper->fileName = NULL;
     pUrlHelper->fileExt = NULL;
 
+    pUrlHelper->isUrl = 0;
     pUrlHelper->isDomainName = 0;
     pUrlHelper->isAbsPath = 0;
     pUrlHelper->isFileName = 0;
@@ -37,10 +38,7 @@ UrlHelper *initUrlHelper(const char *url) {
     pUrlHelper->result = UH_OK;
 
     fillUrlHelper(pUrlHelper, url);
-    if (pUrlHelper->result != UH_OK) {
-        free(pUrlHelper);
-        return NULL;
-    }
+
     return pUrlHelper;
 }
 
@@ -58,8 +56,10 @@ static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url) {
     if (pUrlHelper->result == UH_NAME_PB) {
         fprintf(stderr, "ERROR in fillUrlHelper : Problem with the domain name of url : %s\n", url);
         free(pUrlHelper->url);
+        pUrlHelper->url = NULL;
         return;
     }
+    pUrlHelper->isUrl = 1;
 
     urlHelperSetAbsPath(pUrlHelper);
 
@@ -111,14 +111,17 @@ static void urlHelperSetAbsPath(UrlHelper *pUrlHelper) {
         length = getIndexAfterOccurStr(pUrlHelper->url, pUrlHelper->domainName);
         beginPath = pUrlHelper->url + length;
 
-        if (strchr(beginPath, '/') != NULL && strlen(beginPath) > 1) {
-            absPathAndData = strchr(beginPath, '/');
-            optionalData = strchr(absPathAndData, '?');
-            length = optionalData != NULL ? (int) (optionalData - absPathAndData) : (int) strlen(absPathAndData);
+        if (strchr(beginPath, '/') != NULL) {
+            if (strlen(beginPath) > 1) {
+                absPathAndData = strchr(beginPath, '/');
+                optionalData = strchr(absPathAndData, '?');
+                length = optionalData != NULL ? (int) (optionalData - absPathAndData) : (int) strlen(absPathAndData);
 
-            pUrlHelper->absPath = strMallocCpy(absPathAndData, length);
-            verifyPointer(pUrlHelper->absPath, "Problem to strMallocCpy absPath if UrlHelper\n");
-
+                pUrlHelper->absPath = strMallocCpy(absPathAndData, length);
+                verifyPointer(pUrlHelper->absPath, "Problem to strMallocCpy absPath if UrlHelper\n");
+            } else {
+                pUrlHelper->absPath = strMallocCpy("/", 1);
+            }
             pUrlHelper->isAbsPath = 1;
         }
     }
@@ -133,7 +136,7 @@ static void urlHelperSetRestFields(UrlHelper *pUrlHelper) {
     char *fileName = NULL; // pointer of char correspond to file name of url without parameters
     char *fileExt = NULL; // pointer of char correspond to file extensions in file name of url
 
-    if (pUrlHelper->isAbsPath == 1) {
+    if (pUrlHelper->isAbsPath == 1 && strlen(pUrlHelper->absPath) > 1) {
         fileExt = strrchr(pUrlHelper->absPath, '.');
 
         if (fileExt != NULL && strlen(fileExt) > 1) {
@@ -147,7 +150,6 @@ static void urlHelperSetRestFields(UrlHelper *pUrlHelper) {
                 return;
             }
         }
-
         lengthAbsPath = (int)strlen(pUrlHelper->absPath) + 1;
         expandAbsPath(pUrlHelper, lengthAbsPath);
 

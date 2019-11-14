@@ -8,7 +8,9 @@ static FILE *fpError = NULL;
 
 static void testCheckUrl() {
     pUrlHelper = initUrlHelper("h.ttoigejorg/ijhifez///iufzheiuf.hziefu");
-    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper);
+    CU_ASSERT_EQUAL(pUrlHelper->isUrl, 0);
+    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->url);
 
     pUrlHelper = initUrlHelper("http://www.google.com");
     CU_ASSERT_STRING_EQUAL(pUrlHelper->url, "http://www.google.com");
@@ -30,7 +32,9 @@ static void testCheckDomainName() {
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("https://fzieoifjzoeif");
-    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper);
+    CU_ASSERT_EQUAL(pUrlHelper->isUrl, 0);
+    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->url);
 
     pUrlHelper = initUrlHelper("http://www.toto.titi.org/tonton.png");
     CU_ASSERT_STRING_EQUAL(pUrlHelper->domainName, "www.toto.titi.org");
@@ -39,8 +43,9 @@ static void testCheckDomainName() {
 
 static void testAbsPath() {
     pUrlHelper = initUrlHelper("http://google.com/");
-    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 0);
-    CU_ASSERT_PTR_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/");
     destroyUrlHelper(pUrlHelper);
 
     pUrlHelper = initUrlHelper("http://google.fr/translate");
