@@ -27,7 +27,7 @@ static void testGetHttpUrlAndHttpsUrlInPage() {
     char *pageUrl1 = getContentInFile("testPage2.html", "rb");
     arrayUrl = getAllUrlsInPage("https://www.google.com", "text/html", pageUrl1, &count);
 
-    CU_ASSERT_EQUAL(count, 2);
+    CU_ASSERT_EQUAL_FATAL(count, 2);
     CU_ASSERT_PTR_NOT_NULL_FATAL(arrayUrl[0]);
     CU_ASSERT_STRING_EQUAL(arrayUrl[0], "https://www.iana.org/domains/example")
     CU_ASSERT_PTR_NOT_NULL_FATAL(arrayUrl[1]);

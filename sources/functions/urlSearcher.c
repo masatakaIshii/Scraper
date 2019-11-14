@@ -49,7 +49,7 @@ static void getArrStrOfUrls(ListStr *listStr, const char *urlNoRes, const char *
             }
         }
     } else {
-        printf("Bizzare\n");
+        printf("Strange\n");
     }
     // -faire une boucle jusqu'à qu'il n'y ait pas http ou https
     // -check s'il n'y a pas de http ou de https
