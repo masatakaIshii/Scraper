@@ -62,6 +62,7 @@ typedef struct UrlHelper {
     char *absPath;
     char *fileName;
     char *fileExt;
+    int isUrl;
     int isDomainName;
     int isAbsPath;
     int isFileName;
