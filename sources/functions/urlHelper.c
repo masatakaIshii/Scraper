@@ -18,8 +18,7 @@ static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pLi
 /**
  * Initialize the structure UrlHelper to get few parts of url
  * @param url : current url to view
- * @return OK pUrlHerper : pointer of structure UrlHelper,<br>
- * ERROR NULL
+ * @return pUrlHerper : pointer of structure UrlHelper
  */
 UrlHelper *initUrlHelper(const char *url) {
     UrlHelper *pUrlHelper = malloc(sizeof(UrlHelper));
