@@ -59,7 +59,9 @@ CU_ErrorCode listSpecs(CU_pSuite pSuite) {
         CUE_SUCCESS != fileExtTypeMimeSpec(pSuite) ||
         CUE_SUCCESS != fileNameManagerSpec(pSuite) ||
         CUE_SUCCESS != urlSearcherSpec(pSuite) ||
-        CUE_SUCCESS != listArraySpec(pSuite)) {
+        CUE_SUCCESS != listArraySpec(pSuite) ||
+        CUE_SUCCESS != listCharSpec(pSuite)) {
+
         CU_cleanup_registry();
     }
 

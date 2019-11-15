@@ -5,54 +5,57 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 set(SRCS
-    sources/functions/app.c
-    sources/functions/request.c
-    sources/functions/config.c
-    sources/functions/option.c
-    sources/functions/resource.c
-    sources/functions/request.c
-    sources/functions/session.c
-    sources/functions/task.c
-    sources/functions/version.c
-    sources/functions/common.c
-    sources/functions/urlHelper.c
-    sources/functions/fileExtTypeMime.c
-    sources/functions/fileNameManager.c
-    sources/functions/urlSearcher.c
-    sources/functions/listArray.c)
+        sources/functions/app.c
+        sources/functions/request.c
+        sources/functions/config.c
+        sources/functions/option.c
+        sources/functions/resource.c
+        sources/functions/request.c
+        sources/functions/session.c
+        sources/functions/task.c
+        sources/functions/version.c
+        sources/functions/common.c
+        sources/functions/urlHelper.c
+        sources/functions/services/fileExtTypeMime.c
+        sources/functions/services/fileNameManager.c
+        sources/functions/urlSearcher.c
+        sources/functions/lists/listArray.c
+        sources/functions/lists/ListChar.c)
 
 set(HEADERS
-    sources/headers/app.h
-    sources/headers/request.h
-    sources/headers/config.h
-    sources/headers/option.h
-    sources/headers/resource.h
-    sources/headers/request.h
-    sources/headers/session.h
-    sources/headers/task.h
-    sources/headers/version.h
-    sources/headers/common.h
-    sources/headers/urlHelper.h
-    sources/headers/fileExtTypeMime.h
-    sources/headers/fileNameManager.h
-    sources/headers/urlSearcher.h
-    sources/headers/listArray.h)
+        sources/headers/app.h
+        sources/headers/request.h
+        sources/headers/config.h
+        sources/headers/option.h
+        sources/headers/resource.h
+        sources/headers/request.h
+        sources/headers/session.h
+        sources/headers/task.h
+        sources/headers/version.h
+        sources/headers/common.h
+        sources/headers/urlHelper.h
+        sources/headers/services/fileExtTypeMime.h
+        sources/headers/services/fileNameManager.h
+        sources/headers/urlSearcher.h
+        sources/headers/lists/listArray.h
+        sources/headers/lists/ListChar.h)
 
 set(TESTSRCS
-    test/testShare.c
-    test/testDummiesAction.c
-    test/testCommon.c
-    test/testRequest.c
-    test/testRequest.c
-    test/testResource.c
-    test/testApp.c
-    test/testSession.c
-    test/testUrlHelper.c
-    test/testFileExtTypeMime.c
-    test/testFileNameManager.c
-    test/testUrlSearcher.c
-    test/testPageUrlDummies.c
-    test/testListArray.c)
+        test/testShare.c
+        test/testDummiesAction.c
+        test/testCommon.c
+        test/testRequest.c
+        test/testRequest.c
+        test/testResource.c
+        test/testApp.c
+        test/testSession.c
+        test/testUrlHelper.c
+        test/testFileExtTypeMime.c
+        test/testFileNameManager.c
+        test/testUrlSearcher.c
+        test/testPageUrlDummies.c
+        test/testListArray.c
+        test/testListChar.c)
 
 set(TESTHEADERS
     test/testShare.h

@@ -1,8 +1,12 @@
-//
-// Created by masat on 12/11/2019.
-//
+/*
+ *  Filename    : listArray.c
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : create list of array like list of string and manage adding value and expanding capacity
+ */
 
-#include "../headers/listArray.h"
+#include "../../headers/lists/listArray.h"
 static int expandListStrCapacity(ListStr *listStr);
 
 /**
@@ -88,15 +92,26 @@ static int expandListStrCapacity(ListStr *listStr) {
     return 1;
 }
 
+/**
+ * Get string in list string by index
+ * @param listStr : pointer of structure string
+ * @param index : number correspond to index
+ * @return OK string : correspond to index,<br>
+ * ERROR NULL : when index param is more than the quantity of list or less than 0
+ */
 const char* listStrGet(ListStr *listStr, int index) {
-    if (index >= listStr->count) {
-        fprintf(stderr, "ERROR in listStrGet : the value of index %d is to high, you have to choose unsigned int until %d\n", index, listStr->count - 1);
+    if (index >= listStr->count || index < 0) {
+        fprintf(stderr, "ERROR in listStrGet : the value of index %d is not correct, you have to choose unsigned int 0 until %d\n", index, listStr->count - 1);
         return NULL;
     }
 
     return  listStr->arrStr[index];
 }
 
+/**
+ * Destroy list of string structure
+ * @param listStr : pointer of string
+ */
 void destroyListStr(ListStr *listStr) {
     int i;
 
@@ -107,9 +122,22 @@ void destroyListStr(ListStr *listStr) {
     free(listStr);
 }
 
-char **copyArrStr(char **arrStr, int count) {
+/**
+ * Copy array of string to another one
+ * @param arrStr : array of string
+ * @param count : the count of array
+ * @return OK newArrStr : the copy of arrStr, <br>
+ * ERROR : NULL : if count is <= 0
+ */
+static char **copyArrStr(char **arrStr, int count) {
     int i;
-    char **newArrStr = malloc(sizeof(char*) * count);
+    char **newArrStr;
+
+    if (count <= 0) {
+        return NULL;
+    }
+
+    newArrStr = malloc(sizeof(char*) * count);
     if (newArrStr == NULL) {
         return NULL;
     }
@@ -126,6 +154,12 @@ char **copyArrStr(char **arrStr, int count) {
     return newArrStr;
 }
 
+/**
+ * Destroy listStr and return array of string that is contain
+ * @param listStr
+ * @param count
+ * @return
+ */
 char **destroyListStrAndReturnArrStr(ListStr *listStr, int *count) {
     char **arrStr = copyArrStr(listStr->arrStr, listStr->count);
     if (arrStr == NULL) {

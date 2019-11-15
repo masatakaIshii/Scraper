@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../headers/common.h"
+#include "../common.h"
 
 /**
  * Function to get unique name for resource that not have file name in URL
