@@ -64,21 +64,21 @@ static void getUrlInPage(ListStr *listStr, const char *currentPosPage, int *posi
     // TODO : if https or http get url
     // TODO : else if it "//" after so add before the protocol of com of url
     // TODO : if its "/" add the url with absolute path
-    if ((checkUrl = strstr(currentPosPage, "https")) || (checkUrl = strstr(currentPosPage, "http"))) {
-        if (checkUrl[-1] != '=') {
-            container = checkUrl[-1];
-            startUrl = checkUrl;
-            if (container > 0) {
-                endUrl = strchr(checkUrl, container);
-                if (endUrl == NULL) {
-                    fprintf(stderr, "Problem url\n");
-                    return;
-                }
-            }
-            lengthUrl = (int)(endUrl - startUrl);
-            addUrlInList(listStr, startUrl, lengthUrl);
-            *position += lengthUrl + (int)(startUrl - currentPosPage);
-        }
+    if ((checkUrl = strstr(currentPosPage, "https:")) || (checkUrl = strstr(currentPosPage, "http:"))) {
+//        if (checkUrl[-1] != '=') {
+//            container = checkUrl[-1];
+//            startUrl = checkUrl;
+//            if (container > 0) {
+//                endUrl = strchr(checkUrl, container);
+//                if (endUrl == NULL) {
+//                    fprintf(stderr, "Problem url\n");
+//                    return;
+//                }
+//            }
+//            lengthUrl = (int)(endUrl - startUrl);
+//            addUrlInList(listStr, startUrl, lengthUrl);
+//            *position += lengthUrl + (int)(startUrl - currentPosPage);
+//        }
     } else {
         *position += (int)strlen(currentPosPage);
     }

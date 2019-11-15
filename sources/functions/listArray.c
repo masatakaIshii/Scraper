@@ -109,7 +109,13 @@ void destroyListStr(ListStr *listStr) {
 
 char **copyArrStr(char **arrStr, int count) {
     int i;
-    char **newArrStr = malloc(sizeof(char*) * count);
+    char **newArrStr;
+
+    if (count <= 0) {
+        return NULL;
+    }
+
+    newArrStr = malloc(sizeof(char*) * count);
     if (newArrStr == NULL) {
         return NULL;
     }
