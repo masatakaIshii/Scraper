@@ -33,10 +33,10 @@ String *initString(int capacity, double mul) {
     return pString;
 }
 
-int addString(String *pString, char *strToAdd) {
+int addString(String *pString, const char *strToAdd) {
     int lengthStr = (int)strlen(strToAdd);
 
-    if (pString->capacity < lengthStr + pString->count + 1) {
+    while (pString->capacity < lengthStr + pString->count + 1) {
         pString->content = expandStringContent(pString);
         if (pString->content == NULL) {
             free(pString);

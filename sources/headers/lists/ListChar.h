@@ -18,7 +18,7 @@ typedef struct ListChar {
 
 String *initString(int capacity, double mul);
 
-int addString(String *pString, char *strToAdd);
+int addString(String *pString, const char *strToAdd);
 
 void destroyString(String *pString);
 

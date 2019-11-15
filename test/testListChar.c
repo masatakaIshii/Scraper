@@ -86,11 +86,25 @@ static void testExpandString() {
     destroyString(pString);
 }
 
-// test normal init if capacity and count is correct and string is correct
+static void testExpandFewTimes() {
+    pString = initString(1, 2);
+    addString(pString, "test");
+    CU_ASSERT_STRING_EQUAL(pString->content, "test");
+    CU_ASSERT_EQUAL(pString->capacity, 8);
+    destroyString(pString);
 
-// test expand v1
+    pString = initString(3, 1.5);
+    addString(pString, "testez");
+    CU_ASSERT_STRING_EQUAL(pString->content, "testez");
+    CU_ASSERT_EQUAL(pString->capacity, 9);
+    destroyString(pString);
 
-// test if listChar can expand few time until the string to add can be add
+    pString = initString(2, 2);
+    addString(pString, "Testez l'efficacite de l'expand de la structure String\nPour contrer tout type de fuite memoire\n");
+    CU_ASSERT_STRING_EQUAL(pString->content, "Testez l'efficacite de l'expand de la structure String\nPour contrer tout type de fuite memoire\n");
+    CU_ASSERT(pString->capacity > pString->count);
+    destroyString(pString);
+}
 
 CU_ErrorCode listCharSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testListChar", initManageStderr, cleanManageStderr);
@@ -98,7 +112,8 @@ CU_ErrorCode listCharSpec(CU_pSuite pSuite) {
     if (NULL == CU_add_test(pSuite, "testStringNullIfError", testStringNullIfError) ||
         NULL == CU_add_test(pSuite, "testInitString", testInitString) ||
         NULL == CU_add_test(pSuite, "testAddString", testAddString) ||
-        NULL == CU_add_test(pSuite, "testExpandString", testExpandString)) {
+        NULL == CU_add_test(pSuite, "testExpandString", testExpandString) ||
+        NULL == CU_add_test(pSuite, "testExpandFewTimes", testExpandFewTimes)) {
 
         CU_cleanup_registry();
         return CU_get_error();
