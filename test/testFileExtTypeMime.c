@@ -9,7 +9,7 @@ static void testSearchFileExtByTypeMime() {
     list = fillListFData("text/html", FILE_EXT);
     CU_ASSERT_PTR_NOT_NULL_FATAL(list);
     CU_ASSERT(access("list_file_ext_mime_type.txt", F_OK) != -1);
-    CU_ASSERT_EQUAL(list->numberData, 2);
+    CU_ASSERT_EQUAL(list->numberData, 3);
     CU_ASSERT_EQUAL(list->fileDataInfo, FILE_EXT);
     destroyListFData(list);
 
@@ -66,6 +66,12 @@ static void testSearchMimeTypeByFileExt() {
     CU_ASSERT_EQUAL(list->numberData, 2);
     CU_ASSERT_STRING_EQUAL(list->data[0], "video/3gpp");
     CU_ASSERT_STRING_EQUAL(list->data[1], "audio/3gpp");
+    destroyListFData(list);
+
+    list = fillListFData(".asp", MIME_TYPE);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(list);
+    CU_ASSERT_EQUAL(list->numberData, 1);
+    CU_ASSERT_STRING_EQUAL(list->data[0], "text/html");
     destroyListFData(list);
 
     list = fillListFData(".azerty", MIME_TYPE);
