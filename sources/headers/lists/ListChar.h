@@ -2,8 +2,8 @@
 // Created by masat on 15/11/2019.
 //
 
-#ifndef SCRAPER_MYSTRING_H
-#define SCRAPER_MYSTRING_H
+#ifndef SCRAPER_LISTCHAR_H
+#define SCRAPER_LISTCHAR_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,13 +13,13 @@ typedef struct ListChar {
     char *content;
     int capacity;
     int count;
-    int mul;
+    double mul;
 } String;
 
-String *initString(int capacity, int mul);
+String *initString(int capacity, double mul);
 
 int addString(String *pString, char *strToAdd);
 
 void destroyString(String *pString);
 
-#endif //SCRAPER_MYSTRING_H
+#endif //SCRAPER_LISTCHAR_H
