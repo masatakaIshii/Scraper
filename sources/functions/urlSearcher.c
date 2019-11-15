@@ -12,7 +12,8 @@ static void addUrlInList(ListStr *listStr, const char *startUrl, int lengthUrl);
  * @param UrlNoRes : the url with only http syntax and domain name like "https://www.google.com"
  * @param page : the page that correspond to the
  * @param count : number of url
- * @return allUrls : array of url that fetch in page
+ * @return OK allUrls : array of url that fetch in page, <br>
+ * ERROR NULL
  */
 char **getAllUrlsInPage(const char *url, const char *contentType, const char *page, int *count) {
     char **arrStr = NULL;
@@ -32,7 +33,7 @@ char **getAllUrlsInPage(const char *url, const char *contentType, const char *pa
         return NULL;
     }
 
-    //urlWithPath = getUrlWithAbsPath(pUrlHelper);
+    urlWithPath = getUrlWithAbsPath(pUrlHelper);
 
     getArrStrOfUrls(listStr, urlWithPath, page);
 
@@ -57,6 +58,12 @@ static void getUrlInPage(ListStr *listStr, const char *currentPosPage, int *posi
     char container = 0;
     int lengthUrl = 0;
 
+    // TODO : change the start search to "src=" or "href="
+    // TODO : get if after they have " or ' or alphabet
+    // TODO : change after if it contain https or http
+    // TODO : if https or http get url
+    // TODO : else if it "//" after so add before the protocol of com of url
+    // TODO : if its "/" add the url with absolute path
     if ((checkUrl = strstr(currentPosPage, "https")) || (checkUrl = strstr(currentPosPage, "http"))) {
         if (checkUrl[-1] != '=') {
             container = checkUrl[-1];
