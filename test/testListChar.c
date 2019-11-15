@@ -51,10 +51,39 @@ static void testAddString() {
 
     pString = initString(20, 2);
     addString(pString, "");
+
+    pString = initString(15, 1.1);
+    addString(pString, "test\n");
+    addString(pString, "ons\t\n");
+    CU_ASSERT_STRING_EQUAL(pString->content, "test\nons\t\n");
+    destroyString(pString);
 }
 
 static void testExpandString() {
+    pString = initString(5, 2);
+    addString(pString, "testons");
+    CU_ASSERT_STRING_EQUAL(pString->content, "testons");
+    CU_ASSERT_EQUAL(pString->capacity, 10);
+    destroyString(pString);
 
+    pString = initString(10, 2);
+    addString(pString, "testons\n");
+    addString(pString, "testez\n");
+    CU_ASSERT_STRING_EQUAL(pString->content, "testons\ntestez\n");
+    CU_ASSERT_EQUAL(pString->capacity, 20);
+    destroyString(pString);
+
+    pString = initString(4, 1.5);
+    addString(pString, "test\n");
+    CU_ASSERT_STRING_EQUAL(pString->content, "test\n");
+    CU_ASSERT_EQUAL(pString->capacity, 6);
+    destroyString(pString);
+
+    pString = initString(4, 1.5);
+    addString(pString, "test");
+    CU_ASSERT_STRING_EQUAL(pString->content, "test");
+    CU_ASSERT_EQUAL(pString->capacity, 6);
+    destroyString(pString);
 }
 
 // test normal init if capacity and count is correct and string is correct

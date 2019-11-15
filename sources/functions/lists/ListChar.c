@@ -4,6 +4,8 @@
 
 #include "../../headers/lists/ListChar.h"
 
+static char *expandStringContent(String *pString);
+
 String *initString(int capacity, double mul) {
     String *pString;
 
@@ -19,6 +21,7 @@ String *initString(int capacity, double mul) {
 
     pString->capacity = capacity;
     pString->mul = mul;
+    pString->count = 0;
 
     pString->content = calloc(pString->capacity, sizeof(char));
     if (pString->content == NULL) {
@@ -31,7 +34,35 @@ String *initString(int capacity, double mul) {
 }
 
 int addString(String *pString, char *strToAdd) {
-    return 0;
+    int lengthStr = (int)strlen(strToAdd);
+
+    if (pString->capacity < lengthStr + pString->count + 1) {
+        pString->content = expandStringContent(pString);
+        if (pString->content == NULL) {
+            free(pString);
+            return 0;
+        }
+    }
+    strcat(pString->content, strToAdd);
+    pString->count = lengthStr;
+
+    return 1;
+}
+
+static char *expandStringContent(String *pString) {
+    char *newContent = NULL;
+
+    pString->capacity = (int)(pString->capacity * pString->mul);
+
+    newContent = calloc(pString->capacity, sizeof(char));
+    if (newContent == NULL) {
+        fprintf(stderr, "ERROR in ListChar : Problem calloc newContent in function expandStringContent\n");
+    } else {
+        strcpy(newContent, pString->content);
+    }
+    free(pString->content);
+
+    return newContent;
 }
 
 void destroyString(String *pString) {
