@@ -1,11 +1,22 @@
-//
-// Created by masat on 15/11/2019.
-//
+/*
+ *  Filename    : listChar.c
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : create list of character to manage adding string and expanding capacity
+ */
 
 #include "../../headers/lists/ListChar.h"
 
 static char *expandStringContent(String *pString);
 
+/**
+ * Init the structure String that contain expandable string
+ * @param capacity : initial capacity of content
+ * @param mul : when string to add to content exceed the capacity, expand it with mul the value
+ * @return OK pString : pointer of structure String that is init, <br>
+ * ERROR NULL : the reason can be problem of malloc or the incorrect values of capacity and|or mull
+ */
 String *initString(int capacity, double mul) {
     String *pString;
 
@@ -33,12 +44,20 @@ String *initString(int capacity, double mul) {
     return pString;
 }
 
+/**
+ * Add string in content of structure String
+ * @param pString : pointer of structure String
+ * @param strToAdd : string to add in structure
+ * @return OK 1 : the string is add in structure, <br>
+ * ERROR 0 : fail to add string, pString memory is free
+ */
 int addString(String *pString, const char *strToAdd) {
     int lengthStr = (int)strlen(strToAdd);
 
     while (pString->capacity < lengthStr + pString->count + 1) {
         pString->content = expandStringContent(pString);
         if (pString->content == NULL) {
+            fprintf(stderr, "ERROR in addString : fail to expand content of pString\n");
             free(pString);
             return 0;
         }
@@ -49,6 +68,12 @@ int addString(String *pString, const char *strToAdd) {
     return 1;
 }
 
+/**
+ * Expand the capacity of structure String
+ * @param pString : pointer of structure String
+ * @return OK newContent : the string with more memory allocation, <br>
+ * ERROR NULL : fail to memory allocate
+ */
 static char *expandStringContent(String *pString) {
     char *newContent = NULL;
 
@@ -65,6 +90,10 @@ static char *expandStringContent(String *pString) {
     return newContent;
 }
 
+/**
+ * Free content and structure of String
+ * @param pString : pointer of structure String
+ */
 void destroyString(String *pString) {
 
     free(pString->content);

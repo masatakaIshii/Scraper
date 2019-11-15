@@ -1,6 +1,10 @@
-//
-// Created by masat on 12/11/2019.
-//
+/*
+ *  Filename    : listArray.h
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : create list of array like list of string and manage adding value and expanding capacity
+ */
 
 #ifndef SCRAPER_LISTARRAY_H
 #define SCRAPER_LISTARRAY_H
