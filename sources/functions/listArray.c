@@ -8,8 +8,10 @@ static int expandListStrCapacity(ListStr *listStr);
 /**
  * Initialize ListStr structure that represents list of string
  * @param initCapacity : init capacity that grown * 2 when this is exceed
- * @return OK listStr : pointer of list of string, ERROR NULL
- */
+ * @return OK listStr : pointer of list of string, ERROR NULL<br>
+ * ERROR1 : can be the capacity that is less than 1<br>
+ * ERROR2 : can be problem of malloc
+*/
 ListStr *initListStr(int initCapacity) {
     ListStr *listStr = malloc(sizeof(ListStr));
     if (listStr == NULL) {
