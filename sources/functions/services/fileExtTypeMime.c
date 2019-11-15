@@ -6,7 +6,7 @@
  *  Description : Service to search file extension or mime type in list_file_ext_mime_type.txt and give the appropriate data.
  *                  Check also if the data linked of file extensions / mime type are correct.
  */
-#include "../headers/fileExtTypeMime.h"
+#include "../../headers/services/fileExtTypeMime.h"
 
 static ListFData *initFData();
 static void searchCorrespondingData(ListFData *pListFData, const char *nearData, const char *allList, enum FileDataInfo dataInfo);

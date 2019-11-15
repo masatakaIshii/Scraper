@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../headers/common.h"
+#include "../common.h"
 
 typedef struct ListString {
     char **arrStr;

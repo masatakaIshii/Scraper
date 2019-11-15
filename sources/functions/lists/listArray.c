@@ -2,7 +2,7 @@
 // Created by masat on 12/11/2019.
 //
 
-#include "../headers/listArray.h"
+#include "../../headers/lists/listArray.h"
 static int expandListStrCapacity(ListStr *listStr);
 
 /**

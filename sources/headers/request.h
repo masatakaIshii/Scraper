@@ -12,7 +12,7 @@
 #include <curl/curl.h>
 #include "common.h"
 #include "urlHelper.h"
-#include "../headers/fileNameManager.h"
+#include "services/fileNameManager.h"
 
 /**
  * Initialise Request structure
