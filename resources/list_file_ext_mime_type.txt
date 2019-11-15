@@ -14,7 +14,7 @@
 .eot:application/vnd.ms-fontobject
 .epub:application/epub+zip
 .gif:image/gif
-.htm|.html:text/html
+.asp|.htm|.html:text/html
 .ico:image/x-icon
 .ics:text/calendar
 .jar:application/java-archive
