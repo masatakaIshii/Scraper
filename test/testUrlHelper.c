@@ -48,7 +48,19 @@ static void testAbsPath() {
     CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/");
     destroyUrlHelper(pUrlHelper);
 
+    pUrlHelper = initUrlHelper("http://www.google.com");
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/");
+    destroyUrlHelper(pUrlHelper);
+
     pUrlHelper = initUrlHelper("http://google.fr/translate");
+    CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
+    CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/translate/");
+    destroyUrlHelper(pUrlHelper);
+
+    pUrlHelper = initUrlHelper("http://google.fr/translate/");
     CU_ASSERT_EQUAL(pUrlHelper->isAbsPath, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pUrlHelper->absPath);
     CU_ASSERT_STRING_EQUAL(pUrlHelper->absPath, "/translate/");
@@ -200,6 +212,47 @@ static void testSetNewFileNameWhenIsNotInUrl() {
     destroyUrlHelper(pUrlHelper);
 }
 
+static void testGetUrlWithAbsPath() {
+    char *urlAbsPath = NULL;
+    pUrlHelper = initUrlHelper("https://www.google.com/");
+    verifyPointer(pUrlHelper, "ERROR in testUrlHelper : Problem initUrlHelper in testGetUrlWithAbsPath\n");
+    urlAbsPath = getUrlWithAbsPath(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(urlAbsPath);
+    CU_ASSERT_EQUAL(strlen(urlAbsPath), strlen("https://www.google.com/"));
+    CU_ASSERT_STRING_EQUAL(urlAbsPath, "https://www.google.com/")
+    destroyUrlHelper(pUrlHelper);
+    free(urlAbsPath);
+    urlAbsPath = NULL;
+
+    pUrlHelper = initUrlHelper("https://www.google.com");
+    verifyPointer(pUrlHelper, "ERROR in testUrlHelper : Problem initUrlHelper in testGetUrlWithAbsPath\n");
+    urlAbsPath = getUrlWithAbsPath(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(urlAbsPath);
+    CU_ASSERT_EQUAL(strlen(urlAbsPath), strlen("https://www.google.com/"));
+    CU_ASSERT_STRING_EQUAL(urlAbsPath, "https://www.google.com/")
+    destroyUrlHelper(pUrlHelper);
+    free(urlAbsPath);
+    urlAbsPath = NULL;
+
+    pUrlHelper = initUrlHelper("https://www.deezer/albums/summer/");
+    verifyPointer(pUrlHelper, "ERROR in testUrlHelper : Problem initUrlHelper in testGetUrlWithAbsPath\n");
+    urlAbsPath = getUrlWithAbsPath(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(urlAbsPath);
+    CU_ASSERT_EQUAL(strlen(urlAbsPath), strlen("https://www.deezer/albums/summer/"));
+    CU_ASSERT_STRING_EQUAL(urlAbsPath, "https://www.deezer/albums/summer/")
+    destroyUrlHelper(pUrlHelper);
+    free(urlAbsPath);
+    urlAbsPath = NULL;
+
+    pUrlHelper = initUrlHelper("https://www.w3schools.com/tags/att_meta_content.asp");
+    verifyPointer(pUrlHelper, "ERROR in testUrlHelper : Problem initUrlHelper in testGetUrlWithAbsPath\n");
+    urlAbsPath = getUrlWithAbsPath(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(urlAbsPath);
+    CU_ASSERT_EQUAL(strlen(urlAbsPath), strlen("https://www.w3schools.com/tags/"));
+    CU_ASSERT_STRING_EQUAL(urlAbsPath, "https://www.w3schools.com/tags/")
+    destroyUrlHelper(pUrlHelper);
+    free(urlAbsPath);
+}
 
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testUrlHelper", initManageStderr, cleanManageStderr);
@@ -211,7 +264,8 @@ CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testCheckFileExt", testCheckFileExt) ||
         NULL == CU_add_test(pSuite, "testCheckFileNotExit", testCheckFileNotExit) ||
         NULL == CU_add_test(pSuite, "testSetFileExtInFileName", testSetFileExtInFileName) ||
-        NULL == CU_add_test(pSuite, "testSetNewFileNameWhenIsNotInUrl", testSetNewFileNameWhenIsNotInUrl)) {
+        NULL == CU_add_test(pSuite, "testSetNewFileNameWhenIsNotInUrl", testSetNewFileNameWhenIsNotInUrl) ||
+        NULL == CU_add_test(pSuite, "testGetUrlWithAbsPath", testGetUrlWithAbsPath)) {
 
         CU_cleanup_registry();
         return CU_get_error();

@@ -40,6 +40,8 @@ int setFileNameWhenNoOneInUrl(UrlHelper *pUrlHelper, const char *fileNameNoExt, 
  */
 int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType);
 
+char *getUrlWithAbsPath(UrlHelper *pUrlHelper);
+
 /**
  * Destroy the pointer of structure UrlHelper
  * @param pUrlHelper

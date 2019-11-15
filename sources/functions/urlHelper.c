@@ -11,6 +11,7 @@ static void fillUrlHelper(UrlHelper *pUrlHelper, const char *url);
 static void urlHelperSetDomainName(UrlHelper *pUrlHelper);
 static void urlHelperSetAbsPath(UrlHelper *pUrlHelper);
 static void urlHelperSetRestFields(UrlHelper *pUrlHelper);
+static void manageSlashInEndAbsPath(UrlHelper *pUrlHelper);
 static void urlHelperSetFileNameAndExt(UrlHelper *pUrlHelper, const char *fileName, const char *fileExt);
 static void expandAbsPath(UrlHelper *pUrlHelper, int newLength);
 static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pList);
@@ -18,7 +19,8 @@ static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pLi
 /**
  * Initialize the structure UrlHelper to get few parts of url
  * @param url : current url to view
- * @return pUrlHerper : pointer of structure UrlHelper
+ * @return OK pUrlHelper : pointer of structure UrlHelper,<br>
+ * ERROR pUrlHelper->result == UH_NAME_PB : problem of url structure
  */
 UrlHelper *initUrlHelper(const char *url) {
     UrlHelper *pUrlHelper = malloc(sizeof(UrlHelper));
@@ -118,11 +120,12 @@ static void urlHelperSetAbsPath(UrlHelper *pUrlHelper) {
 
                 pUrlHelper->absPath = strMallocCpy(absPathAndData, length);
                 verifyPointer(pUrlHelper->absPath, "Problem to strMallocCpy absPath if UrlHelper\n");
-            } else {
-                pUrlHelper->absPath = strMallocCpy("/", 1);
+                pUrlHelper->isAbsPath = 1;
+                return;
             }
-            pUrlHelper->isAbsPath = 1;
         }
+        pUrlHelper->absPath = strMallocCpy("/", 1);
+        pUrlHelper->isAbsPath = 1;
     }
 }
 
@@ -149,6 +152,18 @@ static void urlHelperSetRestFields(UrlHelper *pUrlHelper) {
                 return;
             }
         }
+        manageSlashInEndAbsPath(pUrlHelper);
+    }
+}
+
+/**
+ * Function to add slash in end of absolute path when it not have
+ * @param pUrlHelper : pointer of structure UrlHelper
+ */
+static void manageSlashInEndAbsPath(UrlHelper *pUrlHelper) {
+    int lengthAbsPath = 0;
+
+    if (pUrlHelper->absPath[strlen(pUrlHelper->absPath) - 1] != '/') {
         lengthAbsPath = (int)strlen(pUrlHelper->absPath) + 1;
         expandAbsPath(pUrlHelper, lengthAbsPath);
 
@@ -241,7 +256,7 @@ static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pLi
     char *temp = NULL;
     int index = 0;
 
-    index = (pList->numberData > 1) ? 1 : 0;
+    index = (pList->numberData > 1) ? pList->numberData - 1 : 0;
 
     pUrlHelper->fileExt = strMallocCpy(pList->data[index], (int)strlen(pList->data[index]));
     verifyPointer(pUrlHelper->fileExt, "Problem strMallocCpy fileExt");
@@ -251,6 +266,31 @@ static void catUrlHelperFileNameAndFileExt(UrlHelper *pUrlHelper, ListFData *pLi
     pUrlHelper->fileName = strMallocCat(temp, pUrlHelper->fileExt);
 
     free(temp);
+}
+
+/**
+ * Function to get url with absolute path only
+ * @param pUrlHelper
+ * @return
+ */
+char *getUrlWithAbsPath(UrlHelper *pUrlHelper) {
+    char *urlWithAbsPath = NULL;
+    int lengthStr = getIndexAfterOccurStr(pUrlHelper->url, pUrlHelper->domainName);
+
+
+    urlWithAbsPath = strMallocCpy(pUrlHelper->url, lengthStr);
+    if (urlWithAbsPath == NULL) {
+        fprintf(stderr, "ERROR in urlHelper.c : Problem to strMallocCpy urlWithAbsPath\n");
+        return NULL;
+    }
+
+    urlWithAbsPath = strReallocCat(urlWithAbsPath, pUrlHelper->absPath);
+    if (urlWithAbsPath == NULL) {
+        fprintf(stderr, "ERROR in urlHelper.c : Problem to strReallocCat urlWithAbsPath\n");
+        return NULL;
+    }
+
+    return urlWithAbsPath;
 }
 
 /**
