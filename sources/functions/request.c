@@ -30,7 +30,11 @@ Request *initRequest(const char *url) {
     pRequest->isUrlHelper = 0;
 
     pRequest->pUrlHelper = initUrlHelper(url);
-    verifyPointer(pRequest->pUrlHelper->url, "problem pRequest\n");
+    if (pRequest->pUrlHelper == NULL) {
+        fprintf(stderr, "Problem in url : %s\n", url);
+        free(pRequest);
+        return NULL;
+    }
     pRequest->isUrlHelper = 1;
 
     pRequest->contentType = NULL;
