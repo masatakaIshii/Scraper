@@ -5,6 +5,8 @@
 #ifndef SCRAPER_STRUCT_H
 #define SCRAPER_STRUCT_H
 
+#include <curl/curl.h>
+
 /**
  * Possibility of option value
  * valueInt : integer's value of option
