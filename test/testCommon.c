@@ -10,7 +10,7 @@ static void testGetNumberDigit() {
     CU_ASSERT_EQUAL(getNbrDigit(99), 2);
     CU_ASSERT_EQUAL(getNbrDigit(100), 3);
     CU_ASSERT_EQUAL(getNbrDigit(102950), 6);
-    CU_ASSERT_EQUAL(getNbrDigit(-999), -1);
+    CU_ASSERT_EQUAL(getNbrDigit(-999), 0);
 }
 
 static void testGetIndexAfterOccurStr() {
@@ -84,7 +84,7 @@ static void testStrMallocCat() {
     CU_ASSERT_STRING_EQUAL(result, "");
     free(result);
 
-    result = strMallocCat(NULL,"Tonton");
+    result = strMallocCat(NULL, "Tonton");
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_STRING_EQUAL(result, "Tonton");
     free(result);
@@ -206,6 +206,31 @@ static void testGetNumberOccurrenceInStr() {
     CU_ASSERT_EQUAL(getNbrOccurInStr("tata;toto;titi", ";"), 2);
 }
 
+static void testMyStrrstr() {
+    char *result = myStrrstr("testons", "ons");
+
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(strlen(result), 3);
+    CU_ASSERT_STRING_EQUAL(result, "ons");
+
+
+    result = myStrrstr("testez", "tons");
+    CU_ASSERT_PTR_NULL(result);
+
+    result = myStrrstr("index_scrap_0\nindex_scrap_1\nindex_scrap_2\n", "index_scrap_1");
+    CU_ASSERT_PTR_NOT_NULL(result);
+    CU_ASSERT_EQUAL(strlen(result), strlen("index_scrap_1\nindex_scrap_2\n"));
+    CU_ASSERT_STRING_EQUAL(result, "index_scrap_1\nindex_scrap_2\n");
+
+    result = myStrrstr("toto", "toto");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "toto");
+
+    result = myStrrstr("toto le beau gosse", "toto");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "toto le beau gosse");
+}
+
 static void freeArrayStr(char **arrayStr, int count) {
     int i;
     for (i = 0; i < count; i++) {
@@ -277,6 +302,7 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
     if (NULL == CU_add_test(pSuite, "testGetNumberDigit", testGetNumberDigit) ||
+        NULL == CU_add_test(pSuite, "testGetIndexAfterOccurStr", testGetIndexAfterOccurStr) ||
         NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy) ||
         NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate) ||
         NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat) ||
@@ -286,6 +312,7 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent) ||
         NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile) ||
         NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr) ||
+        NULL == CU_add_test(pSuite, "testMyStrrstr", testMyStrrstr) ||
         NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit)) {
 
         CU_cleanup_registry();

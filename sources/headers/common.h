@@ -61,6 +61,15 @@ char *strMallocCat(const char *str1, const char *str2);
 int getNbrOccurInStr(const char *str, const char *occur);
 
 /**
+ * Function to get last occurrence of string
+ * @param string : string to search the occurence
+ * @param lastOccur : occurence to return if it's in string
+ * @return OK address of char that occurrence start, <br>
+ * ERROR NULL
+ */
+char *myStrrstr(const char *string, const char *lastOccur);
+
+/**
  * function to split string to array of string by delimitor
  * @param str : string to copy to split in array
  * @param pCount : count of array string

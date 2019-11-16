@@ -25,13 +25,13 @@ void verifyPointer(void *pointer, const char *message) {
  * Get number of digit of param number
  * @param number : integer to see the number of digit
  * @return OK count > 0
- * ERROR -1 : when number is less than 0
+ * ERROR 0 : when number is less than 0
  */
 int getNbrDigit(int number) {
     int count = 0;
 
     if (number < 0) {
-        return -1;
+        return 0;
     }
 
     if (number == 0) {
@@ -133,6 +133,29 @@ int getNbrOccurInStr(const char *str, const char *occur) {
         }
     }
     return result;
+}
+
+/**
+ * Function to get last occurrence of string
+ * @param string : string to search the occurence
+ * @param lastOccur : occurence to return if it's in string
+ * @return OK address of char that occurrence start, <br>
+ * ERROR NULL
+ */
+char *myStrrstr(const char *string, const char *lastOccur) {
+    int index = (int)strlen(string) - 1;
+    int lengthOccur = (int)strlen(lastOccur);
+
+    while(index >= lengthOccur - 1) {
+        if (string[index] == lastOccur[lengthOccur - 1]) {
+            if (strncmp(&string[index] - (lengthOccur - 1) , lastOccur, lengthOccur) == 0) {
+                return (char*)&string[index] - (lengthOccur - 1);
+            }
+        }
+        index--;
+    }
+
+    return NULL;
 }
 
 /**
