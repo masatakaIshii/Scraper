@@ -106,6 +106,28 @@ static void testExpandFewTimes() {
     destroyString(pString);
 }
 
+static void testSplitString() {
+    char **arrStr = NULL;
+    int count = 0;
+    pString = initString(10, 2);
+    addString(pString, "je teste\n");
+    addString(pString, "tu testes\n");
+    addString(pString, "il, elle, on teste\n");
+    addString(pString, "nous testons\n");
+    addString(pString, "vous testez\n");
+    addString(pString, "ils, elles testent\n");
+
+    arrStr = properStrSplit(pString->content, "\n", &count);
+    CU_ASSERT_EQUAL_FATAL(count, 6);
+    CU_ASSERT_STRING_EQUAL(arrStr[0], "je teste");
+    CU_ASSERT_STRING_EQUAL(arrStr[1], "tu testes");
+    CU_ASSERT_STRING_EQUAL(arrStr[2], "il, elle, on teste");
+    CU_ASSERT_STRING_EQUAL(arrStr[5], "ils, elles testent");
+
+    destroyString(pString);
+    freeArrayString(arrStr, count);
+}
+
 CU_ErrorCode listCharSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testListChar", initManageStderr, cleanManageStderr);
 
@@ -113,7 +135,8 @@ CU_ErrorCode listCharSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testInitString", testInitString) ||
         NULL == CU_add_test(pSuite, "testAddString", testAddString) ||
         NULL == CU_add_test(pSuite, "testExpandString", testExpandString) ||
-        NULL == CU_add_test(pSuite, "testExpandFewTimes", testExpandFewTimes)) {
+        NULL == CU_add_test(pSuite, "testExpandFewTimes", testExpandFewTimes) ||
+        NULL == CU_add_test(pSuite, "testSplitString", testSplitString)) {
 
         CU_cleanup_registry();
         return CU_get_error();

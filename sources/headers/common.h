@@ -79,6 +79,8 @@ char *myStrrstr(const char *string, const char *lastOccur);
  */
 char **strSplit(const char *str, const char *delimiter, int *pCount);
 
+char **properStrSplit(const char *content, const char *delimiter, int *count);
+
 /**
  * Free array of string
  * @param arrayStr : array of string to free

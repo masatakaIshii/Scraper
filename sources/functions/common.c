@@ -209,6 +209,18 @@ char **strSplit(const char *str, const char *delimiter, int *pCount) {
     return arrayStr;
 }
 
+char **properStrSplit(const char *content, const char *delimiter, int *count) {
+    char **arrStr = NULL;
+
+    arrStr = strSplit(content, delimiter, count);
+
+    if (content[strlen(content) - 1] == delimiter[0]) {
+        (*count)--;
+    }
+
+    return arrStr;
+}
+
 /**
  * Free array of string
  * @param arrayStr : array of string to free
