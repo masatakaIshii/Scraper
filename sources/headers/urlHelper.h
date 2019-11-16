@@ -42,6 +42,8 @@ int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType);
 
 char *getUrlWithAbsPath(UrlHelper *pUrlHelper);
 
+char *getUrlWithRootPath(UrlHelper *pUrlHelper);
+
 /**
  * Destroy the pointer of structure UrlHelper
  * @param pUrlHelper

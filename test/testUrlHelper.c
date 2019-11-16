@@ -254,6 +254,38 @@ static void testGetUrlWithAbsPath() {
     free(urlWithPath);
 }
 
+static void testGetRootUrlPath() {
+    char *urlWithPath = NULL;
+    pUrlHelper = initUrlHelper("https://www.google.com");
+    verifyPointer(pUrlHelper, "ERROR in testUrlHelper : Problem initUrlHelper in testGetRootUrlPath\n");
+    urlWithPath = getUrlWithRootPath(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(urlWithPath);
+    CU_ASSERT_EQUAL(strlen(urlWithPath), strlen("https://www.google.com/"));
+    CU_ASSERT_STRING_EQUAL(urlWithPath, "https://www.google.com/")
+    destroyUrlHelper(pUrlHelper);
+    free(urlWithPath);
+    urlWithPath = NULL;
+
+    pUrlHelper = initUrlHelper("https://www.google.com/");
+    verifyPointer(pUrlHelper, "ERROR in testUrlHelper : Problem initUrlHelper in testGetUrlWithAbsPath\n");
+    urlWithPath = getUrlWithAbsPath(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(urlWithPath);
+    CU_ASSERT_EQUAL(strlen(urlWithPath), strlen("https://www.google.com/"));
+    CU_ASSERT_STRING_EQUAL(urlWithPath, "https://www.google.com/")
+    destroyUrlHelper(pUrlHelper);
+    free(urlWithPath);
+    urlWithPath = NULL;
+
+    pUrlHelper = initUrlHelper("https://www.w3schools.com/tags/att_meta_content.asp");
+    verifyPointer(pUrlHelper, "ERROR in testUrlHelper : Problem initUrlHelper in testGetRootUrlPath\n");
+    urlWithPath = getUrlWithRootPath(pUrlHelper);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(urlWithPath);
+    CU_ASSERT_EQUAL(strlen(urlWithPath), strlen("https://www.w3schools.com/"));
+    CU_ASSERT_STRING_EQUAL(urlWithPath, "https://www.w3schools.com/")
+    destroyUrlHelper(pUrlHelper);
+    free(urlWithPath);
+}
+
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testUrlHelper", initManageStderr, cleanManageStderr);
 
@@ -265,7 +297,8 @@ CU_ErrorCode urlHelperSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testCheckFileNotExit", testCheckFileNotExit) ||
         NULL == CU_add_test(pSuite, "testSetFileExtInFileName", testSetFileExtInFileName) ||
         NULL == CU_add_test(pSuite, "testSetNewFileNameWhenIsNotInUrl", testSetNewFileNameWhenIsNotInUrl) ||
-        NULL == CU_add_test(pSuite, "testGetUrlWithAbsPath", testGetUrlWithAbsPath) ) {
+        NULL == CU_add_test(pSuite, "testGetUrlWithAbsPath", testGetUrlWithAbsPath) ||
+        NULL == CU_add_test(pSuite, "testGetRootUrlPath", testGetRootUrlPath)) {
 
         CU_cleanup_registry();
         return CU_get_error();

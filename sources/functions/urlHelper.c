@@ -293,6 +293,23 @@ char *getUrlWithAbsPath(UrlHelper *pUrlHelper) {
     return urlWithAbsPath;
 }
 
+char *getUrlWithRootPath(UrlHelper *pUrlHelper) {
+    char *urlWithRootPath = NULL;
+    int lengthStr = getIndexAfterOccurStr(pUrlHelper->url, pUrlHelper->domainName);
+
+
+    urlWithRootPath = strMallocCpy(pUrlHelper->url, lengthStr + 1);
+    if (urlWithRootPath == NULL) {
+        fprintf(stderr, "ERROR in urlHelper.c : Problem to strMallocCpy urlWithAbsPath\n");
+        return NULL;
+    }
+
+    urlWithRootPath[lengthStr] = '/';
+
+    return urlWithRootPath;
+}
+
+
 /**
  * Destroy the pointer of structure UrlHelper
  * @param pUrlHelper
