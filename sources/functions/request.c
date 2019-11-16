@@ -230,18 +230,19 @@ int getFileExtByMimeType(Request *pRequest, const char *dirResourcePath) {
  */
 static int setContentType(Request *pRequest, const char *dirResourcePath) {
     int result = 0;
+    UrlHelper *pUrlHelper = pRequest->pUrlHelper;
 
     result = saveContentType(pRequest);
     if (result == CURLE_OK) {
         if (pRequest->isContentType == 1) {
-            if (pRequest->pUrlHelper->isFileName == 0) {
-                pRequest->pUrlHelper->fileName = getAvailableFileName(dirResourcePath, NULL);
-                if (pRequest->pUrlHelper->fileName == NULL) {
+            if (pUrlHelper->isFileName == 0) {
+                pUrlHelper->fileName = getAvailableFileName(dirResourcePath, "index", "all_files_names.txt", "_scrap_");
+                if (pUrlHelper->fileName == NULL) {
                     return 0;
                 }
-                pRequest->pUrlHelper->isFileName = 1;
+                pUrlHelper->isFileName = 1;
             }
-            result = (setFileExtInFileName(pRequest->pUrlHelper, pRequest->contentType) == 1) ? 0 : -1;
+            result = (setFileExtInFileName(pUrlHelper, pRequest->contentType) == 1) ? 0 : -1;
         }
     }
 
