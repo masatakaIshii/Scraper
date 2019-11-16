@@ -212,8 +212,6 @@ static void testGetExtFileByMimeType() {
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".html");
 
-    deleteAllFilesNamesFiles("");
-
     destroyRequest(pRequest);
 }
 
@@ -230,7 +228,7 @@ static void testSetExtFileInFileName() {
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".js")
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_sc_0.js");
     destroyRequest(pRequest);
-    deleteAllFilesNamesFiles("");
+    //deleteAllFilesNamesFiles("");
 }
 
 static void testGetUniqueNameWhenNoFileName() {
@@ -253,7 +251,7 @@ static void testGetUniqueNameWhenNoFileName() {
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileName);
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_sc_1.html");
     destroyRequest(pRequest);
-    deleteAllFilesNamesFiles("");
+    //deleteAllFilesNamesFiles("");
 }
 
 CU_ErrorCode requestSpec(CU_pSuite pSuite) {
