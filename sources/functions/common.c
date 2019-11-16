@@ -21,6 +21,10 @@ void verifyPointer(void *pointer, const char *message) {
     }
 }
 
+int getNumberDigit(int number) {
+
+}
+
 /**
  * Strcat with proper malloc and not static array of character
  * @param str1

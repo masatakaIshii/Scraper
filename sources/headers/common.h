@@ -19,6 +19,8 @@
  */
 void verifyPointer(void *pointer, const char *message);
 
+int getNumberDigit(int number);
+
 /**
  * malloc and copy string with precise length
  * @param str
