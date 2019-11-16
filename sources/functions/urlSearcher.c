@@ -3,9 +3,14 @@
 //
 
 #include "../headers/urlSearcher.h"
-static void getArrStrOfUrls(ListStr *listStr, const char *urlNoRes, const char *page);
-static void getUrlInPage(ListStr *pListStr, const char *page, int *position);
-static void addUrlInList(ListStr *listStr, const char *startUrl, int lengthUrl);
+
+static void getArrStrOfUrls(String *pString, const char *urlNoRes, const char *page, const char *contentType);
+
+static void getUrlInHtmlPage(String *pString, const char *currentPosPage, int *position);
+
+static void getUrlInPage(String *pString, const char *page, int *position);
+
+static void addUrlInList(String *pString, const char *startUrl, int lengthUrl);
 
 /**
  * Function to get all http url in page that each url is unique
@@ -19,7 +24,7 @@ char **getAllUrlsInPage(const char *url, const char *contentType, const char *pa
     char **arrStr = NULL;
     char *urlWithPath = NULL;
     UrlHelper *pUrlHelper = NULL;
-    ListStr *listStr = NULL;
+    String *listChar = NULL;
 
     pUrlHelper = initUrlHelper(url);
     if (pUrlHelper->result == UH_NAME_PB) {
@@ -27,36 +32,24 @@ char **getAllUrlsInPage(const char *url, const char *contentType, const char *pa
         return NULL;
     }
 
-    listStr = initListStr(10);
-    if (listStr == NULL) {
+    listChar = initString(500, 1.5);
+    if (listChar == NULL) {
         destroyUrlHelper(pUrlHelper);
         return NULL;
     }
 
     urlWithPath = getUrlWithAbsPath(pUrlHelper);
 
-    getArrStrOfUrls(listStr, urlWithPath, page);
+    getArrStrOfUrls(listChar, urlWithPath, page, contentType);
 
-    arrStr = destroyListStrAndReturnArrStr(listStr, count);
+    arrStr = NULL;//destroyListStrAndReturnArrStr(listStr, count);
 
     return arrStr;
 }
 
-static void getArrStrOfUrls(ListStr *listStr, const char *urlNoRes, const char *page) {
+static void getArrStrOfUrls(String *pString, const char *urlNoRes, const char *page, const char *contentType) {
     int position = 0;
-    int length = (int)strlen(page);
-
-    while(position < length) {
-        getUrlInPage(listStr, page + position, &position);
-    }
-}
-
-static void getUrlInPage(ListStr *listStr, const char *currentPosPage, int *position) {
-    char *checkUrl = NULL;
-    char *startUrl = NULL;
-    char *endUrl = NULL;
-    char container = 0;
-    int lengthUrl = 0;
+    int length = (int) strlen(page);
 
     // TODO : change the start search to "src=" or "href="
     // TODO : get if after they have " or ' or alphabet
@@ -64,6 +57,28 @@ static void getUrlInPage(ListStr *listStr, const char *currentPosPage, int *posi
     // TODO : if https or http get url
     // TODO : else if it "//" after so add before the protocol of com of url
     // TODO : if its "/" add the url with absolute path
+    if (strcmp(contentType, "text/html") == 0) {
+        while (position < length) {
+            getUrlInHtmlPage(pString, page + position, &position);
+        }
+    } else {
+        while (position < length) {
+            getUrlInPage(pString, page + position, &position);
+        }
+    }
+}
+
+static void getUrlInHtmlPage(String *pString, const char *currentPosPage, int *position) {
+
+}
+
+static void getUrlInPage(String *pString, const char *currentPosPage, int *position) {
+    char *checkUrl = NULL;
+    char *startUrl = NULL;
+    char *endUrl = NULL;
+    char container = 0;
+    int lengthUrl = 0;
+
     if ((checkUrl = strstr(currentPosPage, "https:")) || (checkUrl = strstr(currentPosPage, "http:"))) {
 //        if (checkUrl[-1] != '=') {
 //            container = checkUrl[-1];
@@ -76,19 +91,20 @@ static void getUrlInPage(ListStr *listStr, const char *currentPosPage, int *posi
 //                }
 //            }
 //            lengthUrl = (int)(endUrl - startUrl);
-//            addUrlInList(listStr, startUrl, lengthUrl);
+//            addUrlInList(pString, startUrl, lengthUrl);
 //            *position += lengthUrl + (int)(startUrl - currentPosPage);
 //        }
     } else {
-        *position += (int)strlen(currentPosPage);
+        *position += (int) strlen(currentPosPage);
     }
 }
 
-static void addUrlInList(ListStr *listStr, const char *startUrl, int lengthUrl) {
+static void addUrlInList(String *pString, const char *startUrl, int lengthUrl) {
     char *url = NULL;
 
-    url = strMallocCpy(startUrl, lengthUrl);
+    url = strMallocCpy(startUrl, lengthUrl + 1);
     verifyPointer(url, "Problem to strMalloc url in function addUrlInListAndUpdatePosition\n");
-    listStrAdd(listStr, url);
+    strcat(url, "\n");
+    addString(pString, url);
     free(url);
 }
