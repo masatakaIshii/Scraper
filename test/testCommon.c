@@ -68,6 +68,21 @@ static void testStrMallocCat() {
     result = strMallocCat("", "");
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     free(result);
+
+    result = strMallocCat(NULL, NULL);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "");
+    free(result);
+
+    result = strMallocCat(NULL,"Tonton");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "Tonton");
+    free(result);
+
+    result = strMallocCat("Tati", NULL);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "Tati");
+    free(result);
 }
 
 struct TestStr {

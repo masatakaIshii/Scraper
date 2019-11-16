@@ -28,13 +28,23 @@ void verifyPointer(void *pointer, const char *message) {
  * @return newStr : string that is concat with str1 and str2
  */
 char *strMallocCat(const char *str1, const char *str2) {
-    char *newStr = calloc(strlen(str1) + strlen(str2) + 1, sizeof(char));
+    char *newStr = NULL;
+    int length1 = (str1 != NULL) ? (int)strlen(str1) : 0;
+    int length2 = (str2 != NULL) ? (int)strlen(str2) : 0;
+
+    newStr = calloc(length1 + length2 + 1, sizeof(char));
     if (newStr == NULL) {
         return NULL;
     }
 
-    strcpy(newStr, str1);
-    strcat(newStr, str2);
+    if (str1 != NULL) {
+        strcpy(newStr, str1);
+    } else {
+        strcpy(newStr, "");
+    }
+    if (str2 != NULL) {
+        strcat(newStr, str2);
+    }
 
     return newStr;
 }
