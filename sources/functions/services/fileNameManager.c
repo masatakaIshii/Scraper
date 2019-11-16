@@ -9,140 +9,185 @@
 
 #include "../../headers/services/fileNameManager.h"
 
-static char *getFilesNamesPath(const char *dirPath, const char *manageNameFile);
-static char *getNewFileName(const char *filesNamesPath, const char *nameToAdd, const char *btwNameAndNumber);
-static char *createAllFilesNames( const char *nameWithBtwPart);
-static char *addFileNameInAllFilesNames(const char *filesNamesPath, const char *nameToAdd);
-static char *checkFileNameExistAndGetAvailableOne(const char*contentAllFilesNames, const char *nameToAdd);
+static char *getFileNamesManagerPath(const char *dirPath, const char *manageNameFile);
+static char *getNewName(const char *fileNamesManagerPath, const char *nameToAdd, const char *btwNameAndNumber);
+static char *createNamesManager(const char *nameWithBtwPart);
+static char *addNameInAllFilesNamesManager(const char *fileNamesManagerPath, const char *nameToAdd);
+static char *checkNameExistAndGetAvailableOne(const char*contentFileNamesManager, const char *nameToAdd);
 static char *getNewNameByNameAndCurrentNbr(const char *nameToAdd, const char *formatName, int number);
-static int writeFileNameInListFileNames(const char *filesNamesPath, const char *nameToAdd);
+static int writeFileNameInListFileNames(const char *filesNamesManagerPath, const char *nameToAdd);
+static int checkIfNameIsUsed(const char *fileNamesManagerPath, const char *nameToCheck);
 
 /**
- * Function to get unique name for resource that not have file name in URL
- * TODO: complete documentation after it's done
+ * Function to get unique name of file depend to file names manager
+ * @param fileNamesManager
+ * @param dirPath
+ * @param nameToAdd
+ * @param btwNameAndNumber
+ * @return OK newName : new available name
+ * ERROR NULL
  */
-char *getAvailableFileName(const char *manageNameFile, const char *dirPath, const char *nameToAdd, const char *btwNameAndNumber) {
-    char *newFileName = NULL;
-    char *filesNamesPath = NULL;
+char *getAvailableFileName(const char *fileNamesManager, const char *dirPath, const char *nameToAdd, const char *btwNameAndNumber) {
+    char *newName = NULL; // new name deliver by file names manager
+    char *fileNamesManagerPath = NULL;
 
-    if (manageNameFile == NULL || strlen(manageNameFile) <= 0) {
-        fprintf(stderr, "ERROR in getAvailableFileName : the manageNameFile can\'t be empty\n");
+    if (fileNamesManager == NULL || strlen(fileNamesManager) <= 0) {
+        fprintf(stderr, "ERROR in getAvailableFileName : the fileNamesManager can\'t be empty\n");
         return NULL;
     }
 
-    filesNamesPath = getFilesNamesPath(dirPath, manageNameFile);
+    fileNamesManagerPath = getFileNamesManagerPath(dirPath, fileNamesManager);
 
-    newFileName = getNewFileName(filesNamesPath, nameToAdd, btwNameAndNumber);
+    newName = getNewName(fileNamesManagerPath, nameToAdd, btwNameAndNumber);
 
-    free(filesNamesPath);
-    return newFileName;
+    free(fileNamesManagerPath);
+    return newName;
 }
 
-static char *getFilesNamesPath(const char *dirPath, const char *manageNameFile) {
-    char *temp = NULL;
-    char *filesNamesPath = NULL;
+/**
+ * Get the file names manager path
+ * @param dirPath : directory path that contain file names manager
+ * @param manageNameFile
+ * @return
+ */
+static char *getFileNamesManagerPath(const char *dirPath, const char *manageNameFile) {
+    char *temp = NULL; // temp address of char to add '/'
+    char *fileNamesManagerPath = NULL;
 
     if (strlen(dirPath) > 0) {
         mkdirP(dirPath);
         temp = strMallocCat(dirPath, "/");
-        filesNamesPath = strMallocCat(temp, manageNameFile);
+        fileNamesManagerPath = strMallocCat(temp, manageNameFile);
         free(temp);
-        if (filesNamesPath == NULL) {
+        if (fileNamesManagerPath == NULL) {
             return NULL;
         }
     } else {
-        filesNamesPath = strMallocCpy(manageNameFile, (int)strlen(manageNameFile));
-        if (filesNamesPath == NULL) {
+        fileNamesManagerPath = strMallocCpy(manageNameFile, (int)strlen(manageNameFile));
+        if (fileNamesManagerPath == NULL) {
             return NULL;
         }
     }
 
-    return filesNamesPath;
+    return fileNamesManagerPath;
 }
 
-static char *getNewFileName(const char *filesNamesPath, const char *nameToAdd, const char *btwNameAndNumber) {
-    char *newFileName = NULL;
-    char *nameWithBtwPart = NULL;
+/**
+ * Get new name and add the name in file names manager
+ * @param fileNamesManagerPath : the file path that contain names that is used
+ * @param nameToAdd : the name to add in file names manager
+ * @param btwNameAndNumber : the separator between name and number
+ * @return OK newName : the name that is unique in context of file names manager
+ * ERROR NULL
+ */
+static char *getNewName(const char *fileNamesManagerPath, const char *nameToAdd, const char *btwNameAndNumber) {
+    char *newName = NULL; // new name deliver by file names manager
+    char *nameWithBtwPart = NULL; // concat nameToAdd and btwNameAndNumber
 
     nameWithBtwPart = strMallocCat(nameToAdd, btwNameAndNumber);
 
-    if (access(filesNamesPath, F_OK) == -1) {
-        newFileName = createAllFilesNames(nameWithBtwPart);
+    if (access(fileNamesManagerPath, F_OK) == -1) {
+        newName = createNamesManager(nameWithBtwPart);
     } else {
-        newFileName = addFileNameInAllFilesNames(filesNamesPath, nameWithBtwPart);
+        newName = addNameInAllFilesNamesManager(fileNamesManagerPath, nameWithBtwPart);
     }
     free(nameWithBtwPart);
-    if (newFileName == NULL) {
+    if (newName == NULL) {
         return NULL;
     }
-    if (!writeFileNameInListFileNames(filesNamesPath, newFileName)) {
-        free(newFileName);
+    if (!writeFileNameInListFileNames(fileNamesManagerPath, newName)) {
+        free(newName);
         return NULL;
     }
 
-    return newFileName;
+    return newName;
 }
 
 /**
  * Function to create file 'all_files_names.txt', add new file name in the file and return new file name
  * @param filesNamesPath : the path to create new 'all_files_names.txt'
- * @return newFileName : the new unique file name with like 'index_sc_n' where n is number
+ * @return newName : the new unique file name with like 'index_sc_n' where n is number
  */
-static char *createAllFilesNames( const char *nameWithBtwPart) {
-    char *newFileName = NULL;
+static char *createNamesManager(const char *nameWithBtwPart) {
+    char *newName = NULL; // new name deliver by file names manager
 
-    newFileName = strMallocCat(nameWithBtwPart, "0");
-    if (newFileName == NULL) {
-        fprintf(stderr, "ERROR in fileNameManager : Problem strMallocCat newFileName in createAllFilesNames\n");
+    newName = strMallocCat(nameWithBtwPart, "0");
+    if (newName == NULL) {
+        fprintf(stderr, "ERROR in fileNameManager : Problem strMallocCat newName in createNamesManager\n");
     }
 
-    return newFileName;
+    return newName;
 }
 
-static char *addFileNameInAllFilesNames(const char *filesNamesPath, const char *nameToAdd) {
-    char *contentAllFilesNames = NULL;;
-    char *newFileName = NULL;
+/**
+ *
+ * @param fileNamesManagerPath
+ * @param nameToAdd
+ * @return
+ */
+static char *addNameInAllFilesNamesManager(const char *fileNamesManagerPath, const char *nameToAdd) {
+    char *contentFilesNamesManager = NULL; // content of file names manager
+    char *newName = NULL; // new name deliver by file names manager
 
-    contentAllFilesNames = getContentInFile(filesNamesPath, "rb");
-    if (contentAllFilesNames == NULL) {
-        fprintf(stderr, "Problem to open file to read in : %s\n", filesNamesPath);
+    contentFilesNamesManager = getContentInFile(fileNamesManagerPath, "rb");
+    if (contentFilesNamesManager == NULL) {
+        fprintf(stderr, "ERROR : Problem to open file to read in : %s\n", fileNamesManagerPath);
         return NULL;
     }
 
-    newFileName = checkFileNameExistAndGetAvailableOne(contentAllFilesNames, nameToAdd);
-    free(contentAllFilesNames);
+    newName = checkNameExistAndGetAvailableOne(contentFilesNamesManager, nameToAdd);
+    free(contentFilesNamesManager);
 
-    return newFileName;
+    return newName;
 }
 
-static char *checkFileNameExistAndGetAvailableOne(const char*contentAllFilesNames, const char *nameToAdd) {
-    char *newFileName = NULL;
-    char *lineOccurStr = NULL;
-    char *lastOccur = myStrrstr(contentAllFilesNames, nameToAdd);
-    char *formatName = strMallocCat(nameToAdd, "%d");
-    int indexAtLineBreak = 0;
-    int currentNbr = -1;
+/**
+ * Check the content of file names manager and give available name
+ * @param contentFileNamesManager : the content of file names manager
+ * @param nameToAdd : name without number to check occurence and concat with appropriate number
+ * @return OK newName : the available name that is add in end of file names manager
+ * ERROR : NULL;
+ */
+static char *checkNameExistAndGetAvailableOne(const char*contentFileNamesManager, const char *nameToAdd) {
+    char *newName = NULL; // new available name deliver by file names manager
+    char *lineOccurStr = NULL; // line that have occurrence of nameToAdd
+    char *formatName = NULL; // format with nameToAdd to add number
+    char *lastOccur = myStrrstr(contentFileNamesManager, nameToAdd); // begin of last occurence of nameToAdd
+    int indexAtLineBreak = 0; // index of '\n'
+    int currentNbr = -1; // if occurrence, current number to nameToAdd in file names manager
 
+    formatName  = strMallocCat(nameToAdd, "%d");
+    if (formatName == NULL) {
+        return NULL;
+    }
     if (lastOccur != NULL) {
         indexAtLineBreak = getIndexAfterOccurStr(lastOccur, "\n");
+        lineOccurStr = strMallocCpy(lastOccur, indexAtLineBreak - 1);
+        if (lineOccurStr == NULL) {
+            return NULL;
+        }
+        sscanf(lineOccurStr, formatName, &currentNbr);
+    } else {
+        currentNbr = -1;
     }
-
-    lineOccurStr = strMallocCpy(lastOccur, indexAtLineBreak - 1);
-    if (lineOccurStr == NULL) {
-        return NULL;
-    }
-    sscanf(lineOccurStr, formatName, &currentNbr);
-    newFileName = getNewNameByNameAndCurrentNbr(nameToAdd, formatName, ++currentNbr);
-
+    newName = getNewNameByNameAndCurrentNbr(nameToAdd, formatName, ++currentNbr);
     free(lineOccurStr);
     free(formatName);
 
-    return newFileName;
+    return newName;
 }
 
+/**
+ * Get the name that is n + 1 of current name
+ * @param nameToAdd : name that content number count in name
+ * @param formatName : format to change the last occurrence name to n + 1
+ * @param number : current number contain in name to increment
+ * @return OK newName : new unique name to add in file Names manager, <br>
+ * ERROR NULL
+ */
 static char *getNewNameByNameAndCurrentNbr(const char *nameToAdd, const char *formatName, int number) {
-    char *newName = NULL;
-    int digitLength = getNbrDigit(number);
+    char *newName = NULL; // new available name deliver by file names manager
+    int digitLength = getNbrDigit(number); // length of number if it'll be string
 
     newName = calloc(strlen(nameToAdd) + digitLength + 1, sizeof(char));
     if (newName == NULL) {
@@ -155,17 +200,17 @@ static char *getNewNameByNameAndCurrentNbr(const char *nameToAdd, const char *fo
 }
 
 /**
- * Function to add name to the file 'all_files_names.txt'
- * @param filesNamesPath : the path of file 'all_files_names.txt'
+ * Function to add name to the file of name manager
+ * @param filesNamesManagerPath : the path of file 'all_files_names.txt'
  * @param nameToAdd : the name to add in file
  * @return OK 1, ERROR 0
  */
-static int writeFileNameInListFileNames(const char *filesNamesPath, const char *nameToAdd) {
+static int writeFileNameInListFileNames(const char *filesNamesManagerPath, const char *nameToAdd) {
     FILE *pFilesNames = NULL;
 
-    pFilesNames = fopen(filesNamesPath, "ab");
+    pFilesNames = fopen(filesNamesManagerPath, "ab");
     if (pFilesNames == NULL) {
-        fprintf(stderr, "Problem open to write file : %s\n", filesNamesPath);
+        fprintf(stderr, "Problem open to write file : %s\n", filesNamesManagerPath);
         return 0;
     }
     fprintf(pFilesNames, "%s\n", nameToAdd);
@@ -175,13 +220,68 @@ static int writeFileNameInListFileNames(const char *filesNamesPath, const char *
 }
 
 /**
- * Delete 'all_files_names.txt' by given the directory path that is contain
+ * Function to add name in file names manager if its not include
+ * @param dirPath : directory path that have file names manager
+ * @param filesNamesManager : the name of file names manager
+ * @param nameToCheck : the name to check if its in file names manager
+ * @return OK 1 : the name is add in file name manager
+ * ERROR 0 : the name is not add because it's exist alreay
+ */
+int addNameIfNotInFilesNamesManager(const char *dirPath, const char *filesNamesManager, const char *nameToCheck) {
+    char *fileNamesPath = NULL;
+
+    mkdirP(dirPath);
+    fileNamesPath = getFileNamesManagerPath(dirPath, filesNamesManager);
+
+    if (access(fileNamesPath, F_OK) != -1) {
+        if (checkIfNameIsUsed(fileNamesPath, nameToCheck)) {
+            return 0;
+        }
+    }
+    writeFileNameInListFileNames(fileNamesPath, nameToCheck);
+
+    return 1;
+}
+
+/**
+ * Function to check if name in file names manager is already used
+ * @param fileNamesManagerPath : path that contain all names used by file names manager
+ * @param nameToCheck : name to check
+ * @return OK 1 : name is add in file names manager
+ * OK 0 : name is already in file names manager
+ * ERROR -1 : problem to get content of file name manager
+ */
+static int checkIfNameIsUsed(const char *fileNamesManagerPath, const char *nameToCheck) {
+    char *contentFile = NULL;
+    int result = 0;
+
+    contentFile = getContentInFile(fileNamesManagerPath, "rb");
+    if (contentFile == NULL) {
+        fprintf(stderr, "ERROR : Problem to get content of file %s\n", fileNamesManagerPath);
+        return -1;
+    }
+
+    result = (strstr(contentFile, nameToCheck) != NULL) ? 1 : 0;
+
+    free(contentFile);
+
+    return result;
+}
+
+/**
+
+ */
+
+/**
+ * Delete file name manager by given directory path and the name of file
  * @param dirPath
+ * @param fileNamesManager
  * @return OK 1, ERROR 0
  */
-int deleteAllFilesNamesFiles(const char *dirPath) {
+int deleteFilesNamesManager(const char *dirPath, const char *fileNamesManager) {
     int result = 0;
-    char *allFilesNamesPath = strMallocCat(dirPath, ALL_FILES_NAMES);
+    char *allFilesNamesPath = strMallocCat(dirPath, fileNamesManager);
+
     result = unlink(allFilesNamesPath);
     free(allFilesNamesPath);
 
