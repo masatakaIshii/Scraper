@@ -21,8 +21,28 @@ void verifyPointer(void *pointer, const char *message) {
     }
 }
 
-int getNumberDigit(int number) {
+/**
+ * Get number of digit of param number
+ * @param number : integer to see the number of digit
+ * @return OK count > 0
+ * ERROR -1 : when number is less than 0
+ */
+int getNbrDigit(int number) {
+    int count = 0;
 
+    if (number < 0) {
+        return -1;
+    }
+
+    if (number == 0) {
+        return 1;
+    }
+
+    while(number > 0) {
+        number /=10;
+        count++;
+    }
+    return count;
 }
 
 /**

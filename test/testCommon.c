@@ -3,6 +3,16 @@
 //
 #include "test.h"
 
+static void testGetNumberDigit() {
+    CU_ASSERT_EQUAL(getNbrDigit(0), 1);
+    CU_ASSERT_EQUAL(getNbrDigit(1), 1);
+    CU_ASSERT_EQUAL(getNbrDigit(10), 2);
+    CU_ASSERT_EQUAL(getNbrDigit(99), 2);
+    CU_ASSERT_EQUAL(getNbrDigit(100), 3);
+    CU_ASSERT_EQUAL(getNbrDigit(102950), 6);
+    CU_ASSERT_EQUAL(getNbrDigit(-999), -1);
+}
+
 static void testGetIndexAfterOccurStr() {
     int length = getIndexAfterOccurStr("C'est bon les bonbons", "C'est");
     CU_ASSERT_EQUAL(length, strlen("C'est"));
@@ -266,17 +276,17 @@ static void testStrReallocCat() {
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
-    if ((NULL == CU_add_test(pSuite, "testGetIndexAfterOccurStr", testGetIndexAfterOccurStr)) ||
-        (NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy)) ||
-        (NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate)) ||
-        (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat)) ||
-        (NULL == CU_add_test(pSuite, "testStrReallocCat", testStrReallocCat)) ||
-        (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer)) ||
-        (NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories)) ||
-        (NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent)) ||
-        (NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile)) ||
-        (NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr)) ||
-        (NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit))) {
+    if (NULL == CU_add_test(pSuite, "testGetNumberDigit", testGetNumberDigit) ||
+        NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy) ||
+        NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate) ||
+        NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat) ||
+        NULL == CU_add_test(pSuite, "testStrReallocCat", testStrReallocCat) ||
+        NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer) ||
+        NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories) ||
+        NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent) ||
+        NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile) ||
+        NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr) ||
+        NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit)) {
 
         CU_cleanup_registry();
         return CU_get_error();
