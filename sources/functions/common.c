@@ -25,7 +25,8 @@ void verifyPointer(void *pointer, const char *message) {
  * Strcat with proper malloc and not static array of character
  * @param str1
  * @param str2
- * @return newStr : string that is concat with str1 and str2
+ * @return OK newStr : string that is concat with str1 and str2, <br>
+ * ERROR NULL : problem calloc of newStr
  */
 char *strMallocCat(const char *str1, const char *str2) {
     char *newStr = NULL;
@@ -53,8 +54,8 @@ char *strMallocCat(const char *str1, const char *str2) {
  * Function to realloc currentStr with string to add and concat
  * @param currentStr : current string to realloc
  * @param strToAdd : string to add in current string
- * @return OK : currentStr : currentString with string that is add, <br>
- * ERROR : NULL
+ * @return OK currentStr : currentString with string that is add, <br>
+ * ERROR NULL
  */
 char *strReallocCat(char *currentStr, const char *strToAdd) {
     int lengthCurrentStr = (currentStr != NULL) ? (int)strlen(currentStr) : 0;
@@ -115,7 +116,7 @@ int getNbrOccurInStr(const char *str, const char *occur) {
  * @param str
  * @param delimiter
  * @param count
- * @return : array of string
+ * @return result : array of string
  */
 static char **fillArraySplitStr(const char *str, const char *delimiter, int count) {
     char *token = NULL;
@@ -145,8 +146,8 @@ static char **fillArraySplitStr(const char *str, const char *delimiter, int coun
  * @param str : string to copy to split in array
  * @param pCount : count of array string
  * @return
- * arrayStr : array of string
- * NULL : if str is empty
+ * OK arrayStr : array of string, <br>
+ * ERROR NULL : if str is empty
  */
 char **strSplit(const char *str, const char *delimiter, int *pCount) {
     char **arrayStr = NULL;
