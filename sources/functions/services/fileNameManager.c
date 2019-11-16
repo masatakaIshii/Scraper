@@ -13,25 +13,9 @@ static char *getFilesNamesPath(const char *dirPath, const char *manageNameFile);
 static char *getNewFileName(const char *filesNamesPath, const char *nameToAdd, const char *btwNameAndNumber);
 static char *createAllFilesNames( const char *nameWithBtwPart);
 static char *addFileNameInAllFilesNames(const char *filesNamesPath, const char *nameToAdd);
-//static char *copyFileNameAndWriteInFile(const char *filesNamesPath, const char *nameToAdd);
 static char *checkFileNameExistAndGetAvailableOne(const char*contentAllFilesNames, const char *nameToAdd);
-static char *getNewNameByNameAndCurrentNbr(const char *nameToAdd, int number);
+static char *getNewNameByNameAndCurrentNbr(const char *nameToAdd, const char *formatName, int number);
 static int writeFileNameInListFileNames(const char *filesNamesPath, const char *nameToAdd);
-
-/*
- * 1. check if fileName is NULL, if fileName is NULL => 2, else => 3
- * 2. if fileName is NULL check if file 'all_files_names.txt' exist
- * 2.1 if all_files_names not exist add custom created name 'index_esgi_scrap_0'
- * 2.2 if all_files_names exist check check the last 'index_esgi_scrap_n' where 'n' is number and get new custom name with n incremented and add in end of file with '\n'
- * 3. if fileName exist, check if file 'all_files_names.txt' exist
- * 3.1 if all_files_names not exist, create file and add fileName
- * 3.2 if all_files_names exists, check if fileName is writed, if it's not write put fileName in all_files_names, else 4
- * 4. if file if writed already, check if there are 'fileName_esgi_scrap_n' where 'fileName' is current filename and 'n' is number and increment n and add in end of file with '\n'
- *
- *
- * 1. check if 'all_files_names.txt' exist, if exist => 2, else => 3
- * 2. check if fileName is NULL, if fileName is null get custom file name like 'index_esgi_scrap_0' where 'n' is number
- */
 
 /**
  * Function to get unique name for resource that not have file name in URL
@@ -132,24 +116,23 @@ static char *addFileNameInAllFilesNames(const char *filesNamesPath, const char *
 }
 
 static char *checkFileNameExistAndGetAvailableOne(const char*contentAllFilesNames, const char *nameToAdd) {
-    // TODO : check si le nom de fichier exist dane le fichier all_files_texts et obtenir un qui n'est pas dans ce fichier
     char *newFileName = NULL;
     char *lineOccurStr = NULL;
-    char *occurStart = strstr(contentAllFilesNames, nameToAdd);
+    char *lastOccur = myStrrstr(contentAllFilesNames, nameToAdd);
     char *formatName = strMallocCat(nameToAdd, "%d");
     int indexAtLineBreak = 0;
     int currentNbr = -1;
 
-    if (occurStart != NULL) {
-        indexAtLineBreak = getIndexAfterOccurStr(occurStart, "\n");
+    if (lastOccur != NULL) {
+        indexAtLineBreak = getIndexAfterOccurStr(lastOccur, "\n");
     }
 
-    lineOccurStr = strMallocCpy(occurStart, indexAtLineBreak - 1);
+    lineOccurStr = strMallocCpy(lastOccur, indexAtLineBreak - 1);
     if (lineOccurStr == NULL) {
         return NULL;
     }
     sscanf(lineOccurStr, formatName, &currentNbr);
-    newFileName = getNewNameByNameAndCurrentNbr(nameToAdd, currentNbr);
+    newFileName = getNewNameByNameAndCurrentNbr(nameToAdd, formatName, ++currentNbr);
 
     free(lineOccurStr);
     free(formatName);
@@ -157,32 +140,19 @@ static char *checkFileNameExistAndGetAvailableOne(const char*contentAllFilesName
     return newFileName;
 }
 
-static char *getNewNameByNameAndCurrentNbr(const char *nameToAdd, int number) {
-    // get string of number and cat to nameToAdd
-    return NULL;
-}
+static char *getNewNameByNameAndCurrentNbr(const char *nameToAdd, const char *formatName, int number) {
+    char *newName = NULL;
+    int digitLength = getNbrDigit(number);
 
-/**
-// * Function to copy new file name to array of char that is malloc and add in all_files_names.txt
-// * @param filesNamesPath : the path of all_files_names.txt
-// * @param nameToAdd : the file name to malloc
-// * @return OK newFileName : the file name that is malloc, ERROR NULL
-// */
-//static char *copyFileNameAndWriteInFile(const char *filesNamesPath, const char *nameToAdd) {
-//    char *newFileName = strMallocCpy(nameToAdd, (int) strlen(nameToAdd));
-//    if (newFileName == NULL) {
-//        fprintf(stderr, "Problem strMallocCpy newFileName in function getAvailableFileName\n");
-//        return NULL;
-//    }
-//
-//    if (writeFileNameInListFileNames(filesNamesPath, newFileName) == 0) {
-//        free(newFileName);
-//        return NULL;
-//    }
-//
-//    return newFileName;
-//}
-//
+    newName = calloc(strlen(nameToAdd) + digitLength + 1, sizeof(char));
+    if (newName == NULL) {
+        return NULL;
+    }
+
+    sprintf(newName, formatName, number);
+
+    return newName;
+}
 
 /**
  * Function to add name to the file 'all_files_names.txt'
