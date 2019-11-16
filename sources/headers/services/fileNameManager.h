@@ -17,13 +17,9 @@
 
 /**
  * Function to get unique name for resource that not have file name in URL
- * DEBT : fileNameNoExt is for manage the case when 2 differents url have the same file name, now it is not manage
- * @param dirPath : the directory path
- * @param fileNameNoExt : the file to add "_sc_n" where 'n' is number that is available
- * @return OK newFileName : unique file name,
- * ERROR NULL
+ *
  */
-char *getAvailableFileName(const char *dirPath, const char *fileNameNoExt);
+char *getAvailableFileName(const char *manageNameFile, const char *dirPath, const char *nameToAdd, const char *btwNameAndNumber);
 
 /**
  * Delete 'all_files_names.txt' by given the directory path that is contain
