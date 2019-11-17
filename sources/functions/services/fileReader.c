@@ -11,20 +11,8 @@ static char **searchAllOptionValues(const char *content, int *count, const char 
 static char **searchOptionValuesOkArrOptionName(const char *content, const char *optionName, int *count);
 
 static char *getProperOptName(const char *content, const char *optionName);
+static void removeSpacesAfterOneIndex(char **values, int count);
 
-//FILE *startFileReader(const char *filePath, const char *mode) {
-//    FILE *fp = NULL;
-//
-//    if (strcmp(mode, "rb") == 0 || strcmp(mode, "r") == 0) {
-//        fp = fopen(filePath, mode);
-//        if (fp == NULL) {
-//            fprintf(stderr, "ERROR : Problem to open file in startFileReader, check if file exist\n");
-//            return NULL;
-//        }
-//    }
-//
-//    return fp;
-//}
 
 char *getOptValue(const char *filePath, const char *optionName) {
     char *content = NULL;
@@ -178,6 +166,46 @@ static char *getProperOptName(const char *content, const char *optionName) {
         position = (int) (start - content) + lengthOpt;
     }
     return NULL;
+}
+
+char **getArrValuesInParenthesis(const char *filePath, const char *delimiter, int *count) {
+    char *startPart = NULL;
+    char *endPart = NULL;
+    char *concernedPart = NULL;
+    char *content = NULL;
+    char **values = NULL;
+
+    content = getContentInFile(filePath, "rb");
+    if (content == NULL) {
+        return NULL;
+    }
+
+    startPart = strchr(content, '(');
+    if (startPart == NULL) {
+        return NULL;
+    }
+    startPart = startPart + 1;
+
+    endPart = strchr(content, ')');
+    if (endPart == NULL) {
+        return NULL;
+    }
+    concernedPart = strMallocCpy(startPart, (int)(endPart - startPart));
+    values = strSplit(concernedPart, delimiter, count);
+    removeSpacesAfterOneIndex(values, *count);
+
+    return values;
+}
+
+static void removeSpacesAfterOneIndex(char **values, int count) {
+    int i;
+    char *temp = NULL;
+
+    for (i = 1; i < count; i++) {
+        temp = values[i];
+        values[i] = strMallocCpy(temp + 1, strlen(temp) - 1);
+        free(temp);
+    }
 }
 
 //void closeFileReader(FILE *fp) {

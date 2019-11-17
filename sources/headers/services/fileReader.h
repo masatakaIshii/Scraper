@@ -18,6 +18,8 @@ char **getAllOptValuesByOptName(const char *filePath, const char *optionName, in
 
 char **getOptValuesOfArrOptName(const char *filePath, const char *optionName, int *count);
 
-void closeFileReader(FILE *fp);
+char **getArrValuesInParenthesis(const char *content, const char *delimiter, int *count);
+
+//void closeFileReader(FILE *fp);
 
 #endif //SCRAPER_FILEREADER_H

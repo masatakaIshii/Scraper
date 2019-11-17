@@ -38,6 +38,10 @@ static void startExampleFileWithArrayValue1() {
     closeFileWriter(fwp);
 }
 
+static void startExemplaManageParenthesis() {
+
+}
+
 static void testInitFileReader() {
 //    startExampleFileToRead1();
 //
@@ -107,8 +111,18 @@ static void testGetArrOptionValue() {
     CU_ASSERT_STRING_EQUAL(results[5], "t");
     freeArrayString(results, count);
     count = 0;
-
+    results = NULL;
     unlink("tonton.txt");
+}
+
+static void testGetValueInParenthesis() {
+    startExampleFileWithArrayValue1();
+
+    results = getArrValuesInParenthesis("test.txt", ",", &count);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(results);
+    CU_ASSERT_EQUAL(count, 2);
+    CU_ASSERT_STRING_EQUAL(results[0], "Mon site web");
+    CU_ASSERT_STRING_EQUAL(results[1], "Mon deuxième site");
 }
 
 CU_ErrorCode fileReaderSpec(CU_pSuite pSuite) {
@@ -117,7 +131,8 @@ CU_ErrorCode fileReaderSpec(CU_pSuite pSuite) {
     if (NULL == CU_add_test(pSuite, "testInitFileReader", testInitFileReader) ||
         NULL == CU_add_test(pSuite, "testGetOptionValue", testGetOptionValue) ||
         NULL == CU_add_test(pSuite, "testGetOptionValues", testGetOptionValues) ||
-        NULL == CU_add_test(pSuite, "testGetArrOptionValue", testGetArrOptionValue)) {
+        NULL == CU_add_test(pSuite, "testGetArrOptionValue", testGetArrOptionValue) ||
+        NULL == CU_add_test(pSuite, "testGetValueInParenthesis", testGetValueInParenthesis)) {
 
         CU_cleanup_registry();
         return CU_get_error();

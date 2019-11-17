@@ -211,8 +211,11 @@ static void testGetExtFileByMimeType() {
     CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".html");
-    rmrf("index");
+    //rmrf("index");
     destroyRequest(pRequest);
+
+    unlink("index/all_files_names.txt");
+    rmdir("index");
 }
 
 static void testSetExtFileInFileName() {
