@@ -6,9 +6,10 @@
  *  Description : file to manage the session of action
  */
 
-static void setSessionByAction(Session *pSession, Action *pAction);
-
 #include "../headers/session.h"
+
+static int setSession(Session *pSession, Action *action);
+static void initAndSetResource(Session *pSession, Action *pAction);
 
 Session *initSession(Action *action, char *sessionName) {
     Session *pSession = malloc(sizeof(Session));
@@ -20,25 +21,39 @@ Session *initSession(Action *action, char *sessionName) {
         free(pSession);
         return NULL;
     }
-    //pSession->actions = malloc(sizeof(Action*));
 
-    setSessionByAction(pSession, action);
+    if (setSession(pSession, action)) {
+        free(pSession);
+        return NULL;
+    }
+    pSession->nameAction = strMallocCpy(action->name, (int)strlen(action->name));
 
-    pSession->createdDate = getCurrentTime();
-
-
+    initAndSetResource(pSession, action);
 
     return pSession;
 }
 
-static void setSessionByAction(Session *pSession, Action *pAction) {
+static int setSession(Session *pSession, Action *action) {
+    pSession->nameAction = strMallocCpy(action->name, strlen(action->name));
+    if (pSession->nameAction == NULL) {
+        fprintf(stderr, "Problem strMallocCpy pSession->nameAction\n");
+        return 0;
+    }
+
+    pSession->createdDate = getCurrentTime();
+    if (pSession->)
+}
+
+static void initAndSetResource(Session *pSession, Action *pAction) {
+
+
+
+
     //pSession->resources = initResource(action->url, ) TODO : get depth of action
 //    if (pSession->resources == NULL) {
 //        fprintf(stderr, "Problem of malloc resources for pointer of Session\n");
 //        exit(1);
 //    }
-
-    pSession->nameAction = strMallocCpy(pAction->name, (int)strlen(pAction->name));
 }
 
 // addResourceRecursively(url, maxDepth)

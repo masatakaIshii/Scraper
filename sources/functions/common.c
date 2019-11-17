@@ -324,13 +324,16 @@ char *getCurrentTime() {
 
     currentTime = time(NULL);
     if (currentTime == (time_t) -1) {
+        fprintf(stderr, "Problem to set time in getCurrentTime\n");
         return NULL;
     }
 
     temp = ctime(&currentTime);
     strCurrentTime = strMallocCpy(temp, (int) strlen(temp));
-
-    verifyPointer(strCurrentTime, "Problem get current time\n");
+    if (strCurrentTime == NULL) {
+        fprintf(stderr, "Problem get current time\n");
+        return NULL;
+    }
 
     return strCurrentTime;
 }
