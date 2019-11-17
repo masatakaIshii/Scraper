@@ -14,7 +14,7 @@
  * -write option name and array of value of option
  * -close stream of fileWriting
  */
-FILE *startFileWriter(const char *filePath, const char *mode);
+FILE *startFileWriter(const char *filePath, const char *mode, const char *startStr);
 
 int writeOptionNameAndValue(FILE *fp, const char *optionName, const char *optionValue);
 

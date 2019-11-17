@@ -8,10 +8,10 @@ static FILE *fp = NULL;
 static char *contentFile = NULL;
 
 static void testStartFileWriter() {
-    fp = startFileWriter("toto.txt", "rb");
+    fp = startFileWriter("toto.txt", "rb", "=");
     CU_ASSERT_PTR_NULL(fp);
 
-    fp = startFileWriter("toto.txt", "ab");
+    fp = startFileWriter("toto.txt", "ab", "=");
     CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
     closeFileWriter(fp);
 
@@ -27,21 +27,21 @@ static void testStartFileWriter() {
 }
 
 static void testAddOptionNameAndValue() {
-    fp = startFileWriter("toto.txt", "ab");
+    fp = startFileWriter("toto.txt", "ab", "==");
 
     CU_ASSERT_EQUAL(writeOptionNameAndValue(fp, "tata", "titi"), 0);
     closeFileWriter(fp);
     contentFile = getContentInFile("toto.txt", "rb");
     verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValue\n");
 
-    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{ tata -> titi }\n\n");
+    CU_ASSERT_STRING_EQUAL(contentFile, "==\n{ tata -> titi }\n\n");
     free(contentFile);
     unlink("toto.txt");
     contentFile = NULL;
 }
 
 static void testAddOptionNameAndValues() {
-    fp = startFileWriter("toto.txt", "ab");
+    fp = startFileWriter("toto.txt", "ab", "=");
     char *arrStr1[100] = {"tonton", "tete", "teodore"};
 
     CU_ASSERT_EQUAL(writeOptionNameAndArrayValues(fp, "option-value",  (const char**)arrStr1, 3), 0);
@@ -54,14 +54,14 @@ static void testAddOptionNameAndValues() {
     unlink("toto.txt");
     contentFile = NULL;
 
-    fp = startFileWriter("toto.txt", "ab");
+    fp = startFileWriter("toto.txt", "ab", "===");
     char *arrStr2[100] = {"tonton"};
 
     CU_ASSERT_EQUAL(writeOptionNameAndArrayValues(fp, "option-value",  (const char**)arrStr2, 1), 0);
 
     closeFileWriter(fp);
     contentFile = getContentInFile("toto.txt", "rb");
-    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{ option-value -> (tonton) }\n\n");
+    CU_ASSERT_STRING_EQUAL(contentFile, "===\n{ option-value -> (tonton) }\n\n");
     verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValues\n");
     free(contentFile);
     unlink("toto.txt");
@@ -69,7 +69,7 @@ static void testAddOptionNameAndValues() {
 }
 
 static void testAddEqualMarkWhenRestartFileWriter() {
-    fp = startFileWriter("toto.txt", "ab");
+    fp = startFileWriter("toto.txt", "ab", "=");
     char *arrStr2[100] = {"tonton"};
 
     CU_ASSERT_EQUAL(writeOptionNameAndArrayValues(fp, "option-value",  (const char**)arrStr2, 1), 0);
@@ -81,8 +81,7 @@ static void testAddEqualMarkWhenRestartFileWriter() {
     free(contentFile);
     contentFile = NULL;
 
-    fp = startFileWriter("toto.txt", "ab");
-
+    fp = startFileWriter("toto.txt", "ab", "=");
     CU_ASSERT_EQUAL(writeOptionNameAndValue(fp, "tata", "titi"), 0);
     closeFileWriter(fp);
     contentFile = getContentInFile("toto.txt", "rb");

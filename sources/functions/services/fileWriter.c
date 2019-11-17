@@ -8,10 +8,11 @@
  * Function to start file writer to write data
  * @param filePath
  * @param mode
+ * @param startStr
  * @return OK fp : pointer of structure FILE, <br>
  * ERROR NULL
  */
-FILE *startFileWriter(const char *filePath, const char *mode) {
+FILE *startFileWriter(const char *filePath, const char *mode, const char *startStr) {
     FILE *fp = NULL;
 
     if (strcmp(mode, "ab") == 0 || strcmp(mode, "a") == 0) {
@@ -19,9 +20,8 @@ FILE *startFileWriter(const char *filePath, const char *mode) {
         if (fp == NULL) {
             fprintf(stderr, "Problem open file %s\n", filePath);
             return NULL;
-
         }
-        fprintf(fp, "=\n");
+        fprintf(fp, "%s\n", startStr);
     }
 
     return fp;
