@@ -68,12 +68,38 @@ static void testAddOptionNameAndValues() {
     contentFile = NULL;
 }
 
+static void testAddEqualMarkWhenRestartFileWriter() {
+    fp = startFileWriter("toto.txt", "ab");
+    char *arrStr2[100] = {"tonton"};
+
+    CU_ASSERT_EQUAL(writeOptionNameAndArrayValues(fp, "option-value",  (const char**)arrStr2, 1), 0);
+
+    closeFileWriter(fp);
+    contentFile = getContentInFile("toto.txt", "rb");
+    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{ option-value -> (tonton) }\n\n");
+    verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValues\n");
+    free(contentFile);
+    contentFile = NULL;
+
+    fp = startFileWriter("toto.txt", "ab");
+
+    CU_ASSERT_EQUAL(writeOptionNameAndValue(fp, "tata", "titi"), 0);
+    closeFileWriter(fp);
+    contentFile = getContentInFile("toto.txt", "rb");
+    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{ option-value -> (tonton) }\n\n=\n{ tata -> titi }\n\n");
+    verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValue\n");
+    free(contentFile);
+    unlink("toto.txt");
+    contentFile = NULL;
+}
+
 CU_ErrorCode fileWriterSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testFileWriter", initManageStderr, cleanManageStderr);
 
     if (NULL == CU_add_test(pSuite, "testStartFileWriter", testStartFileWriter) ||
         NULL == CU_add_test(pSuite, "testAddOptionNameAndValue", testAddOptionNameAndValue) ||
-        NULL == CU_add_test(pSuite, "testAddOptionNameAndValues", testAddOptionNameAndValues)) {
+        NULL == CU_add_test(pSuite, "testAddOptionNameAndValues", testAddOptionNameAndValues) ||
+        NULL == CU_add_test(pSuite, "testAddEqualMarkWhenRestartFileWriter", testAddEqualMarkWhenRestartFileWriter)) {
 
         CU_cleanup_registry();
         return CU_get_error();
