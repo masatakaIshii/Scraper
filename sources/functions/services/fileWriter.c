@@ -36,7 +36,7 @@ FILE *startFileWriter(const char *filePath, const char *mode, const char *startS
  */
 int writeOptionNameAndValue(FILE *fp, const char *optionName, const char *optionValue) {
 
-    return (fprintf(fp, "{ %s -> %s }\n", optionName, optionValue) >= 0) ? 0 : -1;
+    return (fprintf(fp, "{%s -> %s}\n", optionName, optionValue) >= 0) ? 0 : -1;
 }
 
 /**
@@ -52,16 +52,16 @@ int writeOptionNameAndArrayValues(FILE *fp, const char *optionName, const char *
     int result = 0;
 
     if (count == 1) {
-        result = fprintf(fp, "{ %s -> (%s) }\n", optionName, optionValues[0]);
+        result = fprintf(fp, "{%s -> (%s)}\n", optionName, optionValues[0]);
     } else {
-        result = fprintf(fp, "{ %s -> (\n", optionName);
+        result = fprintf(fp, "{%s -> (\n", optionName);
         for (i = 0; i < count && result != -1; i++) {
             result = fprintf(fp, "%s\n", optionValues[i]);
         }
         if (result == -1) {
             return result;
         }
-        result = fprintf(fp, ") }\n");
+        result = fprintf(fp, ")}\n");
     }
 
     return (result != -1) ? 0 : result;

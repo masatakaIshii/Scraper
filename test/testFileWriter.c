@@ -34,7 +34,7 @@ static void testAddOptionNameAndValue() {
     contentFile = getContentInFile("toto.txt", "rb");
     verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValue\n");
 
-    CU_ASSERT_STRING_EQUAL(contentFile, "==\n{ tata -> titi }\n\n");
+    CU_ASSERT_STRING_EQUAL(contentFile, "==\n{tata -> titi}\n\n");
     free(contentFile);
     unlink("toto.txt");
     contentFile = NULL;
@@ -48,7 +48,7 @@ static void testAddOptionNameAndValues() {
 
     closeFileWriter(fp);
     contentFile = getContentInFile("toto.txt", "rb");
-    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{ option-value -> (\ntonton\ntete\nteodore\n) }\n\n");
+    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{option-value -> (\ntonton\ntete\nteodore\n)}\n\n");
     verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValues\n");
     free(contentFile);
     unlink("toto.txt");
@@ -61,7 +61,7 @@ static void testAddOptionNameAndValues() {
 
     closeFileWriter(fp);
     contentFile = getContentInFile("toto.txt", "rb");
-    CU_ASSERT_STRING_EQUAL(contentFile, "===\n{ option-value -> (tonton) }\n\n");
+    CU_ASSERT_STRING_EQUAL(contentFile, "===\n{option-value -> (tonton)}\n\n");
     verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValues\n");
     free(contentFile);
     unlink("toto.txt");
@@ -76,7 +76,7 @@ static void testAddEqualMarkWhenRestartFileWriter() {
 
     closeFileWriter(fp);
     contentFile = getContentInFile("toto.txt", "rb");
-    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{ option-value -> (tonton) }\n\n");
+    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{option-value -> (tonton)}\n\n");
     verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValues\n");
     free(contentFile);
     contentFile = NULL;
@@ -85,7 +85,7 @@ static void testAddEqualMarkWhenRestartFileWriter() {
     CU_ASSERT_EQUAL(writeOptionNameAndValue(fp, "tata", "titi"), 0);
     closeFileWriter(fp);
     contentFile = getContentInFile("toto.txt", "rb");
-    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{ option-value -> (tonton) }\n\n=\n{ tata -> titi }\n\n");
+    CU_ASSERT_STRING_EQUAL(contentFile, "=\n{option-value -> (tonton)}\n\n=\n{tata -> titi}\n\n");
     verifyPointer(contentFile, "Problem getContentFile in testAddOptionNameAndValue\n");
     free(contentFile);
     unlink("toto.txt");
