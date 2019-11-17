@@ -3,6 +3,7 @@
 //
 
 #include "../headers/urlSearcher.h"
+
 static void initFieldUrlSearcher(UrlSearcher *pUrlSearcher);
 static void setFieldsUrlSearcher(UrlSearcher *pUrlSearcher, UrlHelper *pUrlHelper, const char *url);
 static void setContentPage(UrlSearcher *pUrlSearch, const char *filePath);
@@ -12,9 +13,9 @@ static void getArrStrOfUrls(String *pString, UrlSearcher *pUrlSearch, const char
 static void getUrlInHtmlPage(String *pString, UrlSearcher *pUrlSearch, const char *ptStartOccur);
 static char *getUrlToAdd(UrlSearcher *pUrlSearch);
 static char *addProtocolComAndUrl(UrlSearcher *pUrlSearch, int lengthUrl);
+static char *addHttpUrl(UrlSearcher *pUrlSearcher, int lengthUrl);
 static char *addRootPathAndUrl(UrlSearcher *pUrlSearch, int lengthUrl);
-static void getUrlInPage(String *pString, const char *page, int *position);
-static void addUrlInList(String *pString, const char *startUrl, int lengthUrl);
+
 
 /**
  * Function to get all http url in page that each url is unique
@@ -25,10 +26,15 @@ static void addUrlInList(String *pString, const char *startUrl, int lengthUrl);
  * ERROR NULL
  */
 char **getAllUrlsInPage(const char *url, const char *contentType, const char *filePath, int *count) {
-    UrlSearcher *pUrlSearcher = initUrlSearcher(url,filePath);
+    UrlSearcher *pUrlSearcher = NULL;
     char **arrStr = NULL;
     String *pString = initString(500, 1.5);
     if (pString == NULL) {
+        return NULL;
+    }
+    pUrlSearcher = initUrlSearcher(url, filePath);
+    if (pUrlSearcher == NULL) {
+        free(pString);
         return NULL;
     }
 
@@ -120,6 +126,7 @@ static void getArrStrOfUrls(String *pString, UrlSearcher *pUrlSearch, const char
             getUrlInHtmlPage(pString, pUrlSearch, "src=");
         }
         pUrlSearch->position = 0;
+        pUrlSearch->currentPage = pUrlSearch->page;
         while (pUrlSearch->position < length) {
             getUrlInHtmlPage(pString, pUrlSearch, "href=");
         }
@@ -137,7 +144,7 @@ static void getUrlInHtmlPage(String *pString, UrlSearcher *pUrlSearch, const cha
             pUrlSearch->start = &pUrlSearch->currentPage[startIndex] + 1;
             urlToAdd = getUrlToAdd(pUrlSearch);
         }
-        if (urlToAdd != NULL) {
+        if (urlToAdd != NULL && strstr(pString->content, urlToAdd) == NULL) {
             addString(pString, urlToAdd);
             free(urlToAdd);
         }
@@ -154,77 +161,93 @@ static char *getUrlToAdd(UrlSearcher *pUrlSearch) {
 
     pUrlSearch->end = strchr(pUrlSearch->start, pUrlSearch->container);
     lengthUrl = (int) (pUrlSearch->end - pUrlSearch->start);
+
     if (strncmp("//", pUrlSearch->start, 2) == 0) {
         urlToAdd = addProtocolComAndUrl(pUrlSearch, lengthUrl);
-    } else if (pUrlSearch->start[0] == '/') {
-        urlToAdd = addRootPathAndUrl(pUrlSearch, lengthUrl);
+
+    } else if (strncmp("https://", pUrlSearch->start, (int) strlen("https://")) == 0 ||
+               strncmp("http://", pUrlSearch->start, (int) strlen("http://")) == 0) {
+        urlToAdd = addHttpUrl(pUrlSearch, lengthUrl);
+
     } else {
-        urlToAdd = strMallocCpy(pUrlSearch->start , lengthUrl + 1);
-        urlToAdd[lengthUrl] = '\n';
+        urlToAdd = addRootPathAndUrl(pUrlSearch, lengthUrl);
     }
 
     return urlToAdd;
 }
 
 static char *addProtocolComAndUrl(UrlSearcher *pUrlSearch, int lengthUrl) {
-    // replace // to protocol com https:// or http://
+    char *urlToAdd = NULL;
+    char *withoutProtocolCom = strMallocCpy(pUrlSearch->start, lengthUrl + 1);
+    if (withoutProtocolCom == NULL) {
+        return NULL;
+    }
 
-    return NULL;
+    withoutProtocolCom[lengthUrl] = '\n';
+    if (pUrlSearch->isProtocolCom == 1) {
+        urlToAdd = strMallocCat(pUrlSearch->protocolCom, withoutProtocolCom);
+        if (urlToAdd == NULL) {
+            free(withoutProtocolCom);
+            return NULL;
+        }
+    } else {
+        free(withoutProtocolCom);
+    }
+
+    return urlToAdd;
+}
+
+static char *addHttpUrl(UrlSearcher *pUrlSearch, int lengthUrl) {
+    char *urlToAdd = NULL;
+
+    urlToAdd = strMallocCpy(pUrlSearch->start, lengthUrl + 1);
+    verifyPointer(urlToAdd, "Problem strMallocCpy urlToAdd in addHttpUrl in urlSearcher.c\n");
+
+    urlToAdd[lengthUrl] = '\n';
+
+    return urlToAdd;
 }
 
 static char *addRootPathAndUrl(UrlSearcher *pUrlSearch, int lengthUrl) {
-    return NULL;
-}
+    char *urlToAdd = NULL;
+    char *withoutNameDomain = NULL;
 
-static void getUrlInPage(String *pString, const char *currentPosPage, int *position) {
-    char *checkUrl = NULL;
-    char *startUrl = NULL;
-    char *endUrl = NULL;
-    char container = 0;
-    int lengthUrl = 0;
-
-    if ((checkUrl = strstr(currentPosPage, "https:")) || (checkUrl = strstr(currentPosPage, "http:"))) {
-//        if (checkUrl[-1] == '"' || checkUrl[-1] == '\'') {
-//            container = checkUrl[-1];
-//            startUrl = checkUrl;
-//            if (container > 0) {
-//                endUrl = strchr(checkUrl, container);
-//                if (endUrl == NULL) {
-//                    fprintf(stderr, "Problem url\n");
-//                    return;
-//                }
-//            }
-//            lengthUrl = (int)(endUrl - startUrl);
-//            addUrlInList(pString, startUrl, lengthUrl);
-//            *position += lengthUrl + (int)(startUrl - currentPosPage);
-//        }
+    if (pUrlSearch->start[0] == '/') {
+        withoutNameDomain = strMallocCpy(pUrlSearch->start + 1, lengthUrl);
+        withoutNameDomain[lengthUrl - 1] = '\n';
     } else {
-        *position += (int) strlen(currentPosPage);
+        withoutNameDomain = strMallocCpy(pUrlSearch->start, lengthUrl + 1);
+        withoutNameDomain[lengthUrl] = '\n';
+        if (strchr(withoutNameDomain, ':') != NULL) {
+            free(withoutNameDomain);
+            return NULL;
+        }
     }
-}
+    if (pUrlSearch->isRootPath == 1) {
+        urlToAdd = strMallocCat(pUrlSearch->rootPath, withoutNameDomain);
+        if (urlToAdd == NULL) {
+            free(withoutNameDomain);
+            return NULL;
+        }
+    } else {
+        free(withoutNameDomain);
+    }
 
-static void addUrlInList(String *pString, const char *startUrl, int lengthUrl) {
-    char *url = NULL;
-
-    url = strMallocCpy(startUrl, lengthUrl + 1);
-    verifyPointer(url, "Problem to strMalloc url in function addUrlInListAndUpdatePosition\n");
-    strcat(url, "\n");
-    addString(pString, url);
-    free(url);
+    return urlToAdd;
 }
 
 void destroyUrlSearcher(UrlSearcher *pUrlSearcher) {
-    if (pUrlSearcher->isProtocolCom != 1) {
+    if (pUrlSearcher->isProtocolCom == 1) {
         free(pUrlSearcher->protocolCom);
     }
-    if (pUrlSearcher->isRootPath != 1) {
+    if (pUrlSearcher->isRootPath == 1) {
         free(pUrlSearcher->rootPath);
     }
-    if (pUrlSearcher->isProtocolCom != 1) {
-        free(pUrlSearcher->page);
-    }
-    if (pUrlSearcher->isPointOccur != 1) {
+    if (pUrlSearcher->isPointOccur == 1) {
         free(pUrlSearcher->pointOccur);
+    }
+    if (pUrlSearcher->isPage == 1) {
+        free(pUrlSearcher->page);
     }
 
     free(pUrlSearcher);

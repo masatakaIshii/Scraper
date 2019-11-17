@@ -59,6 +59,8 @@ static void testGetHttpUrlAndHttpsUrlInPage() {
     CU_ASSERT_STRING_EQUAL(arrayUrl[1], "http://www.iana.org/domains/example");
     CU_ASSERT(ifStringArrayContainString("http://www.iana.org/domains/example", arrayUrl, count));
 
+    freeArrayString(arrayUrl, count);
+    arrayUrl = NULL;
     count = 0;
 }
 
@@ -73,12 +75,13 @@ static void testGetHttpUrlInTrickyHtmlPage() {
     CU_ASSERT(ifStringArrayContainString("https://static.h-bid.com/sncmp/sncmp_stub.min.js", arrayUrl, count));
     CU_ASSERT(ifStringArrayContainString("https://cdn.connectad.io/connectmyusers.php", arrayUrl, count));
 
+    freeArrayString(arrayUrl, count);
+    arrayUrl = NULL;
     count = 0;
 }
 
 static void testGetUniqueHttpUrlsInArray() {
-    char *pageSameUrls = getContentInFile("testPageSameUrls.html", "rb");
-    arrayUrl = getAllUrlsInPage("https://test.com", "text/html", pageSameUrls, &count);
+    arrayUrl = getAllUrlsInPage("https://test.com", "text/html", "testPageSameUrls.html", &count);
 
     CU_ASSERT_EQUAL_FATAL(count, 3);
     CU_ASSERT(ifStringArrayContainString("https://www.google.com", arrayUrl, count));
@@ -89,13 +92,12 @@ static void testGetUniqueHttpUrlsInArray() {
 CU_ErrorCode urlSearcherSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testUrlSearcher", NULL, NULL);
 
-
-//       NULL == CU_add_test(pSuite, "testGetUniqueHttpUrlsInArray", testGetUniqueHttpUrlsInArray)) {
     if (NULL == CU_add_test(pSuite, "testInitUrlSearcher", testInitUrlSearcher) ||
         NULL == CU_add_test(pSuite, "testWhenNoUrlInPageReturnNull", testWhenNoUrlInPageReturnNull) ||
         NULL == CU_add_test(pSuite, "testGetUrlInPage", testGetUrlInPage) ||
         NULL == CU_add_test(pSuite, "testGetHttpUrlAndHttpsUrlInPage", testGetHttpUrlAndHttpsUrlInPage) ||
-        NULL == CU_add_test(pSuite, "testGetHttpUrlInTrickyHtmlPage", testGetHttpUrlInTrickyHtmlPage)) {
+        NULL == CU_add_test(pSuite, "testGetHttpUrlInTrickyHtmlPage", testGetHttpUrlInTrickyHtmlPage) ||
+        NULL == CU_add_test(pSuite, "testGetUniqueHttpUrlsInArray", testGetUniqueHttpUrlsInArray)) {
 
         CU_cleanup_registry();
         return CU_get_error();

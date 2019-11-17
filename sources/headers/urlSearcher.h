@@ -15,8 +15,6 @@ UrlSearcher *initUrlSearcher(const char *url, const char *filePath);
 
 char **getAllUrlsInPage(const char *url, const char *contentType, const char *filePath, int *count);
 
-
-
 void destroyUrlSearcher(UrlSearcher *pUrlSearcher);
 
 #endif //SCRAPER_URLSEARCHER_H
