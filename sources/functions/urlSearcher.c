@@ -3,13 +3,17 @@
 //
 
 #include "../headers/urlSearcher.h"
+static void initFieldUrlSearcher(UrlSearcher *pUrlSearcher);
+static void setFieldsUrlSearcher(UrlSearcher *pUrlSearcher, UrlHelper *pUrlHelper, const char *url);
+static void setContentPage(UrlSearcher *pUrlSearch, const char *filePath);
+static char *getProtocolCom(const char *url);
 
-static void getArrStrOfUrls(String *pString, const char *urlNoRes, const char *page, const char *contentType);
-
-static void getUrlInHtmlPage(String *pString, const char *currentPosPage, int *position);
-
+static void getArrStrOfUrls(String *pString, UrlSearcher *pUrlSearch, const char *contentType);
+static void getUrlInHtmlPage(String *pString, UrlSearcher *pUrlSearch, const char *ptStartOccur);
+static char *getUrlToAdd(UrlSearcher *pUrlSearch);
+static char *addProtocolComAndUrl(UrlSearcher *pUrlSearch, int lengthUrl);
+static char *addRootPathAndUrl(UrlSearcher *pUrlSearch, int lengthUrl);
 static void getUrlInPage(String *pString, const char *page, int *position);
-
 static void addUrlInList(String *pString, const char *startUrl, int lengthUrl);
 
 /**
@@ -20,56 +24,156 @@ static void addUrlInList(String *pString, const char *startUrl, int lengthUrl);
  * @return OK allUrls : array of url that fetch in page, <br>
  * ERROR NULL
  */
-char **getAllUrlsInPage(const char *url, const char *contentType, const char *page, int *count) {
+char **getAllUrlsInPage(const char *url, const char *contentType, const char *filePath, int *count) {
+    UrlSearcher *pUrlSearcher = initUrlSearcher(url,filePath);
     char **arrStr = NULL;
-    char *urlWithPath = NULL;
-    UrlHelper *pUrlHelper = NULL;
-    String *listChar = NULL;
-
-    pUrlHelper = initUrlHelper(url);
-    if (pUrlHelper->result == UH_NAME_PB) {
-        free(pUrlHelper);
+    String *pString = initString(500, 1.5);
+    if (pString == NULL) {
         return NULL;
     }
 
-    listChar = initString(500, 1.5);
-    if (listChar == NULL) {
-        destroyUrlHelper(pUrlHelper);
-        return NULL;
-    }
+    getArrStrOfUrls(pString, pUrlSearcher, contentType);
 
-    urlWithPath = getUrlWithAbsPath(pUrlHelper);
+    arrStr = properStrSplit(pString->content, "\n", count);
 
-    getArrStrOfUrls(listChar, urlWithPath, page, contentType);
-
-    arrStr = NULL;//destroyListStrAndReturnArrStr(listStr, count);
+    destroyString(pString);
+    destroyUrlSearcher(pUrlSearcher);
 
     return arrStr;
 }
 
-static void getArrStrOfUrls(String *pString, const char *urlNoRes, const char *page, const char *contentType) {
-    int position = 0;
-    int length = (int) strlen(page);
+UrlSearcher *initUrlSearcher(const char *url, const char *filePath) {
+    UrlHelper *pUrlHelper = NULL;
+    UrlSearcher *pUrlSearcher = malloc(sizeof(UrlSearcher));
+    if (pUrlSearcher == NULL) {
+        fprintf(stderr, "Problem malloc UrlSearcher\n");
+        return NULL;
+    }
+    pUrlHelper = initUrlHelper(url);
+    if (pUrlHelper->result == UH_NAME_PB) {
+        free(pUrlSearcher);
+        free(pUrlHelper);
+        return NULL;
+    }
+    initFieldUrlSearcher(pUrlSearcher);
 
-    // TODO : change the start search to "src=" or "href="
-    // TODO : get if after they have " or ' or alphabet
-    // TODO : change after if it contain https or http
-    // TODO : if https or http get url
-    // TODO : else if it "//" after so add before the protocol of com of url
-    // TODO : if its "/" add the url with absolute path
+    setFieldsUrlSearcher(pUrlSearcher, pUrlHelper, url);
+    setContentPage(pUrlSearcher, filePath);
+
+    return pUrlSearcher;
+}
+
+static void initFieldUrlSearcher(UrlSearcher *pUrlSearcher) {
+    pUrlSearcher->protocolCom = NULL;
+    pUrlSearcher->rootPath = NULL;
+    pUrlSearcher->currentPage = NULL;
+    pUrlSearcher->pointOccur = NULL;
+    pUrlSearcher->page = NULL;
+
+    pUrlSearcher->container = 0;
+
+    pUrlSearcher->isPointOccur = 0;
+    pUrlSearcher->isRootPath = 0;
+    pUrlSearcher->isProtocolCom = 0;
+    pUrlSearcher->isPage = 0;
+    pUrlSearcher->position = 0;
+}
+
+static void setFieldsUrlSearcher(UrlSearcher *pUrlSearcher, UrlHelper *pUrlHelper, const char *url) {
+    pUrlSearcher->protocolCom = getProtocolCom(url);
+    verifyPointer(pUrlSearcher->protocolCom, "Problem to get protocol com in initUrlSearcher\n");
+    pUrlSearcher->isProtocolCom = 1;
+
+    pUrlSearcher->rootPath = getUrlWithRootPath(pUrlHelper);
+    verifyPointer(pUrlSearcher->rootPath, "Problem getUrlWithRootPath in initUrlSearcher\n");
+    pUrlSearcher->isRootPath = 1;
+}
+
+static void setContentPage(UrlSearcher *pUrlSearch, const char *filePath) {
+    pUrlSearch->page = getContentInFile(filePath, "rb");
+    verifyPointer(pUrlSearch->page, "Problem to get content file in setContentPage or UrlSearcher\n");
+
+    pUrlSearch->isPage = 1;
+
+}
+
+static char *getProtocolCom(const char *url) {
+    char *protocolCom = NULL;
+    int indexEndProtocolCom = 0;
+
+    if ((indexEndProtocolCom = getIndexAfterOccurStr(url, "http:")) ||
+        (indexEndProtocolCom = getIndexAfterOccurStr(url, "https:"))) {
+        protocolCom = strMallocCpy(url, indexEndProtocolCom);
+    }
+
+    return protocolCom;
+}
+
+/// START GET ALL URL ///
+
+static void getArrStrOfUrls(String *pString, UrlSearcher *pUrlSearch, const char *contentType) {
+    int length = (int) strlen(pUrlSearch->page);
+    pUrlSearch->currentPage = pUrlSearch->page;
+
     if (strcmp(contentType, "text/html") == 0) {
-        while (position < length) {
-            getUrlInHtmlPage(pString, page + position, &position);
+        while (pUrlSearch->position < length) {
+            getUrlInHtmlPage(pString, pUrlSearch, "src=");
         }
-    } else {
-        while (position < length) {
-            getUrlInPage(pString, page + position, &position);
+        pUrlSearch->position = 0;
+        while (pUrlSearch->position < length) {
+            getUrlInHtmlPage(pString, pUrlSearch, "href=");
         }
     }
 }
 
-static void getUrlInHtmlPage(String *pString, const char *currentPosPage, int *position) {
+static void getUrlInHtmlPage(String *pString, UrlSearcher *pUrlSearch, const char *ptStartOccur) {
+    int startIndex = getIndexAfterOccurStr(pUrlSearch->currentPage, ptStartOccur);
+    char *urlToAdd = NULL;
+    int lengthUrl = 0;
 
+    if (startIndex > 0) {
+        if (pUrlSearch->currentPage[startIndex] == '"' || pUrlSearch->currentPage[startIndex] == '\'') {
+            pUrlSearch->container = pUrlSearch->currentPage[startIndex];
+            pUrlSearch->start = &pUrlSearch->currentPage[startIndex] + 1;
+            urlToAdd = getUrlToAdd(pUrlSearch);
+        }
+        if (urlToAdd != NULL) {
+            addString(pString, urlToAdd);
+            free(urlToAdd);
+        }
+        pUrlSearch->position += lengthUrl + (int) (pUrlSearch->start - pUrlSearch->currentPage);
+    } else {
+        pUrlSearch->position += (int) strlen(pUrlSearch->currentPage);
+    }
+    pUrlSearch->currentPage = pUrlSearch->page + pUrlSearch->position;
+}
+
+static char *getUrlToAdd(UrlSearcher *pUrlSearch) {
+    int lengthUrl = 0;
+    char *urlToAdd = NULL;
+
+    pUrlSearch->end = strchr(pUrlSearch->start, pUrlSearch->container);
+    lengthUrl = (int) (pUrlSearch->end - pUrlSearch->start);
+    if (strncmp("//", pUrlSearch->start, 2) == 0) {
+        urlToAdd = addProtocolComAndUrl(pUrlSearch, lengthUrl);
+    } else if (pUrlSearch->start[0] == '/') {
+        urlToAdd = addRootPathAndUrl(pUrlSearch, lengthUrl);
+    } else {
+        urlToAdd = strMallocCpy(pUrlSearch->start , lengthUrl + 1);
+        urlToAdd[lengthUrl] = '\n';
+    }
+
+    return urlToAdd;
+}
+
+static char *addProtocolComAndUrl(UrlSearcher *pUrlSearch, int lengthUrl) {
+    // replace // to protocol com https:// or http://
+
+    return NULL;
+}
+
+static char *addRootPathAndUrl(UrlSearcher *pUrlSearch, int lengthUrl) {
+    return NULL;
 }
 
 static void getUrlInPage(String *pString, const char *currentPosPage, int *position) {
@@ -80,7 +184,7 @@ static void getUrlInPage(String *pString, const char *currentPosPage, int *posit
     int lengthUrl = 0;
 
     if ((checkUrl = strstr(currentPosPage, "https:")) || (checkUrl = strstr(currentPosPage, "http:"))) {
-//        if (checkUrl[-1] != '=') {
+//        if (checkUrl[-1] == '"' || checkUrl[-1] == '\'') {
 //            container = checkUrl[-1];
 //            startUrl = checkUrl;
 //            if (container > 0) {
@@ -107,4 +211,21 @@ static void addUrlInList(String *pString, const char *startUrl, int lengthUrl) {
     strcat(url, "\n");
     addString(pString, url);
     free(url);
+}
+
+void destroyUrlSearcher(UrlSearcher *pUrlSearcher) {
+    if (pUrlSearcher->isProtocolCom != 1) {
+        free(pUrlSearcher->protocolCom);
+    }
+    if (pUrlSearcher->isRootPath != 1) {
+        free(pUrlSearcher->rootPath);
+    }
+    if (pUrlSearcher->isProtocolCom != 1) {
+        free(pUrlSearcher->page);
+    }
+    if (pUrlSearcher->isPointOccur != 1) {
+        free(pUrlSearcher->pointOccur);
+    }
+
+    free(pUrlSearcher);
 }

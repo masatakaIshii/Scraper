@@ -72,6 +72,22 @@ typedef struct UrlHelper {
     UHRes result;
 } UrlHelper;
 
+typedef struct UrlSearcher {
+    char *protocolCom;
+    char *rootPath;
+    char *page;
+    char *currentPage;
+    char *pointOccur;
+    char *start;
+    char *end;
+    char container;
+    int position;
+    int isPage;
+    int isProtocolCom;
+    int isRootPath;
+    int isPointOccur;
+} UrlSearcher;
+
 typedef struct Request {
     CURL *pHandle;
     int isHandleInit;
