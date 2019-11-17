@@ -20,7 +20,8 @@ set(SRCS
         sources/functions/services/fileNameManager.c
         sources/functions/urlSearcher.c
         sources/functions/lists/listArray.c
-        sources/functions/lists/ListChar.c)
+        sources/functions/lists/ListChar.c
+        sources/functions/services/fileWriter.c)
 
 set(HEADERS
         sources/headers/app.h
@@ -38,7 +39,8 @@ set(HEADERS
         sources/headers/services/fileNameManager.h
         sources/headers/urlSearcher.h
         sources/headers/lists/listArray.h
-        sources/headers/lists/ListChar.h)
+        sources/headers/lists/ListChar.h
+        sources/headers/services/fileWriter.h)
 
 set(TESTSRCS
         test/testShare.c
@@ -55,7 +57,8 @@ set(TESTSRCS
         test/testUrlSearcher.c
         test/testPageUrlDummies.c
         test/testListArray.c
-        test/testListChar.c)
+        test/testListChar.c
+        test/testFileWriter.c)
 
 set(TESTHEADERS
     test/testShare.h

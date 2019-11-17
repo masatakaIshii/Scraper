@@ -51,7 +51,7 @@ static void initAndSetResource(Session *pSession, Action *pAction) {
 //        exit(1);
 //    }
 
-
+}
 
 void buildSessionInProject(Session *pSession) {
 

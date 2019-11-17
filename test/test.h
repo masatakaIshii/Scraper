@@ -24,9 +24,10 @@
 #include "../sources/headers/urlSearcher.h"
 #include "../sources/headers/lists/listArray.h"
 #include "../sources/headers/lists/listChar.h"
+#include "../sources/headers/services/fileWriter.h"
 
 CU_ErrorCode commonSpec(CU_pSuite pSuite);
-CU_ErrorCode requestSpec(CU_pSuite pSuite) ;
+CU_ErrorCode requestSpec(CU_pSuite pSuite);
 CU_ErrorCode appSpec(CU_pSuite pSuite);
 CU_ErrorCode urlHelperSpec(CU_pSuite pSuite);
 CU_ErrorCode sessionSpec(CU_pSuite pSuite);
@@ -36,5 +37,6 @@ CU_ErrorCode fileNameManagerSpec(CU_pSuite pSuite);
 CU_ErrorCode urlSearcherSpec(CU_pSuite pSuite);
 CU_ErrorCode listArraySpec(CU_pSuite pSuite);
 CU_ErrorCode listCharSpec(CU_pSuite pSuite);
+CU_ErrorCode fileWriterSpec(CU_pSuite pSuite);
 
 #endif //SCRAPER_TESTREQUEST_H
