@@ -6,6 +6,8 @@
  *  Description : file to manage the session of action
  */
 
+static void setSessionByAction(Session *pSession, Action *pAction);
+
 #include "../headers/session.h"
 
 Session *initSession(Action *action, char *sessionName) {
@@ -20,16 +22,23 @@ Session *initSession(Action *action, char *sessionName) {
     }
     //pSession->actions = malloc(sizeof(Action*));
 
-    pSession->createdDate = getCurrentTime();
-    pSession->resources = initResource(action->url, action->)
-    if (pSession->resources == NULL) {
-        fprintf(stderr, "Problem of malloc resources for pointer of Session\n");
-        exit(1);
-    }
+    setSessionByAction(pSession, action);
 
-    pSession
+    pSession->createdDate = getCurrentTime();
+
+
 
     return pSession;
+}
+
+static void setSessionByAction(Session *pSession, Action *pAction) {
+    //pSession->resources = initResource(action->url, ) TODO : get depth of action
+//    if (pSession->resources == NULL) {
+//        fprintf(stderr, "Problem of malloc resources for pointer of Session\n");
+//        exit(1);
+//    }
+
+    pSession->nameAction = strMallocCpy(pAction->name, (int)strlen(pAction->name));
 }
 
 // addResourceRecursively(url, maxDepth)
