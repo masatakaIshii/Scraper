@@ -1,6 +1,10 @@
-//
-// Created by masat on 12/11/2019.
-//
+/*
+ *  Filename    : urlSearcher.c
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : Get the HTTP and HTTPS urls in one page html
+ */
 
 #include "../headers/urlSearcher.h"
 
@@ -10,8 +14,9 @@ static void setContentPage(UrlSearcher *pUrlSearch, const char *filePath);
 static char *getProtocolCom(const char *url);
 
 static void getArrStrOfUrls(String *pString, UrlSearcher *pUrlSearch, const char *contentType);
+static void saveUrlsInFile(const char *contentUrls, const char *dirPath);
 static void getUrlInHtmlPage(String *pString, UrlSearcher *pUrlSearch, const char *ptStartOccur);
-static char *getUrlToAdd(UrlSearcher *pUrlSearch);
+static char *getUrlToAdd(UrlSearcher *pUrlSearch, int *lengthUrl);
 static char *addProtocolComAndUrl(UrlSearcher *pUrlSearch, int lengthUrl);
 static char *addHttpUrl(UrlSearcher *pUrlSearcher, int lengthUrl);
 static char *addRootPathAndUrl(UrlSearcher *pUrlSearch, int lengthUrl);
@@ -25,7 +30,7 @@ static char *addRootPathAndUrl(UrlSearcher *pUrlSearch, int lengthUrl);
  * @return OK allUrls : array of url that fetch in page, <br>
  * ERROR NULL
  */
-char **getAllUrlsInPage(const char *url, const char *contentType, const char *filePath, int *count) {
+char **getAllUrlsInPage(const char *url, const char *contentType, const char *filePath, int *count, const char *dirPath) {
     UrlSearcher *pUrlSearcher = NULL;
     char **arrStr = NULL;
     String *pString = initString(500, 1.5);
@@ -40,12 +45,32 @@ char **getAllUrlsInPage(const char *url, const char *contentType, const char *fi
 
     getArrStrOfUrls(pString, pUrlSearcher, contentType);
 
+    saveUrlsInFile(pString->content, dirPath);
     arrStr = properStrSplit(pString->content, "\n", count);
 
     destroyString(pString);
     destroyUrlSearcher(pUrlSearcher);
 
     return arrStr;
+}
+
+static void saveUrlsInFile(const char *contentUrls, const char *dirPath) {
+    FILE *fp = NULL;
+    char *fileUrlsName = strMallocCat(dirPath, "/all_urls_names.txt");
+    verifyPointer(fileUrlsName, "Problem strMallocCat in saveUrlsInFile\n");
+
+    if (contentUrls != NULL && strlen(contentUrls) > 1) {
+        mkdirP(dirPath);
+
+        fp = fopen(fileUrlsName, "ab");
+        verifyPointer(fp, "Problem open file in saveUrlsInFile\n");
+
+        fprintf(fp, "%s", contentUrls);
+
+        fclose(fp);
+    }
+
+    free(fileUrlsName);
 }
 
 UrlSearcher *initUrlSearcher(const char *url, const char *filePath) {
@@ -142,35 +167,38 @@ static void getUrlInHtmlPage(String *pString, UrlSearcher *pUrlSearch, const cha
         if (pUrlSearch->currentPage[startIndex] == '"' || pUrlSearch->currentPage[startIndex] == '\'') {
             pUrlSearch->container = pUrlSearch->currentPage[startIndex];
             pUrlSearch->start = &pUrlSearch->currentPage[startIndex] + 1;
-            urlToAdd = getUrlToAdd(pUrlSearch);
+            urlToAdd = getUrlToAdd(pUrlSearch, &lengthUrl);
         }
         if (urlToAdd != NULL && strstr(pString->content, urlToAdd) == NULL) {
             addString(pString, urlToAdd);
             free(urlToAdd);
         }
-        pUrlSearch->position += lengthUrl + (int) (pUrlSearch->start - pUrlSearch->currentPage);
+        if (lengthUrl == 0) {
+            pUrlSearch->position += (int)strlen(ptStartOccur) + startIndex;
+        } else {
+            pUrlSearch->position += lengthUrl + startIndex + 2;
+        }
     } else {
-        pUrlSearch->position += (int) strlen(pUrlSearch->currentPage);
+        pUrlSearch->position += ((int)strlen(pUrlSearch->currentPage));
     }
     pUrlSearch->currentPage = pUrlSearch->page + pUrlSearch->position;
 }
 
-static char *getUrlToAdd(UrlSearcher *pUrlSearch) {
-    int lengthUrl = 0;
+static char *getUrlToAdd(UrlSearcher *pUrlSearch, int *lengthUrl) {
     char *urlToAdd = NULL;
 
     pUrlSearch->end = strchr(pUrlSearch->start, pUrlSearch->container);
-    lengthUrl = (int) (pUrlSearch->end - pUrlSearch->start);
+    *lengthUrl = (int) (pUrlSearch->end - pUrlSearch->start);
 
     if (strncmp("//", pUrlSearch->start, 2) == 0) {
-        urlToAdd = addProtocolComAndUrl(pUrlSearch, lengthUrl);
+        urlToAdd = addProtocolComAndUrl(pUrlSearch, *lengthUrl);
 
     } else if (strncmp("https://", pUrlSearch->start, (int) strlen("https://")) == 0 ||
                strncmp("http://", pUrlSearch->start, (int) strlen("http://")) == 0) {
-        urlToAdd = addHttpUrl(pUrlSearch, lengthUrl);
+        urlToAdd = addHttpUrl(pUrlSearch, *lengthUrl);
 
     } else {
-        urlToAdd = addRootPathAndUrl(pUrlSearch, lengthUrl);
+        urlToAdd = addRootPathAndUrl(pUrlSearch, *lengthUrl);
     }
 
     return urlToAdd;

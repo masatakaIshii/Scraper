@@ -31,12 +31,12 @@ static void testInitUrlSearcher() {
 }
 
 static void testWhenNoUrlInPageReturnNull() {
-    arrayUrl = getAllUrlsInPage("https://www.myspace.fr", "text/html", "testPageNoUrl.html", &count);
+    arrayUrl = getAllUrlsInPage("https://www.myspace.fr", "text/html", "testPageNoUrl.html", &count, "toto");
     CU_ASSERT_PTR_NULL_FATAL(arrayUrl);
 }
 
 static void testGetUrlInPage() {
-    arrayUrl = getAllUrlsInPage("https://www.google.com", "text/html", "testPage.html", &count);
+    arrayUrl = getAllUrlsInPage("https://www.google.com", "text/html", "testPage.html", &count, "test");
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(arrayUrl);
     CU_ASSERT_EQUAL(count, 1);
@@ -46,10 +46,11 @@ static void testGetUrlInPage() {
     freeArrayString(arrayUrl, count);
     arrayUrl = NULL;
     count = 0;
+    rmrf("test");
 }
 
 static void testGetHttpUrlAndHttpsUrlInPage() {
-    arrayUrl = getAllUrlsInPage("https://www.google.com", "text/html", "testPage2.html", &count);
+    arrayUrl = getAllUrlsInPage("https://www.google.com", "text/html", "testPage2.html", &count, "test");
 
     CU_ASSERT_EQUAL_FATAL(count, 2);
     CU_ASSERT_PTR_NOT_NULL_FATAL(arrayUrl[0]);
@@ -62,10 +63,11 @@ static void testGetHttpUrlAndHttpsUrlInPage() {
     freeArrayString(arrayUrl, count);
     arrayUrl = NULL;
     count = 0;
+    rmrf("test");
 }
 
 static void testGetHttpUrlInTrickyHtmlPage() {
-    arrayUrl = getAllUrlsInPage("https://www.tricky.com", "text/html", "testPageTricky.html", &count);
+    arrayUrl = getAllUrlsInPage("https://www.tricky.com", "text/html", "testPageTricky.html", &count, "test");
 
     CU_ASSERT_EQUAL_FATAL(count, 6);
     CU_ASSERT(ifStringArrayContainString("https://www.tricky.com/favicon.ico", arrayUrl, count));
@@ -78,15 +80,25 @@ static void testGetHttpUrlInTrickyHtmlPage() {
     freeArrayString(arrayUrl, count);
     arrayUrl = NULL;
     count = 0;
+    rmrf("test");
 }
 
 static void testGetUniqueHttpUrlsInArray() {
-    arrayUrl = getAllUrlsInPage("https://test.com", "text/html", "testPageSameUrls.html", &count);
+    arrayUrl = getAllUrlsInPage("https://test.com", "text/html", "testPageSameUrls.html", &count, "test");
 
     CU_ASSERT_EQUAL_FATAL(count, 3);
     CU_ASSERT(ifStringArrayContainString("https://www.google.com", arrayUrl, count));
     CU_ASSERT(ifStringArrayContainString("https://static.h-bid.com/sncmp/sncmp_stub.min.js", arrayUrl, count));
     CU_ASSERT(ifStringArrayContainString("https://test.com/domains/example", arrayUrl, count));
+    rmrf("test");
+    freeArrayString(arrayUrl, count);
+}
+
+static void testGooglePage() {
+    arrayUrl = getAllUrlsInPage("https://test.com", "text/html", "testGooglePage.html", &count, "test");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(arrayUrl);
+    CU_ASSERT(count > 0);
+    freeArrayString(arrayUrl, count);
 }
 
 CU_ErrorCode urlSearcherSpec(CU_pSuite pSuite) {
@@ -97,6 +109,7 @@ CU_ErrorCode urlSearcherSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testGetUrlInPage", testGetUrlInPage) ||
         NULL == CU_add_test(pSuite, "testGetHttpUrlAndHttpsUrlInPage", testGetHttpUrlAndHttpsUrlInPage) ||
         NULL == CU_add_test(pSuite, "testGetHttpUrlInTrickyHtmlPage", testGetHttpUrlInTrickyHtmlPage) ||
+        NULL == CU_add_test(pSuite, "testGooglePage", testGooglePage) ||
         NULL == CU_add_test(pSuite, "testGetUniqueHttpUrlsInArray", testGetUniqueHttpUrlsInArray)) {
 
         CU_cleanup_registry();

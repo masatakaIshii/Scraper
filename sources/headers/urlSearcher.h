@@ -1,6 +1,10 @@
-//
-// Created by masat on 12/11/2019.
-//
+/*
+ *  Filename    : urlSearcher.h
+ *
+ *  Made by     : Masataka ISHII
+ *
+ *  Description : Get the HTTP and HTTPS urls in one page html
+ */
 
 #ifndef SCRAPER_URLSEARCHER_H
 #define SCRAPER_URLSEARCHER_H
@@ -13,7 +17,7 @@
 
 UrlSearcher *initUrlSearcher(const char *url, const char *filePath);
 
-char **getAllUrlsInPage(const char *url, const char *contentType, const char *filePath, int *count);
+char **getAllUrlsInPage(const char *url, const char *contentType, const char *filePath, int *count, const char *dirPath);
 
 void destroyUrlSearcher(UrlSearcher *pUrlSearcher);
 

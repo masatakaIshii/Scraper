@@ -104,6 +104,12 @@ static void testExpandFewTimes() {
     CU_ASSERT_STRING_EQUAL(pString->content, "Testez l'efficacite de l'expand de la structure String\nPour contrer tout type de fuite memoire\n");
     CU_ASSERT(pString->capacity > pString->count);
     destroyString(pString);
+
+    pString = initString(100, 1.5);
+    addString(pString, "https://cdn.ecosia.org/indexpage/f02934e0f082640d6bc8.js\nhttps://chrome.google.com/webstore/detail/eedlgdlajadkbbjoobobefphmfkcchfk\nhttps://cdn.ecosia.org\nhttps://s3.amazonaws.com\nhttps://cdn.ecosia.org/opensearch.xml\nhttps://cdn.ecosia.org/assets/images/ico/favicon.ico\nhttps://cdn.ecosia.org/assets/images/png/apple-touch-icon.png\nhttps://cdn.ecosia.org/manifest.json\nhttps://www.ecosia.org/?c=sv\nhttps://www.ecosia.org/?c=de\nhttps://www.ecosia.org/?c=en\nhttps://www.ecosia.org/?c=es\nhttps://www.ecosia.org/?c=fr\nhttps://www.ecosia.org/?c=it\nhttps://www.ecosia.org/?c=nl\nhttps://cdn,\344m\211/cdnorg/indexpage/71eb9e0a27a975\274p3Ze5.css\n");
+    CU_ASSERT_STRING_EQUAL(pString->content, "https://cdn.ecosia.org/indexpage/f02934e0f082640d6bc8.js\nhttps://chrome.google.com/webstore/detail/eedlgdlajadkbbjoobobefphmfkcchfk\nhttps://cdn.ecosia.org\nhttps://s3.amazonaws.com\nhttps://cdn.ecosia.org/opensearch.xml\nhttps://cdn.ecosia.org/assets/images/ico/favicon.ico\nhttps://cdn.ecosia.org/assets/images/png/apple-touch-icon.png\nhttps://cdn.ecosia.org/manifest.json\nhttps://www.ecosia.org/?c=sv\nhttps://www.ecosia.org/?c=de\nhttps://www.ecosia.org/?c=en\nhttps://www.ecosia.org/?c=es\nhttps://www.ecosia.org/?c=fr\nhttps://www.ecosia.org/?c=it\nhttps://www.ecosia.org/?c=nl\nhttps://cdn,\344m\211/cdnorg/indexpage/71eb9e0a27a975\274p3Ze5.css\n");
+    CU_ASSERT(pString->capacity > pString->count);
+    destroyString(pString);
 }
 
 static void testSplitString() {

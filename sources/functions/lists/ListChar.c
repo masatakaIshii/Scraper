@@ -63,7 +63,7 @@ int addString(String *pString, const char *strToAdd) {
         }
     }
     strcat(pString->content, strToAdd);
-    pString->count = lengthStr;
+    pString->count += lengthStr;
 
     return 1;
 }

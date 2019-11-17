@@ -52,7 +52,7 @@ static void testSetDirAndOutputPath() {
     verifyPointer(pResource, "Problem initResource of example.com in testResource");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pResource);
     CU_ASSERT_EQUAL(createFileResource(pResource, "example", NULL, 0), 0);
-    CU_ASSERT_STRING_EQUAL(pResource->outputPath, "example/index_sc_0.html");
+    CU_ASSERT_STRING_EQUAL(pResource->outputPath, "example/index_scrap_0.html");
     CU_ASSERT_NOT_EQUAL(access(pResource->outputPath, F_OK), -1);
 
     destroyResource(pResource);
@@ -80,15 +80,15 @@ static void testFilterUrlByContentType() {
     verifyPointer(pResource, "Problem initResource of example.com in testResource");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pResource);
     CU_ASSERT_EQUAL(createFileResource(pResource, "example/yahoo", NULL, 0), 0);
-    CU_ASSERT_STRING_EQUAL(pResource->outputPath, "example/yahoo/index_sc_0.html");
+    CU_ASSERT_STRING_EQUAL(pResource->outputPath, "example/yahoo/index_scrap_0.html");
     CU_ASSERT_NOT_EQUAL(access(pResource->outputPath, F_OK), -1);
     destroyResource(pResource);
 
-    pResource = initResource("https://yahoo.com/", 0, 0);
+    pResource = initResource("https://www.yahoo.fr/", 0, 0);
     verifyPointer(pResource, "Problem initResource of example.com in testResource");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pResource);
     CU_ASSERT_EQUAL(createFileResource(pResource, "example/yahoo", NULL, 0), 0);
-    CU_ASSERT_STRING_EQUAL(pResource->outputPath, "example/yahoo/index_sc_1.html");
+    CU_ASSERT_STRING_EQUAL(pResource->outputPath, "example/yahoo/index_scrap_1.html");
     CU_ASSERT_NOT_EQUAL(access(pResource->outputPath, F_OK), -1);
     destroyResource(pResource);
 
@@ -96,7 +96,7 @@ static void testFilterUrlByContentType() {
     verifyPointer(pResource, "Problem initResource of example.com in testResource");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pResource);
     CU_ASSERT_EQUAL(createFileResource(pResource, "example/yahoo", NULL, 0), 0);
-    CU_ASSERT_STRING_EQUAL(pResource->outputPath, "example/yahoo/index_sc_2.html");
+    CU_ASSERT_STRING_EQUAL(pResource->outputPath, "example/yahoo/index_scrap_2.html");
     CU_ASSERT_NOT_EQUAL(access(pResource->outputPath, F_OK), -1);
     destroyResource(pResource);
 
@@ -106,9 +106,9 @@ static void testFilterUrlByContentType() {
 
     allFilesNames = getContentInFile(filePath, "rb");
     verifyPointer(allFilesNames, "Problem allFilesNames in testResource\n");
-    CU_ASSERT(strstr(allFilesNames, "index_sc_0") != NULL);
-    CU_ASSERT(strstr(allFilesNames, "index_sc_1") != NULL);
-    CU_ASSERT(strstr(allFilesNames, "index_sc_2") != NULL);
+    CU_ASSERT(strstr(allFilesNames, "index_scrap_0") != NULL);
+    CU_ASSERT(strstr(allFilesNames, "index_scrap_1") != NULL);
+    CU_ASSERT(strstr(allFilesNames, "index_scrap_2") != NULL);
     free(allFilesNames);
 
     rmrf("example/yahoo");

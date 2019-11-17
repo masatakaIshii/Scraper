@@ -8,6 +8,7 @@
 #include <io.h>
 #include "common.h"
 #include "request.h"
+#include "../headers/urlSearcher.h"
 
 Resource *initResource(const char *url, int depth, int maxDepth);
 

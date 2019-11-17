@@ -38,8 +38,8 @@ int getNbrDigit(int number) {
         return 1;
     }
 
-    while(number > 0) {
-        number /=10;
+    while (number > 0) {
+        number /= 10;
         count++;
     }
     return count;
@@ -54,8 +54,8 @@ int getNbrDigit(int number) {
  */
 char *strMallocCat(const char *str1, const char *str2) {
     char *newStr = NULL;
-    int length1 = (str1 != NULL) ? (int)strlen(str1) : 0;
-    int length2 = (str2 != NULL) ? (int)strlen(str2) : 0;
+    int length1 = (str1 != NULL) ? (int) strlen(str1) : 0;
+    int length2 = (str2 != NULL) ? (int) strlen(str2) : 0;
 
     newStr = calloc(length1 + length2 + 1, sizeof(char));
     if (newStr == NULL) {
@@ -82,8 +82,8 @@ char *strMallocCat(const char *str1, const char *str2) {
  * ERROR NULL
  */
 char *strReallocCat(char *currentStr, const char *strToAdd) {
-    int lengthCurrentStr = (currentStr != NULL) ? (int)strlen(currentStr) : 0;
-    int lengthStrToAdd = (strToAdd != NULL) ? (int)strlen(strToAdd) : 0;
+    int lengthCurrentStr = (currentStr != NULL) ? (int) strlen(currentStr) : 0;
+    int lengthStrToAdd = (strToAdd != NULL) ? (int) strlen(strToAdd) : 0;
 
     currentStr = realloc(currentStr, lengthCurrentStr + lengthStrToAdd + 1);
     if (currentStr == NULL) {
@@ -126,7 +126,7 @@ int getNbrOccurInStr(const char *str, const char *occur) {
     int result = 0;
 
     temp = strstr(str, occur);
-    while(temp != NULL) {
+    while (temp != NULL) {
         result++;
         if (strstr(temp, occur) != NULL) {
             temp = strstr(temp + 1, occur);
@@ -143,13 +143,13 @@ int getNbrOccurInStr(const char *str, const char *occur) {
  * ERROR NULL
  */
 char *myStrrstr(const char *string, const char *lastOccur) {
-    int index = (int)strlen(string) - 1;
-    int lengthOccur = (int)strlen(lastOccur);
+    int index = (int) strlen(string) - 1;
+    int lengthOccur = (int) strlen(lastOccur);
 
-    while(index >= lengthOccur - 1) {
+    while (index >= lengthOccur - 1) {
         if (string[index] == lastOccur[lengthOccur - 1]) {
-            if (strncmp(&string[index] - (lengthOccur - 1) , lastOccur, lengthOccur) == 0) {
-                return (char*)&string[index] - (lengthOccur - 1);
+            if (strncmp(&string[index] - (lengthOccur - 1), lastOccur, lengthOccur) == 0) {
+                return (char *) &string[index] - (lengthOccur - 1);
             }
         }
         index--;
@@ -169,15 +169,15 @@ static char **fillArraySplitStr(const char *str, const char *delimiter, int coun
     char *token = NULL;
     int i = 0;
     char *temp; // string to malloc, to use strtok without affect param str
-    char **result = malloc(sizeof(char*) * count);
+    char **result = malloc(sizeof(char *) * count);
     verifyPointer(result, "Problem malloc result in fillArraySplitStr\n");
 
-    temp = strMallocCpy(str, (int)strlen(str));
+    temp = strMallocCpy(str, (int) strlen(str));
     verifyPointer(temp, "Problem strMallocCpy temp in fillArraySplitStr\n");
 
     token = strtok(temp, delimiter);
-    while(token != NULL) {
-        result[i] = strMallocCpy(token, (int)strlen(token));
+    while (token != NULL) {
+        result[i] = strMallocCpy(token, (int) strlen(token));
         verifyPointer(result[i], "Problem result[i] in fillArraySplitStr\n");
         token = strtok(NULL, delimiter);
         i++;
@@ -199,7 +199,7 @@ static char **fillArraySplitStr(const char *str, const char *delimiter, int coun
 char **strSplit(const char *str, const char *delimiter, int *pCount) {
     char **arrayStr = NULL;
 
-    if (str == NULL || delimiter == NULL ||strlen(str) == 0 || strlen(delimiter) == 0) {
+    if (str == NULL || delimiter == NULL || strlen(str) == 0 || strlen(delimiter) == 0) {
         return NULL;
     }
     *pCount = getNbrOccurInStr(str, delimiter) + 1;
@@ -242,10 +242,14 @@ void freeArrayString(char **arrayStr, int count) {
  * @return index : index after occurrence strOccur
  */
 int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
-    char *startOccur = strstr(strCheck, strOccur);
+    char *startOccur = NULL;
 
-    if (startOccur != NULL) {
-        return (int)(startOccur - strCheck + strlen(strOccur));
+    if (strCheck != NULL && strOccur != NULL) {
+        startOccur = strstr(strCheck, strOccur);
+
+        if (startOccur != NULL) {
+            return (int) (startOccur - strCheck + strlen(strOccur));
+        }
     }
 
     return 0;
@@ -269,7 +273,7 @@ static char *writeContentOfFile(FILE *fp, int lengthFile) {
         return NULL;
     }
 
-    while(fread(&checkChar, sizeof(char), 1, fp), !feof(fp)) {
+    while (fread(&checkChar, sizeof(char), 1, fp), !feof(fp)) {
         // TODO : manage depend to OS
         if (checkChar != '\r') {
             result[i] = checkChar;
@@ -319,12 +323,12 @@ char *getCurrentTime() {
     char *temp = NULL;
 
     currentTime = time(NULL);
-    if (currentTime == (time_t) - 1) {
+    if (currentTime == (time_t) -1) {
         return NULL;
     }
 
     temp = ctime(&currentTime);
-    strCurrentTime = strMallocCpy(temp, (int)strlen(temp));
+    strCurrentTime = strMallocCpy(temp, (int) strlen(temp));
 
     verifyPointer(strCurrentTime, "Problem get current time\n");
 
@@ -365,7 +369,7 @@ static int checkIfDirPathIsCorrect(const char *dirPath) {
  * 0 : operation success
  * -1 : problem with token
  */
-static int  createDirectories(const char *dirPath) {
+static int createDirectories(const char *dirPath) {
     const char s[2] = "/";
     unsigned length = strlen(dirPath);
     char temp[length];
@@ -379,7 +383,7 @@ static int  createDirectories(const char *dirPath) {
     }
 
     strcpy(currentDirPath, token);
-    while( token != NULL) {
+    while (token != NULL) {
         mkdir(currentDirPath);
         token = strtok(NULL, s);
         if (token != NULL) {
