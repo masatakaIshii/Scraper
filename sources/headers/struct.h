@@ -5,6 +5,8 @@
 #ifndef SCRAPER_STRUCT_H
 #define SCRAPER_STRUCT_H
 
+#include <curl/curl.h>
+
 /**
  * Possibility of option value
  * valueInt : integer's value of option
@@ -59,13 +61,32 @@ typedef enum UrlHelperResponse {
 typedef struct UrlHelper {
     char *url;
     char *domainName;
+    char *absPath;
     char *fileName;
     char *fileExt;
+    int isUrl;
     int isDomainName;
+    int isAbsPath;
     int isFileName;
     int isFileExt;
     UHRes result;
 } UrlHelper;
+
+typedef struct UrlSearcher {
+    char *protocolCom;
+    char *rootPath;
+    char *page;
+    char *currentPage;
+    char *pointOccur;
+    char *start;
+    char *end;
+    char container;
+    int position;
+    int isPage;
+    int isProtocolCom;
+    int isRootPath;
+    int isPointOccur;
+} UrlSearcher;
 
 typedef struct Request {
     CURL *pHandle;

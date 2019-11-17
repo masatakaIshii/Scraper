@@ -30,7 +30,11 @@ Request *initRequest(const char *url) {
     pRequest->isUrlHelper = 0;
 
     pRequest->pUrlHelper = initUrlHelper(url);
-    verifyPointer(pRequest->pUrlHelper->url, "problem pRequest\n");
+    if (pRequest->pUrlHelper == NULL) {
+        fprintf(stderr, "Problem in url : %s\n", url);
+        free(pRequest);
+        return NULL;
+    }
     pRequest->isUrlHelper = 1;
 
     pRequest->contentType = NULL;
@@ -226,18 +230,19 @@ int getFileExtByMimeType(Request *pRequest, const char *dirResourcePath) {
  */
 static int setContentType(Request *pRequest, const char *dirResourcePath) {
     int result = 0;
+    UrlHelper *pUrlHelper = pRequest->pUrlHelper;
 
     result = saveContentType(pRequest);
     if (result == CURLE_OK) {
         if (pRequest->isContentType == 1) {
-            if (pRequest->pUrlHelper->isFileName == 0) {
-                pRequest->pUrlHelper->fileName = getAvailableFileName(dirResourcePath, NULL);
-                if (pRequest->pUrlHelper->fileName == NULL) {
+            if (pUrlHelper->isFileName == 0) {
+                pUrlHelper->fileName = getAvailableFileName("all_files_names.txt", dirResourcePath, "index", "_scrap_");
+                if (pUrlHelper->fileName == NULL) {
                     return 0;
                 }
-                pRequest->pUrlHelper->isFileName = 1;
+                pUrlHelper->isFileName = 1;
             }
-            result = (setFileExtInFileName(pRequest->pUrlHelper, pRequest->contentType) == 1) ? 0 : -1;
+            result = (setFileExtInFileName(pUrlHelper, pRequest->contentType) == 1) ? 0 : -1;
         }
     }
 

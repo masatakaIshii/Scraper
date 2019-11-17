@@ -20,12 +20,29 @@
 void verifyPointer(void *pointer, const char *message);
 
 /**
+ * Get number of digit of param number
+ * @param number : integer to see the number of digit
+ * @return OK count > 0
+ * ERROR -1 : when number is less than 0
+ */
+int getNbrDigit(int number);
+
+/**
  * malloc and copy string with precise length
  * @param str
  * @param length
  * @return
  */
 char *strMallocCpy(const char *str, int length);
+
+/**
+ * Function to realloc currentStr with string to add and concat
+ * @param currentStr : current string to realloc
+ * @param strToAdd : string to add in current string
+ * @return OK : currentStr : currentString with string that is add, <br>
+ * ERROR : NULL
+ */
+char *strReallocCat(char *currentStr, const char *strToAdd);
 
 /**
  * malloc and copy string with precise length
@@ -44,6 +61,15 @@ char *strMallocCat(const char *str1, const char *str2);
 int getNbrOccurInStr(const char *str, const char *occur);
 
 /**
+ * Function to get last occurrence of string
+ * @param string : string to search the occurence
+ * @param lastOccur : occurence to return if it's in string
+ * @return OK address of char that occurrence start, <br>
+ * ERROR NULL
+ */
+char *myStrrstr(const char *string, const char *lastOccur);
+
+/**
  * function to split string to array of string by delimitor
  * @param str : string to copy to split in array
  * @param pCount : count of array string
@@ -52,6 +78,15 @@ int getNbrOccurInStr(const char *str, const char *occur);
  * NULL : if str is empty
  */
 char **strSplit(const char *str, const char *delimiter, int *pCount);
+
+char **properStrSplit(const char *content, const char *delimiter, int *count);
+
+/**
+ * Free array of string
+ * @param arrayStr : array of string to free
+ * @param count : number of string in arrayStr
+ */
+void freeArrayString(char **arrayStr, int count);
 
 /**
  * get index of array of char strCheck after the occurrence of string strOccur

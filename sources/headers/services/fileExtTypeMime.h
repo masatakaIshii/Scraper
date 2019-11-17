@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <io.h>
-#include "common.h"
+#include "../common.h"
 
 #define LIST_EXT_FILE_TYPE_MIME "list_file_ext_mime_type.txt"
 

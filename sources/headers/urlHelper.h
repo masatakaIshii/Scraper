@@ -13,12 +13,13 @@
 #include <curl/curl.h>
 #include "common.h"
 #include "app.h"
-#include "../headers/fileExtTypeMime.h"
+#include "services/fileExtTypeMime.h"
 
 /**
  * Initialize the structure UrlHelper to get few parts of url
  * @param url : current url to view
- * @return : pointer of structure UrlHelper
+ * @return OK pUrlHerper : pointer of structure UrlHelper,<br>
+ * ERROR NULL
  */
 UrlHelper *initUrlHelper(const char *url);
 
@@ -38,6 +39,10 @@ int setFileNameWhenNoOneInUrl(UrlHelper *pUrlHelper, const char *fileNameNoExt, 
  * @return OK 1, ERROR 0, WARNING 2
  */
 int setFileExtInFileName(UrlHelper *pUrlHelper, char *mimeType);
+
+char *getUrlWithAbsPath(UrlHelper *pUrlHelper);
+
+char *getUrlWithRootPath(UrlHelper *pUrlHelper);
 
 /**
  * Destroy the pointer of structure UrlHelper

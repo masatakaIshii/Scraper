@@ -62,6 +62,7 @@ int cleanRequest(void) {
     remove(filePath2);
     remove(filePath3);
     remove(filePath4);
+    cleanManageStderr();
 
     return 0;
 }
@@ -169,7 +170,7 @@ static void checkContentType() {
     char contentType2[100];
     char contentType3[100];
 
-    pRequest = initRequest("https://yahoo.com/");
+    pRequest = initRequest("https://aurelia.io/docs/tutorials/creating-a-contact-manager#setting-up-your-machine");
     CU_ASSERT(saveRequestInFile(pRequest, filePath4) == 0);
     (pRequest->contentType != NULL) ? strcpy(contentType1, pRequest->contentType) : strcpy(contentType1, "");
     CU_ASSERT_EQUAL(strlen(contentType1), strlen("text/html"));
@@ -204,15 +205,13 @@ static void notSaveWhenStatusNot200() {
 
 static void testGetExtFileByMimeType() {
     pRequest = initRequest("http://example.com");
-    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, ""), 1);
+    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, "index"), 1);
     CU_ASSERT_EQUAL(pRequest->isContentType, 1);
     CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html");
     CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".html");
-
-    deleteAllFilesNamesFiles("");
-
+    rmrf("index");
     destroyRequest(pRequest);
 }
 
@@ -220,43 +219,44 @@ static void testSetExtFileInFileName() {
     pRequest = initRequest(
             "https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.fr.0wWUI2yCpY8.O/m=auth2/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCO22Fl2AuKda_nx5ySnmxaf7niDMQ/cb=gapi.loaded_0");
     CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 0);
-    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, ""), 1);
+    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, "toto"), 1);
     CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 1);
-    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "cb=gapi.loaded_0.js");
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_scrap_0.js");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
     CU_ASSERT_EQUAL(pRequest->isContentType, 1);
     CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/javascript");
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".js")
-    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "cb=gapi.loaded_0.js");
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_scrap_0.js");
+    rmrf("toto");
     destroyRequest(pRequest);
-    deleteAllFilesNamesFiles("");
 }
 
 static void testGetUniqueNameWhenNoFileName() {
     pRequest = initRequest("http://example.com");
-    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, ""), 1);
+    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, "tata"), 1);
     CU_ASSERT_EQUAL(pRequest->isContentType, 1);
     CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html");
     CU_ASSERT_EQUAL(pRequest->pUrlHelper->isFileExt, 1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".html");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileName);
-    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_sc_0.html");
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_scrap_0.html");
     destroyRequest(pRequest);
 
     pRequest = initRequest("http://yahoo.com");
-    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, ""), 1);
+    CU_ASSERT_EQUAL(getFileExtByMimeType(pRequest, "tata"), 1);
     CU_ASSERT_STRING_EQUAL(pRequest->contentType, "text/html");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileExt);
     CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileExt, ".html");
     CU_ASSERT_PTR_NOT_NULL_FATAL(pRequest->pUrlHelper->fileName);
-    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_sc_1.html");
+    CU_ASSERT_STRING_EQUAL(pRequest->pUrlHelper->fileName, "index_scrap_1.html");
     destroyRequest(pRequest);
-    deleteAllFilesNamesFiles("");
+    rmrf("tata");
+    //deleteAllFilesNamesFiles("");
 }
 
 CU_ErrorCode requestSpec(CU_pSuite pSuite) {
-    pSuite = CU_add_suite("testRequest", NULL, cleanRequest);
+    pSuite = CU_add_suite("testRequest", initManageStderr, cleanRequest);
 
     if (NULL == CU_add_test(pSuite, "checkWhenUrlNotExist", checkWhenUrlNotExist) ||
         (NULL == CU_add_test(pSuite, "checkSaveFile", checkSaveFile)) ||

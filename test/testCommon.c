@@ -3,6 +3,16 @@
 //
 #include "test.h"
 
+static void testGetNumberDigit() {
+    CU_ASSERT_EQUAL(getNbrDigit(0), 1);
+    CU_ASSERT_EQUAL(getNbrDigit(1), 1);
+    CU_ASSERT_EQUAL(getNbrDigit(10), 2);
+    CU_ASSERT_EQUAL(getNbrDigit(99), 2);
+    CU_ASSERT_EQUAL(getNbrDigit(100), 3);
+    CU_ASSERT_EQUAL(getNbrDigit(102950), 6);
+    CU_ASSERT_EQUAL(getNbrDigit(-999), 0);
+}
+
 static void testGetIndexAfterOccurStr() {
     int length = getIndexAfterOccurStr("C'est bon les bonbons", "C'est");
     CU_ASSERT_EQUAL(length, strlen("C'est"));
@@ -67,6 +77,21 @@ static void testStrMallocCat() {
 
     result = strMallocCat("", "");
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    free(result);
+
+    result = strMallocCat(NULL, NULL);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "");
+    free(result);
+
+    result = strMallocCat(NULL, "Tonton");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "Tonton");
+    free(result);
+
+    result = strMallocCat("Tati", NULL);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "Tati");
     free(result);
 }
 
@@ -177,8 +202,33 @@ static void testGetNumberOccurrenceInStr() {
     CU_ASSERT_EQUAL(getNbrOccurInStr("tata", "ton"), 0);
     CU_ASSERT_EQUAL(getNbrOccurInStr("tatata", "ta"), 3);
     CU_ASSERT_EQUAL(getNbrOccurInStr("text:html", ","), 0);
-    CU_ASSERT_EQUAL(getNbrOccurInStr(".html,.htm",","), 1);
-    CU_ASSERT_EQUAL(getNbrOccurInStr("tata;toto;titi",";"), 2);
+    CU_ASSERT_EQUAL(getNbrOccurInStr(".html,.htm", ","), 1);
+    CU_ASSERT_EQUAL(getNbrOccurInStr("tata;toto;titi", ";"), 2);
+}
+
+static void testMyStrrstr() {
+    char *result = myStrrstr("testons", "ons");
+
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_EQUAL(strlen(result), 3);
+    CU_ASSERT_STRING_EQUAL(result, "ons");
+
+
+    result = myStrrstr("testez", "tons");
+    CU_ASSERT_PTR_NULL(result);
+
+    result = myStrrstr("index_scrap_0\nindex_scrap_1\nindex_scrap_2\n", "index_scrap_1");
+    CU_ASSERT_PTR_NOT_NULL(result);
+    CU_ASSERT_EQUAL(strlen(result), strlen("index_scrap_1\nindex_scrap_2\n"));
+    CU_ASSERT_STRING_EQUAL(result, "index_scrap_1\nindex_scrap_2\n");
+
+    result = myStrrstr("toto", "toto");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "toto");
+
+    result = myStrrstr("toto le beau gosse", "toto");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "toto le beau gosse");
 }
 
 static void freeArrayStr(char **arrayStr, int count) {
@@ -221,19 +271,49 @@ static void testStrSplit() {
     freeArrayStr(result, count);
 }
 
+static void testStrReallocCat() {
+    char *test = calloc(strlen("test") + 1, sizeof(char));
+    verifyPointer(test, "Problem to calloc test in testStrReallocCat in testCommon.c\n");
+
+    strcpy(test, "test");
+    test = strReallocCat(test, "ons");
+    CU_ASSERT_EQUAL(strlen(test), strlen("testons"));
+    CU_ASSERT_STRING_EQUAL(test, "testons");
+
+    test = strReallocCat(test, " son efficacite");
+    CU_ASSERT_EQUAL(strlen(test), strlen("testons son efficacite"));
+    CU_ASSERT_STRING_EQUAL(test, "testons son efficacite");
+
+    free(test);
+
+    test = NULL;
+    test = strReallocCat(test, "test");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(test);
+    CU_ASSERT_EQUAL(strlen(test), strlen("test"));
+    CU_ASSERT_STRING_EQUAL(test, "test");
+
+    test = strReallocCat(test, NULL);
+    CU_ASSERT_EQUAL(strlen(test), strlen("test"));
+    CU_ASSERT_STRING_EQUAL(test, "test");
+    free(test);
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
-    if ((NULL == CU_add_test(pSuite, "testGetIndexAfterOccurStr", testGetIndexAfterOccurStr)) ||
-        (NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy)) ||
-        (NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate)) ||
-        (NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat)) ||
-        (NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer)) ||
-        (NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories)) ||
-        (NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent)) ||
-        (NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile)) ||
-        (NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr)) ||
-        (NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit))) {
+    if (NULL == CU_add_test(pSuite, "testGetNumberDigit", testGetNumberDigit) ||
+        NULL == CU_add_test(pSuite, "testGetIndexAfterOccurStr", testGetIndexAfterOccurStr) ||
+        NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy) ||
+        NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate) ||
+        NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat) ||
+        NULL == CU_add_test(pSuite, "testStrReallocCat", testStrReallocCat) ||
+        NULL == CU_add_test(pSuite, "testFreePointer", testFreePointer) ||
+        NULL == CU_add_test(pSuite, "testMkdirPCreateDirectories", testMkdirPCreateDirectories) ||
+        NULL == CU_add_test(pSuite, "testMkdirPNotEraseExitContent", testMkdirPNotEraseExitContent) ||
+        NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile) ||
+        NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr) ||
+        NULL == CU_add_test(pSuite, "testMyStrrstr", testMyStrrstr) ||
+        NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit)) {
 
         CU_cleanup_registry();
         return CU_get_error();

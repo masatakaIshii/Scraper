@@ -30,6 +30,10 @@ Session *initSession(Action *action, char *sessionName) {
     return pSession;
 }
 
+// addResourceRecursively(url, maxDepth)
+
+// checkIfResourceExist(url)
+
 void buildSessionInProject(Session *pSession) {
 
 }

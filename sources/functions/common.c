@@ -22,21 +22,81 @@ void verifyPointer(void *pointer, const char *message) {
 }
 
 /**
+ * Get number of digit of param number
+ * @param number : integer to see the number of digit
+ * @return OK count > 0
+ * ERROR 0 : when number is less than 0
+ */
+int getNbrDigit(int number) {
+    int count = 0;
+
+    if (number < 0) {
+        return 0;
+    }
+
+    if (number == 0) {
+        return 1;
+    }
+
+    while(number > 0) {
+        number /=10;
+        count++;
+    }
+    return count;
+}
+
+/**
  * Strcat with proper malloc and not static array of character
  * @param str1
  * @param str2
- * @return newStr : string that is concat with str1 and str2
+ * @return OK newStr : string that is concat with str1 and str2, <br>
+ * ERROR NULL : problem calloc of newStr
  */
 char *strMallocCat(const char *str1, const char *str2) {
-    char *newStr = calloc(strlen(str1) + strlen(str2) + 1, sizeof(char));
+    char *newStr = NULL;
+    int length1 = (str1 != NULL) ? (int)strlen(str1) : 0;
+    int length2 = (str2 != NULL) ? (int)strlen(str2) : 0;
+
+    newStr = calloc(length1 + length2 + 1, sizeof(char));
     if (newStr == NULL) {
         return NULL;
     }
 
-    strcpy(newStr, str1);
-    strcat(newStr, str2);
+    if (str1 != NULL) {
+        strcpy(newStr, str1);
+    } else {
+        strcpy(newStr, "");
+    }
+    if (str2 != NULL) {
+        strcat(newStr, str2);
+    }
 
     return newStr;
+}
+
+/**
+ * Function to realloc currentStr with string to add and concat
+ * @param currentStr : current string to realloc
+ * @param strToAdd : string to add in current string
+ * @return OK currentStr : currentString with string that is add, <br>
+ * ERROR NULL
+ */
+char *strReallocCat(char *currentStr, const char *strToAdd) {
+    int lengthCurrentStr = (currentStr != NULL) ? (int)strlen(currentStr) : 0;
+    int lengthStrToAdd = (strToAdd != NULL) ? (int)strlen(strToAdd) : 0;
+
+    currentStr = realloc(currentStr, lengthCurrentStr + lengthStrToAdd + 1);
+    if (currentStr == NULL) {
+        return NULL;
+    }
+    if (lengthCurrentStr == 0) {
+        memset(currentStr, 0, lengthCurrentStr + lengthStrToAdd + 1);
+    }
+    if (strToAdd != NULL) {
+        strcat(currentStr, strToAdd);
+    }
+
+    return currentStr;
 }
 
 /**
@@ -76,11 +136,34 @@ int getNbrOccurInStr(const char *str, const char *occur) {
 }
 
 /**
+ * Function to get last occurrence of string
+ * @param string : string to search the occurence
+ * @param lastOccur : occurence to return if it's in string
+ * @return OK address of char that occurrence start, <br>
+ * ERROR NULL
+ */
+char *myStrrstr(const char *string, const char *lastOccur) {
+    int index = (int)strlen(string) - 1;
+    int lengthOccur = (int)strlen(lastOccur);
+
+    while(index >= lengthOccur - 1) {
+        if (string[index] == lastOccur[lengthOccur - 1]) {
+            if (strncmp(&string[index] - (lengthOccur - 1) , lastOccur, lengthOccur) == 0) {
+                return (char*)&string[index] - (lengthOccur - 1);
+            }
+        }
+        index--;
+    }
+
+    return NULL;
+}
+
+/**
  * Function to operate split of string to array of string by delimiter
  * @param str
  * @param delimiter
  * @param count
- * @return : array of string
+ * @return result : array of string
  */
 static char **fillArraySplitStr(const char *str, const char *delimiter, int count) {
     char *token = NULL;
@@ -110,8 +193,8 @@ static char **fillArraySplitStr(const char *str, const char *delimiter, int coun
  * @param str : string to copy to split in array
  * @param pCount : count of array string
  * @return
- * arrayStr : array of string
- * NULL : if str is empty
+ * OK arrayStr : array of string, <br>
+ * ERROR NULL : if str is empty
  */
 char **strSplit(const char *str, const char *delimiter, int *pCount) {
     char **arrayStr = NULL;
@@ -124,6 +207,32 @@ char **strSplit(const char *str, const char *delimiter, int *pCount) {
     arrayStr = fillArraySplitStr(str, delimiter, *pCount); // operate split of string 'str'
 
     return arrayStr;
+}
+
+char **properStrSplit(const char *content, const char *delimiter, int *count) {
+    char **arrStr = NULL;
+
+    arrStr = strSplit(content, delimiter, count);
+
+    if (content[strlen(content) - 1] == delimiter[0]) {
+        (*count)--;
+    }
+
+    return arrStr;
+}
+
+/**
+ * Free array of string
+ * @param arrayStr : array of string to free
+ * @param count : number of string in arrayStr
+ */
+void freeArrayString(char **arrayStr, int count) {
+    int i = 0;
+    for (i = 0; i < count; i++) {
+        free(arrayStr[i]);
+    }
+
+    free(arrayStr);
 }
 
 /**
