@@ -50,9 +50,33 @@ static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
     pResource->links = NULL;
 }
 
-void setTypesFilter(Resource *pResource, char **type, int count) {
-    pResource->type = type;
+/**
+ * Function to set types to filter the type mime of request
+ * @param pResource : structure of resource of url to get
+ * @param types : the array of string that contain type mime to filter
+ * @param count : the number of types
+ * @return OK 0,<br>
+ * ERROR -1
+ */
+int setTypesFilter(Resource *pResource, char **types, int count) {
+    int i;
+
     pResource->numberType = count;
+    pResource->type = malloc(sizeof(char *) * pResource->numberType);
+    if (pResource->type == NULL) {
+        fprintf(stderr, "Problem malloct pResource->type\n");
+        return -1;
+    }
+
+    for (i = 0; i < pResource->numberType; i++) {
+        pResource->type[i] = strMallocCpy(types[i], (int)strlen(types[i]));
+        if (pResource->type[i] == NULL) {
+            freeArrayString(pResource->type, i);
+            fprintf(stderr, "Problem malloc pResource->type\n");
+            return -1;
+        }
+    }
+    return 0;
 }
 
 int createFileResource(Resource *pResource, const char *dirResourcePath, const char **filter, int depth) {

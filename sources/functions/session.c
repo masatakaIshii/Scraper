@@ -41,24 +41,17 @@ static int setSession(Session *pSession, Action *action) {
     }
 
     pSession->createdDate = getCurrentTime();
-    if (pSession->)
 }
 
 static void initAndSetResource(Session *pSession, Action *pAction) {
 
-
-
-
-    //pSession->resources = initResource(action->url, ) TODO : get depth of action
+    //pSession->resources = initResource(action->url, ) TODO : set correct value to init resource
 //    if (pSession->resources == NULL) {
 //        fprintf(stderr, "Problem of malloc resources for pointer of Session\n");
 //        exit(1);
 //    }
-}
 
-// addResourceRecursively(url, maxDepth)
 
-// checkIfResourceExist(url)
 
 void buildSessionInProject(Session *pSession) {
 
