@@ -107,8 +107,8 @@ typedef struct Resource {
     char *dirResourcePath;
     short isOutputPath;
     char *outputPath;
-    short isType;
-    char *type;
+    char **type;
+    int numberType;
     int depth;
     int maxDepth;
     short isCreatedDate;
@@ -120,8 +120,8 @@ typedef struct Resource {
 
 typedef struct Session {
     int numberActions;
-    char *name;
-    Resource **resources;
+    char *nameAction;
+    Resource *resources;
     char *createdDate;
 } Session;
 

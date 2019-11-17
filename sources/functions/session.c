@@ -21,11 +21,13 @@ Session *initSession(Action *action, char *sessionName) {
     //pSession->actions = malloc(sizeof(Action*));
 
     pSession->createdDate = getCurrentTime();
-    pSession->resources = malloc(sizeof(Resource*));
+    pSession->resources = initResource(action->url, action->)
     if (pSession->resources == NULL) {
         fprintf(stderr, "Problem of malloc resources for pointer of Session\n");
         exit(1);
     }
+
+    pSession
 
     return pSession;
 }

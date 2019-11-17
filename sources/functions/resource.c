@@ -40,7 +40,7 @@ static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
     pResource->isOutputPath = 0;
     pResource->outputPath = NULL;
 
-    pResource->isType = 0;
+    pResource->numberType = 0;
     pResource->type = NULL;
 
     pResource->isRequest = 0;
@@ -48,6 +48,11 @@ static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
     pResource->size = 0;
     pResource->numberLinks = 0;
     pResource->links = NULL;
+}
+
+void setTypesFilter(Resource *pResource, char **type, int count) {
+    pResource->type = type;
+    pResource->numberType = count;
 }
 
 int createFileResource(Resource *pResource, const char *dirResourcePath, const char **filter, int depth) {
@@ -141,17 +146,14 @@ void destroyResource(Resource *pResource) {
         free(pResource->createdDate);
         pResource->isCreatedDate = 0;
     }
-
     if (pResource->isOutputPath == 1) {
         free(pResource->outputPath);
         pResource->isOutputPath = 0;
     }
-
     if (pResource->isDirResourcePath == 1) {
         free(pResource->dirResourcePath);
         pResource->isDirResourcePath = 0;
     }
-
     if (pResource->isRequest == 1) {
         destroyRequest(pResource->pRequest);
         pResource->isRequest = 0;
@@ -159,6 +161,9 @@ void destroyResource(Resource *pResource) {
     if (pResource->numberLinks > 0) {
         freeArrayString(pResource->links, pResource->numberLinks);
         pResource->numberLinks = 0;
+    }
+    if (pResource->numberType > 0) {
+        freeArrayString(pResource->type, pResource->numberType);
     }
 
     free(pResource);
