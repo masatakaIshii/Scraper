@@ -8,6 +8,9 @@ static FILE *fp = NULL;
 static char *contentFile = NULL;
 
 static void testStartFileWriter() {
+    fp = startFileWriter("toto.txt", "rb");
+    CU_ASSERT_PTR_NULL(fp);
+
     fp = startFileWriter("toto.txt", "ab");
     CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
     closeFileWriter(fp);
