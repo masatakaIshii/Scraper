@@ -16,6 +16,10 @@
  */
 FILE *startFileWriter(const char *filePath, const char *mode);
 
+int writeOptionNameAndValue(FILE *fp, const char *optionName, const char *optionValue);
+
+int writeOptionNameAndArrayValues(FILE *fp, const char *optionName, const char **optionValues, int count);
+
 void closeFileWriter(FILE *fp);
 
 
