@@ -23,6 +23,7 @@
 .json:application/json
 .mid|.midi:audio/midi
 .mp3:audio/mpeg|audio/mp3
+.mp4:video/mp4
 .mpeg:video/mpeg
 .mpkg:application/vnd.apple.installer+xml
 .odp:application/vnd.oasis.opendocument.presentation
