@@ -1,0 +1,34 @@
+=
+{name -> Mon site web}
+{url -> https://www.example.com}
++
+{max-depth -> 0}
+{versioning -> off}
+{types -> (text/javascript, text/html, application/javascript)}
+
+=
+{name -> Mon deuxième site}
+{url -> https://www.google.com}
++
+{max-depth -> 0}
+{versioning -> on}
+
+==
+{name -> Ma super tache}
+{second -> 10}
++
+(Mon site web, Mon deuxième site)
+
+==
+{name -> Ma tache facile}
+{minute -> 2}
+{second -> 10}
++
+(Mon site web)
+
+==
+# Lance la requête HTTP toutes les 6 heures
+{name -> Ma tache facile}
+{hour -> 6}
++
+{Mon deuxième site}

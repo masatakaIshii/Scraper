@@ -61,7 +61,8 @@ set(TESTSRCS
         test/testListArray.c
         test/testListChar.c
         test/testFileWriter.c
-        test/testFileReader.c)
+        test/testFileReader.c
+        test/testConfig.c)
 
 set(TESTHEADERS
     test/testShare.h
@@ -73,7 +74,7 @@ add_executable(Scraper sources/main.c ${SRCS} ${HEADERS})
 add_executable(TestScraper test/main.c ${SRCS} ${TESTSRCS} ${HEADERS} ${TESTHEADERS})
 
 file(INSTALL resources/list_file_ext_mime_type.txt DESTINATION ${CMAKE_BINARY_DIR}/)
-
+file(INSTALL resources/configuration.sconf DESTINATION ${CMAKE_BINARY_DIR}/)
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     file(INSTALL ${CMAKE_BINARY_DIR}/Scraper.exe DESTINATION ../bin)
 endif ()

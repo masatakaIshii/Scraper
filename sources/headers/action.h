@@ -5,8 +5,8 @@
 #ifndef SCRAPER_ACTION_H
 #define SCRAPER_ACTION_H
 
-#include"option.h"
+#include "struct.h"
 
-
+Action *initAction();
 
 #endif //SCRAPER_ACTION_H

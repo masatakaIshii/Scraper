@@ -40,5 +40,6 @@ CU_ErrorCode listArraySpec(CU_pSuite pSuite);
 CU_ErrorCode listCharSpec(CU_pSuite pSuite);
 CU_ErrorCode fileWriterSpec(CU_pSuite pSuite);
 CU_ErrorCode fileReaderSpec(CU_pSuite pSuite);
+CU_ErrorCode configSpec(CU_pSuite pSuite);
 
 #endif //SCRAPER_TESTREQUEST_H

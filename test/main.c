@@ -62,7 +62,8 @@ CU_ErrorCode listSpecs(CU_pSuite pSuite) {
         CUE_SUCCESS != listArraySpec(pSuite) ||
         CUE_SUCCESS != listCharSpec(pSuite) ||
         CUE_SUCCESS != fileWriterSpec(pSuite) ||
-        CUE_SUCCESS != fileReaderSpec(pSuite)) {
+        CUE_SUCCESS != fileReaderSpec(pSuite) ||
+        CUE_SUCCESS != configSpec(pSuite)) {
 
         CU_cleanup_registry();
     }

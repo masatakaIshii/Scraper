@@ -4,17 +4,17 @@
 
 #include "../../headers/services/fileReader.h"
 
-static char *searchAndCopyOptionValue(const char *content, const char *optionName, int *position);
+static char *searchAndCopyOptionValue(char *content, char *optionName, int *position);
 
-static char **searchAllOptionValues(const char *content, int *count, const char *optionName);
+static char **searchAllOptionValues(char *content, int *count, char *optionName);
 
-static char **searchOptionValuesOkArrOptionName(const char *content, const char *optionName, int *count);
+static char **searchOptionValuesOkArrOptionName(char *content, char *optionName, int *count);
 
-static char *getProperOptName(const char *content, const char *optionName);
+static char *getProperOptName(char *content, char *optionName);
 static void removeSpacesAfterOneIndex(char **values, int count);
 
 
-char *getOptValue(const char *filePath, const char *optionName) {
+char *getOptValue(char *filePath, char *optionName) {
     char *content = NULL;
     char *result = NULL;
 
@@ -31,7 +31,15 @@ char *getOptValue(const char *filePath, const char *optionName) {
     return result;
 }
 
-static char *searchAndCopyOptionValue(const char *content, const char *optionName, int *position) {
+char *getOptValueByContent(char *content, char *optionName) {
+    char *result = NULL;
+
+    result = searchAndCopyOptionValue(content, optionName, NULL);
+
+    return result;
+}
+
+static char *searchAndCopyOptionValue(char *content, char *optionName, int *position) {
     char *result = NULL;
     char *startValue = NULL;
     char *endOccur = NULL;
@@ -60,7 +68,7 @@ static char *searchAndCopyOptionValue(const char *content, const char *optionNam
     return result;
 }
 
-char **getAllOptValuesByOptName(const char *filePath, const char *optionName, int *count) {
+char **getAllOptValuesByOptName(char *filePath, char *optionName, int *count) {
     char *content = NULL;
     char **result = NULL;
 
@@ -75,7 +83,7 @@ char **getAllOptValuesByOptName(const char *filePath, const char *optionName, in
     return result;
 }
 
-static char **searchAllOptionValues(const char *content, int *count, const char *optionName) {
+static char **searchAllOptionValues(char *content, int *count, char *optionName) {
     ListStr *pListStr = initListStr(10);
     int position = 0;
     unsigned int contentLength = strlen(content);
@@ -95,7 +103,7 @@ static char **searchAllOptionValues(const char *content, int *count, const char 
     return destroyListStrAndReturnArrStr(pListStr, count);
 }
 
-char **getOptValuesOfArrOptName(const char *filePath, const char *optionName, int *count) {
+char **getOptValuesOfArrOptName(char *filePath, char *optionName, int *count) {
     char *content = NULL;
     char **result = NULL;
 
@@ -110,7 +118,7 @@ char **getOptValuesOfArrOptName(const char *filePath, const char *optionName, in
     return result;
 }
 
-static char **searchOptionValuesOkArrOptionName(const char *content, const char *optionName, int *count) {
+static char **searchOptionValuesOkArrOptionName(char *content, char *optionName, int *count) {
     ListStr *pListStr = initListStr(10);
     char *optionValue = NULL;
     char *startOpt = NULL;
@@ -149,7 +157,7 @@ static char **searchOptionValuesOkArrOptionName(const char *content, const char 
     return destroyListStrAndReturnArrStr(pListStr, count);
 }
 
-static char *getProperOptName(const char *content, const char *optionName) {
+static char *getProperOptName(char *content, char *optionName) {
     char *start = NULL;
     int position = 0;
     int lengthContent = (int) strlen(content);
@@ -168,7 +176,35 @@ static char *getProperOptName(const char *content, const char *optionName) {
     return NULL;
 }
 
-char **getArrValuesInParenthesis(const char *filePath, const char *delimiter, int *count) {
+static char *startWell(char *content, char *delimiter) {
+    char *startPart = strchr(content, '(') + 1;
+    if (startPart == NULL) {
+        return NULL;
+    }
+    if (strncmp(startPart, delimiter, strlen(delimiter)) == 0) {
+        startPart += strlen(delimiter);
+    }
+
+    return startPart;
+}
+
+static char *endWell(char *content, char *delimiter) {
+    char *contentCheck = NULL;
+    char *beforeDelimiter = NULL;
+    char *endPart = strchr(content, ')');
+    if (endPart == NULL) {
+        return NULL;
+    }
+    contentCheck = endPart - strlen(delimiter);
+
+    if (strstr(contentCheck, delimiter) != NULL) {
+        endPart -= strlen(delimiter);
+    }
+
+    return endPart;
+}
+
+char **getArrValuesInParenthesis(char *filePath, char *delimiter, int *count) {
     char *startPart = NULL;
     char *endPart = NULL;
     char *concernedPart = NULL;
@@ -179,6 +215,30 @@ char **getArrValuesInParenthesis(const char *filePath, const char *delimiter, in
     if (content == NULL) {
         return NULL;
     }
+
+    startPart = startWell(content, delimiter);
+    if (startPart == NULL) {
+        return NULL;
+    }
+
+    endPart = endWell(startPart, delimiter);
+    if (endPart == NULL) {
+        return NULL;
+    }
+
+
+    concernedPart = strMallocCpy(startPart, (int)(endPart - startPart));
+    values = strSplit(concernedPart, delimiter, count);
+    removeSpacesAfterOneIndex(values, *count);
+
+    return values;
+}
+
+char **getArrValuesInParenthesisOfContent(char *content, char *delimiter, int *count) {
+    char *startPart = NULL;
+    char *endPart = NULL;
+    char *concernedPart = NULL;
+    char **values = NULL;
 
     startPart = strchr(content, '(');
     if (startPart == NULL) {
@@ -203,8 +263,10 @@ static void removeSpacesAfterOneIndex(char **values, int count) {
 
     for (i = 1; i < count; i++) {
         temp = values[i];
-        values[i] = strMallocCpy(temp + 1, strlen(temp) - 1);
-        free(temp);
+        if (temp != NULL && temp[0] == ' ') {
+            values[i] = strMallocCpy(temp + 1, strlen(temp) - 1);
+            free(temp);
+        }
     }
 }
 

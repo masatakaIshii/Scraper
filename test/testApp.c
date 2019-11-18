@@ -5,22 +5,17 @@ int cleanApp(void) {
 }
 
 static void changeNumberSessionApp(int number) {
-    App *pApp = getApp();
+    App *pApp = initApp();
 
-    pApp->listSession->count = number;
 }
 
 static void checkIfAppIsStatic() {
-    App *pApp = getApp();
+    App *pApp = initApp();
 
-    CU_ASSERT_EQUAL(pApp->listSession->capacity, 10);
-    CU_ASSERT_PTR_NOT_NULL(pApp->listSession->sessions);
-    changeNumberSessionApp(7);
-    CU_ASSERT_EQUAL(pApp->listSession->count, 7);
-    changeNumberSessionApp(99);
-    CU_ASSERT_EQUAL(pApp->listSession->count, 99);
-    free(pApp->pConfig);
-    free(pApp);
+    CU_ASSERT_EQUAL(runApp(pApp), 0);
+
+    destroyConfig(pApp->pConfig);
+
 }
 
 CU_ErrorCode appSpec(CU_pSuite pSuite) {

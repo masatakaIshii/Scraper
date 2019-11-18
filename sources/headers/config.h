@@ -6,8 +6,21 @@
 #define SCRAPER_CONFIG_H
 
 #include <stdio.h>
-#include "action.h"
+#include "struct.h"
+#include "common.h"
+#include "app.h"
+
 #include "task.h"
+#include "services/fileReader.h"
+
+Config *initConfig();
+
+Action *initAction();
+
+int runConfig(Config *pConfig);
+
+void destroyConfig(Config *pConfig);
+
 
 
 #endif //SCRAPER_CONFIG_H

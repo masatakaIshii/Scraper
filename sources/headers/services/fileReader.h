@@ -10,15 +10,19 @@
 #include "../common.h"
 #include "../lists/listArray.h"
 
-FILE *startFileReader(const char *filePath, const char *mode);
+FILE *startFileReader(char *filePath, const char *mode);
 
-char *getOptValue(const char *filePath, const char *optionName);
+char *getOptValue(char *filePath, char *optionName);
 
-char **getAllOptValuesByOptName(const char *filePath, const char *optionName, int *count);
+char *getOptValueByContent(char *content, char *optionName);
 
-char **getOptValuesOfArrOptName(const char *filePath, const char *optionName, int *count);
+char **getAllOptValuesByOptName(char *filePath, char *optionName, int *count);
 
-char **getArrValuesInParenthesis(const char *content, const char *delimiter, int *count);
+char **getOptValuesOfArrOptName(char *filePath, char *optionName, int *count);
+
+char **getArrValuesInParenthesis(char *content, char *delimiter, int *count);
+
+char **getArrValuesInParenthesisOfContent(char *content, char *delimiter, int *count);
 
 //void closeFileReader(FILE *fp);
 

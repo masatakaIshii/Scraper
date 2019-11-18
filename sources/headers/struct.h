@@ -35,22 +35,30 @@ typedef struct Option {
 typedef struct Action {
     char *name;
     char *url;
-    Option **options;
-    int numberOption;
+    int maxDepth;
+    int versioning;
+    char **types;
+    int numberTypes;
 } Action;
 
 typedef struct Task {
-    Action **actions;
-    int numberActions;
-    Option **options;
-    int numberOptions;
+    char *name;
+    int hour;
+    int minute;
+    int second;
+    char **actionsNames;
+    int numberActionsNames;
 } Task;
 
 
 typedef struct Config {
+    int numberActions;
     Action **actions;
-    Task **task;
+    int numberTasks;
+    Task **tasks;
     char *content;
+    char *actionsContent;
+    char *tasksContent;
 } Config;
 
 typedef enum UrlHelperResponse {
@@ -125,12 +133,6 @@ typedef struct Session {
     char *createdDate;
 } Session;
 
-typedef struct ListSession {
-    Session **sessions;
-    int capacity;
-    int count;
-} ListSession;
-
 typedef struct Version {
     Action *action;
     Task *task;
@@ -140,7 +142,7 @@ typedef struct Version {
 
 typedef struct App {
     Config *pConfig;
-    ListSession *listSession;
+    Session *session;
 } App;
 
 #endif //SCRAPER_STRUCT_H

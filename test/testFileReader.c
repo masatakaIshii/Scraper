@@ -39,7 +39,12 @@ static void startExampleFileWithArrayValue1() {
 }
 
 static void startExemplaManageParenthesis() {
-
+    char *arrStr[100] = {"tonton", "tata", "taratata", "tres", "thanos", "t"};
+    fwp = startFileWriter("tata.txt", "ab", "=");
+    writeOptionNameAndValue(fwp, "tata", "tonton");
+    writeOptionNameAndArrayValues(fwp, "tabT", (const char**)arrStr, 6);
+    writeOptionNameAndValue(fwp, "tabT", "tonton");
+    closeFileWriter(fwp);
 }
 
 static void testInitFileReader() {
@@ -116,13 +121,17 @@ static void testGetArrOptionValue() {
 }
 
 static void testGetValueInParenthesis() {
-    startExampleFileWithArrayValue1();
+    startExemplaManageParenthesis();
 
-    results = getArrValuesInParenthesis("test.txt", ",", &count);
+    results = getArrValuesInParenthesis("tata.txt", "\n", &count);
     CU_ASSERT_PTR_NOT_NULL_FATAL(results);
-    CU_ASSERT_EQUAL(count, 2);
-    CU_ASSERT_STRING_EQUAL(results[0], "Mon site web");
-    CU_ASSERT_STRING_EQUAL(results[1], "Mon deuxième site");
+    CU_ASSERT_EQUAL(count, 6);
+    CU_ASSERT_STRING_EQUAL(results[1], "tata");
+    CU_ASSERT_STRING_EQUAL(results[5], "t");
+    freeArrayString(results, count);
+    count = 0;
+    results = NULL;
+    unlink("tata.txt");
 }
 
 CU_ErrorCode fileReaderSpec(CU_pSuite pSuite) {

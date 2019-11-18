@@ -19,36 +19,14 @@
  * function to get singleton pointer App structure
  * @return App* pApp : pointer of app structure
  */
-App *getApp();
+App *initApp();
 
 
-// ----- ListSession functions -----
-/**
- * Function to init list of sessions
- * @return listSession : list of sessions
- */
-ListSession *newListSession();
+int runApp(App *pApp) ;
 
-void addSession(Session *pSession);
-
-Session *getSession(int index);
-
-void freeListSession(ListSession *pSession);
-
-/**
- * function to get
- * @return
- */
 Config *getConfig();
-// TODO: Config *getConfig
-
-// TODO: Session *getSession
-
-
 
 void destroyApp();
-
-
 
 // TODO: int startApp(App *app);
 
