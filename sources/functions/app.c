@@ -30,7 +30,7 @@ int runApp(App *pApp) {
 
     pApp->pConfig = initConfig();
 
-    if (runConfig(pApp->pConfig) != 0) {
+    if (fillConfig(pApp->pConfig) != 0) {
         destroyConfig(pApp->pConfig);
         return 1;
     }
