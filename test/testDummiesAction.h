@@ -9,10 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../sources/headers/common.h"
-#include "../sources/headers/action.h"
 
 Action *dummySimpleAction();
-void destroyDummyAction(Action *dummyAction);
+Action *dummyTypesAction();
 Action *dummyDepthAction();
+
+void destroyDummyAction(Action *dummyAction);
 
 #endif //SCRAPER_TESTDUMMIESACTION_H

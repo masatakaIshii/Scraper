@@ -104,8 +104,19 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur);
  */
 char *getContentInFile(const char *filePath, const char *mode);
 
+/**
+ * Get current time in seconds
+ * @return OK current time more than 0
+ * ERROR -1
+ */
 unsigned long getCurrentTimeSec();
 
+/**
+ * Get current time verbose by given seconds unsigned long value
+ * @param seconds : unsigned long value
+ * @return OK strCurrentTime : verbose of currentTime
+ * ERROR NULL
+ */
 char *getTimeToString(unsigned long seconds);
 
 /**

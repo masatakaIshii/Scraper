@@ -14,7 +14,9 @@
 #include "request.h"
 #include "resource.h"
 
-Session *initSession(Action *action, char *sessionName);
+Session *initSession(Action *action, char *nameTask);
+
+int runSessionAndResources(Session *pSession, Action *pAction);
 
 void destroySession(Session *pSession);
 

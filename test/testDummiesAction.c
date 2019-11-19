@@ -1,76 +1,78 @@
 ////
 //// Created by masat on 01/11/2019.
 ////
-//
-//#include "testDummiesAction.h"
-//
-//Action *dummySimpleAction() {
-//    Action *pAction = malloc(sizeof(Action));
-//    if (pAction == NULL) {
-//        fprintf(stderr, "Probleme malloc structure Action in dummyAction()\n");
-//        exit(1);
-//    }
-//    pAction->url = "http://yahoo.com";
-//    pAction->name = "first action";
-//    pAction->numberOption = 1;
-//    pAction->options = malloc(sizeof(Option*) * pAction->numberOption);
-//    if (pAction->options == NULL) {
-//        fprintf(stderr, "Problem malloc list of ");
-//    }
-//    pAction->options[0] = malloc(sizeof(Option));
-//    pAction->options[0]->name = strMallocCpy("max-depth", strlen("max-depth"));
-//    pAction->options[0]->typeValue = OPTION_INT;
-//    pAction->options[0]->nbrValue = 1;
-//    pAction->options[0]->value.valueInt = 0;
-//
-//    return pAction;
-//}
-//
-//void destroyDummyAction(Action *dummyAction) {
-//    int i;
-//    int j;
-//    for (i = 0; i < dummyAction->numberOption; i++) {
-//        if (dummyAction->options[i]->typeValue == OPTION_LIST_STR) {
-//            for (j = 0; j < dummyAction->options[i]->nbrValue; j++) {
-//                free(dummyAction->options[i]->value.listStr[i]);
-//            }
-//        }
-//        if (dummyAction->options[i]->typeValue == OPTION_STR) {
-//            free(dummyAction->options[i]->value.valueStr);
-//        }
-//    }
-//
-//    free(dummyAction->options);
-//    free(dummyAction);
-//}
-//
-//Action *dummyDepthAction() {
-//    Action *pAction = malloc(sizeof(Action));
-//    if (pAction == NULL) {
-//        fprintf(stderr, "Probleme malloc structure Action in dummyAction()\n");
-//        exit(1);
-//    }
-//    pAction->url = "http://yahoo.com";
-//    pAction->name = "first action";
-//    pAction->numberOption = 3;
-//    pAction->options = malloc(sizeof(Option*) * pAction->numberOption);
-//    if (pAction->options == NULL) {
-//        fprintf(stderr, "Problem malloc list of options");
-//    }
-//    pAction->options[0]->name = "max-depth";
-//    pAction->options[0]->nbrValue = 1;
-//    pAction->options[0]->typeValue = OPTION_INT;
-//    pAction->options[0]->value.valueInt = 1;
-//
-//    pAction->options[1]->name = "versioning";
-//    pAction->options[1]->nbrValue = 1;
-//    pAction->options[1]->typeValue = OPTION_INT;
-//    pAction->options[1]->value.valueInt = 0;
-//
-//    pAction->options[2]->name = "type";
-//    pAction->options[2]->nbrValue = 1;
-//    pAction->options[2]->typeValue = OPTION_STR;
-//    pAction->options[2]->value.valueStr = "text/html";
-//
-//    return pAction;
-//}
+
+#include "testDummiesAction.h"
+
+void initDummyAction(Action *pAction) {
+    pAction->url = NULL;
+    pAction->name = NULL;
+    pAction->types = NULL;
+    pAction->numberTypes = 0;
+    pAction->maxDepth = 0;
+    pAction->versioning = 0;
+}
+
+Action *dummySimpleAction() {
+    Action *pAction = malloc(sizeof(Action));
+    if (pAction == NULL) {
+        fprintf(stderr, "Probleme malloc structure Action in dummyAction()\n");
+        exit(1);
+    }
+    initDummyAction(pAction);
+
+    pAction->url = strMallocCpy("http://yahoo.com", strlen("http://yahoo.com"));
+
+    pAction->name = strMallocCpy("first action", strlen("first action"));
+
+    return pAction;
+}
+
+Action *dummyTypesAction() {
+    int i;
+    char *types[100] = {"text/html", "application/javascript", "text/css"};
+    Action *pAction = malloc(sizeof(Action));
+    if (pAction == NULL) {
+        fprintf(stderr, "Probleme malloc structure Action in dummyAction()\n");
+        exit(1);
+    }
+    initDummyAction(pAction);
+
+    pAction->url = strMallocCpy("http://yahoo.com", strlen("http://yahoo.com"));
+    pAction->name = strMallocCpy("first action", strlen("first action"));
+    pAction->numberTypes = 3;
+
+    pAction->types = malloc(sizeof(char *) * pAction->numberTypes);
+    for (i = 0; i < pAction->numberTypes; i++) {
+        pAction->types[i] = strMallocCpy(types[i], strlen(types[i]));
+    }
+    return pAction;
+}
+
+Action *dummyDepthAction() {
+    Action *pAction = malloc(sizeof(Action));
+    if (pAction == NULL) {
+        fprintf(stderr, "Probleme malloc structure Action in dummyAction()\n");
+        exit(1);
+    }
+    pAction->url = strMallocCpy("http://www.example.com", strlen("http://www.example.com"));
+    pAction->name = strMallocCpy("depth action", strlen("depth action"));
+    pAction->versioning = 1;
+    pAction->maxDepth = 1;
+
+    return pAction;
+}
+
+
+void destroyDummyAction(Action *dummyAction) {
+    if (dummyAction->numberTypes > 0) {
+        freeArrayString(dummyAction->types, dummyAction->numberTypes);
+    }
+    if (dummyAction->url != NULL) {
+        free(dummyAction->url);
+    }
+    if (dummyAction->name != NULL) {
+        free(dummyAction->name);
+    }
+    free(dummyAction);
+}

@@ -236,7 +236,7 @@ static int setContentType(Request *pRequest, const char *dirResourcePath) {
     if (result == CURLE_OK) {
         if (pRequest->isContentType == 1) {
             if (pUrlHelper->isFileName == 0) {
-                pUrlHelper->fileName = getAvailableFileName("all_files_names.txt", dirResourcePath, "index", "_scrap_");
+                pUrlHelper->fileName = getAvailableName("all_files_names.txt", dirResourcePath, "index", "_scrap_");
                 if (pUrlHelper->fileName == NULL) {
                     return 0;
                 }

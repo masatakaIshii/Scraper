@@ -9,7 +9,7 @@ static char *contentFile = NULL;
 static char *check = NULL;
 
 static void testCreateFileNamesAndGetFileName() {
-    result = getAvailableFileName("all_files_names.txt", "", "index", "_scrap_");
+    result = getAvailableName("all_files_names.txt", "", "index", "_scrap_");
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_STRING_EQUAL(result, "index_scrap_0");
@@ -29,13 +29,13 @@ static void testCreateFileNamesAndGetFileName() {
 }
 
 static void testAddIndexWhenNameToAddNoPrecise() {
-    result = getAvailableFileName(NULL, "tonton", "tata_file.txt", NULL);
+    result = getAvailableName(NULL, "tonton", "tata_file.txt", NULL);
     CU_ASSERT_PTR_NULL_FATAL(result);
     CU_ASSERT_NOT_EQUAL(checkIfDirExist("tonton"), 1);
 }
 
 static void testAddFileNameInAllFilesNames() {
-    result = getAvailableFileName("tata_file.txt", "tata", "tata", NULL);
+    result = getAvailableName("tata_file.txt", "tata", "tata", NULL);
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_NOT_EQUAL(access("tata/tata_file.txt", F_OK), -1);
     CU_ASSERT_STRING_EQUAL(result, "tata0");
@@ -50,10 +50,10 @@ static void testIfFileNamesExitAddNewFileName() {
     char *manageNameFile = "all_created_files_names.txt";
     char *btwNameNumber = "_scrap_esgi_";
 
-    result = getAvailableFileName(manageNameFile, "", nameToAdd, btwNameNumber);
+    result = getAvailableName(manageNameFile, "", nameToAdd, btwNameNumber);
     free(result);
 
-    result = getAvailableFileName(manageNameFile, "", nameToAdd, btwNameNumber);
+    result = getAvailableName(manageNameFile, "", nameToAdd, btwNameNumber);
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_STRING_EQUAL(result, "index_scrap_esgi_1");
     contentFile = getContentInFile(manageNameFile, "rb");
@@ -65,7 +65,7 @@ static void testIfFileNamesExitAddNewFileName() {
     free(contentFile);
     free(result);
 
-    result = getAvailableFileName(manageNameFile, "", nameToAdd, btwNameNumber);
+    result = getAvailableName(manageNameFile, "", nameToAdd, btwNameNumber);
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_STRING_EQUAL(result, "index_scrap_esgi_2");
     contentFile = getContentInFile(manageNameFile, "rb");
@@ -77,7 +77,7 @@ static void testIfFileNamesExitAddNewFileName() {
     free(contentFile);
     free(result);
 
-    result = getAvailableFileName(manageNameFile, "", "toto", btwNameNumber);
+    result = getAvailableName(manageNameFile, "", "toto", btwNameNumber);
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_STRING_EQUAL(result, "toto_scrap_esgi_0");
     contentFile = getContentInFile(manageNameFile, "rb");
@@ -89,7 +89,7 @@ static void testIfFileNamesExitAddNewFileName() {
     free(contentFile);
     free(result);
 
-    result = getAvailableFileName(manageNameFile, "", nameToAdd, btwNameNumber);
+    result = getAvailableName(manageNameFile, "", nameToAdd, btwNameNumber);
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_STRING_EQUAL(result, "index_scrap_esgi_3");
     contentFile = getContentInFile(manageNameFile, "rb");
@@ -105,12 +105,12 @@ static void testIfFileNamesExitAddNewFileName() {
 }
 
 static void testFilesNameManagerInDifferentDir() {
-    result = getAvailableFileName("sessions_names", "session1", "session", "_");
+    result = getAvailableName("sessions_names", "session1", "session", "_");
     free(result);
-    result = getAvailableFileName("sessions_names", "session1", "session", "_");
+    result = getAvailableName("sessions_names", "session1", "session", "_");
     free(result);
 
-    result = getAvailableFileName("resources_names", "session2/resources", "index", "_scrap_");
+    result = getAvailableName("resources_names", "session2/resources", "index", "_scrap_");
     contentFile = getContentInFile("session2/resources/resources_names", "rb");
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
@@ -118,7 +118,7 @@ static void testFilesNameManagerInDifferentDir() {
     free(result);
     free(contentFile);
 
-    result = getAvailableFileName("sessions_names", "session2", "session", "_");
+    result = getAvailableName("sessions_names", "session2", "session", "_");
     contentFile = getContentInFile("session2/sessions_names", "rb");
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
@@ -127,7 +127,7 @@ static void testFilesNameManagerInDifferentDir() {
     free(result);
     free(contentFile);
 
-    result = getAvailableFileName("resources_names", "session2/resources", "script", "_scrap_");
+    result = getAvailableName("resources_names", "session2/resources", "script", "_scrap_");
     contentFile = getContentInFile("session2/resources/resources_names", "rb");
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
@@ -136,7 +136,7 @@ static void testFilesNameManagerInDifferentDir() {
     free(result);
     free(contentFile);
 
-    result = getAvailableFileName("sessions_names", "session1", "session", "_");
+    result = getAvailableName("sessions_names", "session1", "session", "_");
     contentFile = getContentInFile("session1/sessions_names", "rb");
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
@@ -145,7 +145,7 @@ static void testFilesNameManagerInDifferentDir() {
     free(result);
     free(contentFile);
 
-    result = getAvailableFileName("resources_names", "session2/resources", "index", "_scrap_");
+    result = getAvailableName("resources_names", "session2/resources", "index", "_scrap_");
     contentFile = getContentInFile("session2/resources/resources_names", "rb");
     CU_ASSERT_PTR_NOT_NULL_FATAL(result);
     CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);

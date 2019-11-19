@@ -27,12 +27,12 @@ static int checkIfNameIsUsed(const char *fileNamesManagerPath, const char *nameT
  * @return OK newName : new available name
  * ERROR NULL
  */
-char *getAvailableFileName(const char *fileNamesManager, const char *dirPath, const char *nameToAdd, const char *btwNameAndNumber) {
+char *getAvailableName(const char *fileNamesManager, const char *dirPath, const char *nameToAdd, const char *btwNameAndNumber) {
     char *newName = NULL; // new name deliver by file names manager
     char *fileNamesManagerPath = NULL;
 
     if (fileNamesManager == NULL || strlen(fileNamesManager) <= 0) {
-        fprintf(stderr, "ERROR in getAvailableFileName : the fileNamesManager can\'t be empty\n");
+        fprintf(stderr, "ERROR in getAvailableName : the fileNamesManager can\'t be empty\n");
         return NULL;
     }
 

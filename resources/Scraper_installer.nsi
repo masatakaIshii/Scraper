@@ -6,7 +6,7 @@
   !define MUI_VERSION ""
   
   
-  !define BUILD_PATH "..\build"
+  !define BUILD_PATH "..\cmake-build-debug"
   
 ;---------------------------------
 ;general
@@ -48,6 +48,7 @@ Section "install"
  
   File "${BUILD_PATH}\${MUI_FILE}.exe"
   File "list_file_ext_mime_type.txt"
+  File "configuration.sconf"
  
 ;create desktop shortcut
   CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\${MUI_FILE}.exe" ""

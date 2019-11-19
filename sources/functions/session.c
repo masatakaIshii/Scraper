@@ -8,49 +8,97 @@
 
 #include "../headers/session.h"
 
-static int setSession(Session *pSession, Action *action);
-static void initAndSetResource(Session *pSession, Action *pAction);
+static void initValuesSession(Session *pSession);
+static int setSession(Session *pSession, Action *action, char *nameTask);
 
-Session *initSession(Action *action, char *sessionName) {
+Session *initSession(Action *action, char *nameTask) {
     Session *pSession = malloc(sizeof(Session));
     if (pSession == NULL) {
         fprintf(stderr, "Problem malloc pointer of Session\n");
         exit(1);
     }
-    if (action != NULL) {
+    if (action == NULL) {
         free(pSession);
         return NULL;
     }
+    initValuesSession(pSession);
 
-    if (setSession(pSession, action)) {
-        free(pSession);
+    if (setSession(pSession, action, nameTask) == 0) {
+        destroySession(pSession);
         return NULL;
     }
-    pSession->nameAction = strMallocCpy(action->name, (int)strlen(action->name));
-
-    initAndSetResource(pSession, action);
 
     return pSession;
 }
 
-static int setSession(Session *pSession, Action *action) {
-    pSession->nameAction = strMallocCpy(action->name, strlen(action->name));
-    if (pSession->nameAction == NULL) {
-        fprintf(stderr, "Problem strMallocCpy pSession->nameAction\n");
+static void initValuesSession(Session *pSession) {
+    pSession->createdDate = NULL;
+    pSession->dateSeconds = 0;
+    pSession->resources = NULL;
+    pSession->taskName = NULL;
+    pSession->actionName = NULL;
+    pSession->sessionDirPath = NULL;
+}
+
+static int setSession(Session *pSession, Action *action, char *nameTask) {
+    pSession->actionName = strMallocCpy(action->name, strlen(action->name));
+    if (pSession->actionName == NULL) {
+        fprintf(stderr, "Problem strMallocCpy pSession->actionName\n");
+        return 0;
+    }
+    pSession->taskName = strMallocCpy(nameTask, strlen(nameTask));
+    if (pSession->taskName == NULL) {
+        fprintf(stderr, "ERROR in setSession : Problem strMallocCpy pSession->taskName\n");
         return 0;
     }
 
-    pSession->createdDate = getCurrentTime();
+    pSession->dateSeconds = getCurrentTimeSec();
+    if (pSession->dateSeconds <= 0) {
+        fprintf(stderr, "Error in setSession : Problem getCurrentTimeSec\n");
+        return 0;
+    }
+    pSession->createdDate = getTimeToString(pSession->dateSeconds);
+    if (pSession->createdDate == NULL) {
+        fprintf(stderr, "Error in setSession : Problem getTimeToString\n");
+        return 0;
+    }
+
+    return 1;
 }
 
-static void initAndSetResource(Session *pSession, Action *pAction) {
+static char *getSessionDirPath(int versioning, char *actionName) {
+    char *sessionDirPath = NULL;
 
-    //pSession->resources = initResource(action->url, ) TODO : set correct value to init resource
-//    if (pSession->resources == NULL) {
-//        fprintf(stderr, "Problem of malloc resources for pointer of Session\n");
-//        exit(1);
-//    }
+    if (versioning == 1) {
+        // check if sessionDirPath directory exist
+    } else {
+        sessionDirPath = getAvailableName("session_all_names.txt", "Scraper", "Scraper/session", "_");
+        if (sessionDirPath == NULL) {
+            fprintf(stderr, "ERROR in runSessionAndResources : Problem get session name\n");
+            return 0;
+        }
+    }
 
+    return sessionDirPath;
+}
+
+/**
+ * Run session and get resources by action
+ * @param pSession
+ * @param pAction
+ * @return OK 1,<br>
+ * ERROR 0
+ */
+int runSessionAndResources(Session *pSession, Action *pAction) {
+    pSession->sessionDirPath = getSessionDirPath(pAction->versioning, pAction->name);
+    if (pSession->sessionDirPath == NULL) {
+        fprintf(stderr, "ERROR in runSessionAndResources : problem to get session dir path\n");
+        return 0;
+    }
+
+    // init resource and save
+
+    return 1;
 }
 
 void buildSessionInProject(Session *pSession) {
@@ -58,5 +106,20 @@ void buildSessionInProject(Session *pSession) {
 }
 
 void destroySession(Session *pSession) {
+    if (pSession->actionName != NULL) {
+        free(pSession->actionName);
+    }
 
+    if (pSession->taskName != NULL) {
+        free(pSession->taskName);
+    }
+
+    if (pSession->createdDate != NULL) {
+        free(pSession->createdDate);
+    }
+
+    if (pSession->resources != NULL) {
+        destroyResource(pSession->resources);
+    }
+    free(pSession);
 }

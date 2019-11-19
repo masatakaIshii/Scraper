@@ -24,7 +24,7 @@
  * @return OK newName : new available name
  * ERROR NULL
  */
-char *getAvailableFileName(const char *fileNamesManager, const char *dirPath, const char *nameToAdd, const char *btwNameAndNumber);
+char *getAvailableName(const char *fileNamesManager, const char *dirPath, const char *nameToAdd, const char *btwNameAndNumber);
 
 /**
  * Function to add name in file names manager if its not include

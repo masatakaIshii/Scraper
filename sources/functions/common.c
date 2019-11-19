@@ -360,6 +360,11 @@ char *getContentInFile(const char *filePath, const char *mode) {
     return result;
 }
 
+/**
+ * Get current time in seconds
+ * @return OK current time more than 0
+ * ERROR -1
+ */
 unsigned long getCurrentTimeSec() {
     time_t currentTime;
     currentTime = time(NULL);
@@ -370,6 +375,12 @@ unsigned long getCurrentTimeSec() {
     return (unsigned long)currentTime;
 }
 
+/**
+ * Get current time verbose by given seconds unsigned long value
+ * @param seconds : unsigned long value
+ * @return OK strCurrentTime : verbose of currentTime
+ * ERROR NULL
+ */
 char *getTimeToString(unsigned long seconds) {
     time_t currentTime;
     char *strCurrentTime = NULL;

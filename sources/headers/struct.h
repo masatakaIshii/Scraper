@@ -134,9 +134,11 @@ typedef struct Resource {
 } Resource;
 
 typedef struct Session {
-    int numberActions;
-    char *nameAction;
+    char *actionName;
+    char *taskName;
+    char *sessionDirPath;
     Resource *resources;
+    unsigned long dateSeconds;
     char *createdDate;
 } Session;
 
