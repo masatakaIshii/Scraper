@@ -366,6 +366,149 @@ static void testStrSlice() {
     free(result);
 }
 
+static void testRemoveLineOccurIsPresent() {
+    char *test = "testons\ntestez\ntestent\n";
+    char *testOneLine = "test geroigjoeirj\n";
+    char *testNoLineBreak = "testoijfzoiejf zefzf";
+    char *contentFile = NULL;
+    FILE *fp = NULL;
+
+    // one line break file
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", testOneLine);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "test"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", testOneLine);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "eirj"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", testOneLine);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "gjoe"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "");
+    free(contentFile);
+
+    // no line break file
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", testNoLineBreak);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "test"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", testNoLineBreak);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "zefzf"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", testNoLineBreak);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "fzoi"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "");
+    free(contentFile);
+
+    // few line file
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", test);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "testes"), -1);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "testons\ntestez\ntestent\n");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", test);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "testons"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "testez\ntestent\n");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", test);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "testez"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "testons\ntestent\n");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", test);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "testent"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "testons\ntestez\n");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", test);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "tent"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "testons\ntestez\n");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", test);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "ons"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "testez\ntestent\n");
+    free(contentFile);
+
+    fp = fopen("test.txt", "wb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    fprintf(fp, "%s", test);
+    fclose(fp);
+    CU_ASSERT_EQUAL(removeLineOccurIsPresent("test.txt", "rb", "ez"), 0);
+    contentFile = getContentInFile("test.txt", "rb");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
+    CU_ASSERT_STRING_EQUAL(contentFile, "testons\ntestent\n");
+    free(contentFile);
+
+    unlink("text.txt");
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
@@ -385,7 +528,8 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit) ||
         NULL == CU_add_test(pSuite, "testProperStrSplit", testProperStrSplit) ||
         NULL == CU_add_test(pSuite, "testCheckIfStrIsInArrStr", testCheckIfStrIsInArrStr) ||
-        NULL == CU_add_test(pSuite, "testStrSlice", testStrSlice)) {
+        NULL == CU_add_test(pSuite, "testStrSlice", testStrSlice) ||
+        NULL == CU_add_test(pSuite, "testRemoveLineOccurIsPresent", testRemoveLineOccurIsPresent)) {
 
         CU_cleanup_registry();
         return CU_get_error();

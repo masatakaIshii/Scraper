@@ -7,6 +7,10 @@
  */
 #include "../headers/common.h"
 
+static char *searchBeforeAndAfterOccurAndConcat(const char *contentFile, const char *occur);
+static char *getProperStartLine(const char *contentFile, const char *occur);
+static char *getWithoutOccurPart(const char *contentFile, const char *start, const char *end);
+
 /**
  * Verify the pointer and if its null, show message and quit program with exit status '1'
  * @param pointer
@@ -115,6 +119,14 @@ char *strMallocCpy(const char *str, int length) {
     return newStr;
 }
 
+/**
+ * Slice the string from start to end
+ * @param string
+ * @param start
+ * @param end
+ * @return OK result : the result of slice,<br>
+ * ERROR NULL;
+ */
 char *strSlice(const char *string, int start, int end) {
     char *result = NULL;
 
@@ -226,7 +238,8 @@ static char **extractTokAndSaveInResult(int count, char *temp, const char *delim
  * @param str
  * @param delimiter
  * @param count
- * @return result : array of string
+ * @return OK result : array of string,<br>
+ * ERROR NULL
  */
 static char **fillArraySplitStr(const char *str, const char *delimiter, int count) {
     char *temp; // string to malloc, to use strtok without affect param str
@@ -276,7 +289,8 @@ char **strSplit(const char *str, const char *delimiter, int *pCount) {
  * @param content
  * @param delimiter
  * @param count
- * @return
+ * @return OK arrStr : array of string that is split with proper count
+ * ERROR : NULL;
  */
 char **properStrSplit(const char *content, const char *delimiter, int *count) {
     char **arrStr = NULL;
@@ -285,6 +299,10 @@ char **properStrSplit(const char *content, const char *delimiter, int *count) {
     int length = 0;
 
     arrStr = strSplit(content, delimiter, count);
+    if (arrStr == NULL) {
+        fprintf(stderr, "ERROR in properStrSplit : can't split the content to array of string\n");
+        return NULL;
+    }
     length = (int)(lastOccur - content);
 
     if (length + strlen(delimiter) == strlen(content)) {
@@ -337,7 +355,7 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur) {
  * @param lengthFile
  * @return : string that correspond to content of file
  */
-static char *writeContentOfFile(FILE *fp, int lengthFile) {
+static char *readContentOfFile(FILE *fp, int lengthFile) {
     char checkChar;
     char *result = NULL;
     int i = 0;
@@ -381,9 +399,154 @@ char *getContentInFile(const char *filePath, const char *mode) {
     length = ftell(fp);
 
     rewind(fp);
-    result = writeContentOfFile(fp, length);
+    result = readContentOfFile(fp, length);
 
     fclose(fp);
+
+    return result;
+}
+
+/**
+ * Write content in file
+ * @param filePath : file path to write content
+ * @param mode : mode if its wb or w
+ * @param content
+ * @return OK 0, <br>
+ * ERROR -1
+ */
+int writeInBeginFile(const char *filePath, const char *mode, const char *content) {
+    FILE *fp = NULL;
+    if (strcmp(mode, "wb") != 0 && strcmp(mode, "w") != 0) {
+        return -1;
+    }
+    fp = fopen(filePath, mode);
+    if (fp == NULL) {
+        return -1;
+    }
+
+    fprintf(fp, "%s", content);
+
+    fclose(fp);
+
+    return 0;
+}
+
+/**
+ * Remove line in file when occurrence is present
+ * @param filePath : file path to remove line when there is occurrence
+ * @param readMode : mode rb or b
+ * @param occur : occurrence that the line will be remove
+ * @return OK 0,<br>
+ * ERROR -1
+ */
+int removeLineOccurIsPresent(const char *filePath, const char *readMode, const char *occur) {
+    char *withoutOccurPart = NULL;
+    int result = 0;
+    char *contentFile = getContentInFile(filePath, readMode);
+    if (contentFile == NULL) {
+        return -1;
+    }
+    withoutOccurPart = searchBeforeAndAfterOccurAndConcat(contentFile, occur);
+    if (withoutOccurPart == NULL) {
+        free(contentFile);
+        return -1;
+    }
+
+    result = (writeInBeginFile(filePath, "wb", withoutOccurPart)) == -1 ? -1 : 0;
+
+    free(contentFile);
+    free(withoutOccurPart);
+
+    return result;
+}
+
+/**
+ * To get part without line that have occurrence
+ * @param contentFile : content of file to remove line
+ * @param occur : occurrence that is based to remove line
+ * @return OK withoutOccurPart : content that not contain occur without line
+ * ERROR NULL
+ */
+static char *searchBeforeAndAfterOccurAndConcat(const char *contentFile, const char *occur) {
+    char *withoutOccurPart = NULL;
+    char *start = NULL;
+    char *end = NULL;
+
+    start = getProperStartLine(contentFile, occur);
+    if (start == NULL) {
+        return NULL;
+    }
+
+    end = strchr(start, '\n');
+    if (end != NULL) {
+        end = end + 1;
+    } else {
+        end = (char*)contentFile + strlen(contentFile);
+    }
+
+    withoutOccurPart = getWithoutOccurPart(contentFile, start, end);
+    if (withoutOccurPart == NULL) {
+        return NULL;
+    }
+
+    return withoutOccurPart;
+}
+
+/**
+ * Function to get proper start line to remove
+ * @param contentFile
+ * @param occur
+ * @return OK start : address of char that start line
+ * ERROR NULL
+ */
+static char *getProperStartLine(const char *contentFile, const char *occur) {
+    int lengthContent = (int)strlen(contentFile);
+    char *start = strstr(contentFile, occur);
+    if (start == NULL) {
+        fprintf(stderr, "ERROR in removeListOccurIsPresent : not occur in contentFile\n");
+        return NULL;
+    }
+
+    while (lengthContent > strlen(start) && start[0] != '\n') {
+        start = start - 1;
+    }
+    if (start[0] == '\n') {
+        start += 1;
+    }
+
+    return start;
+}
+
+/**
+ * Function to fetch part without line that have occurrence determined by start and end
+ * @param contentFile
+ * @param start
+ * @param end
+ * @return OK result : content without line with occurrence
+ * ERROR : NULL
+ */
+static char *getWithoutOccurPart(const char *contentFile, const char *start, const char *end) {
+    char *result = NULL;
+    char *partBeforeOccur = NULL;
+    char *partAfterLineOccur = NULL;
+
+    partBeforeOccur = strMallocCpy(contentFile, (int)(start - contentFile));
+    if (partBeforeOccur == NULL) {
+        fprintf(stderr, "ERROR in removeListOccurIsPresent : problem malloc partBeforeOccur\n");
+        return NULL;
+    }
+    partAfterLineOccur = strMallocCpy(end, (int)(strlen(contentFile) - (end - contentFile)));
+    if (partAfterLineOccur == NULL) {
+        free(partBeforeOccur);
+        fprintf(stderr, "ERROR in removeListOccurIsPresent : problem malloc partBeforeOccur\n");
+        return NULL;
+    }
+    result = strMallocCat(partBeforeOccur, partAfterLineOccur);
+    if (result == NULL) {
+        fprintf(stderr, "ERROR in getWithoutOccurPart : problem malloc result\n");
+    }
+    free(partBeforeOccur);
+    free(partAfterLineOccur);
 
     return result;
 }

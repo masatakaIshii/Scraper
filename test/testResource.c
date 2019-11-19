@@ -139,7 +139,7 @@ static void testFilterResource() {
     CU_ASSERT_PTR_NULL_FATAL(pResource);
     CU_ASSERT_EQUAL(access("example/yahoo/index_scrap_0.html", F_OK), -1);
 
-    contentFile = getContentInFile("example/all_files_names.txt", "rb");
+    contentFile = getContentInFile("example/yahoo/all_files_names.txt", "rb");
     CU_ASSERT_PTR_NOT_NULL_FATAL(contentFile);
     CU_ASSERT(strstr(contentFile, "index_scrap_0") == NULL);
     destroyResource(pResource);

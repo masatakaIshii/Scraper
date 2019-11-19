@@ -80,24 +80,13 @@ int setTypesFilter(Resource *pResource, char **types, int count) {
     return 0;
 }
 
-int createFileResource(Resource **pResource, const char *dirResourcePath, Action *pAction, int depth) {
-    int result;
+static void removeLineInFileNameManager(Resource *pResource) {
 
-    result = setDirAndOutputPath(*pResource, dirResourcePath);
-    if (result != 0) {
-        fprintf(stderr, "\nDon't found file extention of resource with url '%s'\n", (*pResource)->pRequest->pUrlHelper->url);
-        *pResource = NULL;
-        return -1;
-    }
+    //char *allFileNamesPath = strMallocCat(pResource, "all_files_names.txt");
 
-    mkdirP((*pResource)->dirResourcePath);
+}
 
-    if (saveRequestInFile((*pResource)->pRequest, (*pResource)->outputPath) != CURLE_OK) {
-        fprintf(stderr, "\nERROR request : %s\n", (*pResource)->pRequest->errBuf);
-        *pResource = NULL;
-        return -1;
-    }
-
+static int saveAndFilterResource(Resource **pResource, Action *pAction, int depth) {
     if ((*pResource)->pRequest->isHandleInit) {
         clearPHandle((*pResource)->pRequest);
     }
@@ -108,11 +97,41 @@ int createFileResource(Resource **pResource, const char *dirResourcePath, Action
     if (pAction->numberTypes > 0 && depth > 0) {
         if (checkIfStrIsInArrStr((*pResource)->pRequest->contentType, (const char **)pAction->types, pAction->numberTypes)) {
             unlink((*pResource)->outputPath);
+            removeLineInFileNameManager(*pResource);
             destroyResource(*pResource);
             *pResource = NULL;
             return -1;
         }
     }
+
+    return 0;
+}
+
+int createFileResource(Resource **pResource, const char *dirResourcePath, Action *pAction, int depth) {
+    int result;
+
+    result = setDirAndOutputPath(*pResource, dirResourcePath);
+    if (result != 0) {
+        fprintf(stderr, "\nDon't found file extention of resource with url '%s'\n", (*pResource)->pRequest->pUrlHelper->url);
+        destroyResource(*pResource);
+        *pResource = NULL;
+        return -1;
+    }
+
+    mkdirP((*pResource)->dirResourcePath);
+
+    if (saveAndFilterResource(pResource, pAction, depth) == -1) {
+        return -1;
+    }
+
+    if (saveRequestInFile((*pResource)->pRequest, (*pResource)->outputPath) != CURLE_OK) {
+        fprintf(stderr, "\nERROR request : %s\n", (*pResource)->pRequest->errBuf);
+        free(*pResource);
+        *pResource = NULL;
+        return -1;
+    }
+
+
 
     (*pResource)->createdDate = getCurrentTime();
     verifyPointer((*pResource)->createdDate, "Problem get current time in createFileResource\n");

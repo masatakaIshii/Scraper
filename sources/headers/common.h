@@ -52,6 +52,14 @@ char *strReallocCat(char *currentStr, const char *strToAdd);
  */
 char *strMallocCat(const char *str1, const char *str2);
 
+/**
+ * Slice the string from start to end
+ * @param string
+ * @param start
+ * @param end
+ * @return OK result : the result of slice,<br>
+ * ERROR NULL;
+ */
 char *strSlice(const char *string, int start, int end);
 
 /**
@@ -91,6 +99,14 @@ char *myStrrstr(const char *string, const char *lastOccur);
  */
 char **strSplit(const char *str, const char *delimiter, int *pCount);
 
+/**
+ * Function to properStrSplit
+ * @param content
+ * @param delimiter
+ * @param count
+ * @return OK arrStr : array of string that is split with proper count
+ * ERROR : NULL;
+ */
 char **properStrSplit(const char *content, const char *delimiter, int *count);
 
 /**
@@ -115,6 +131,26 @@ int getIndexAfterOccurStr(const char *strCheck, const char *strOccur);
  * @return
  */
 char *getContentInFile(const char *filePath, const char *mode);
+
+/**
+ * Write content in file
+ * @param filePath : file path to write content
+ * @param mode : mode if its wb or w
+ * @param content
+ * @return OK 0, <br>
+ * ERROR -1
+ */
+int writeInBeginFile(const char *filePath, const char *mode, const char *content);
+
+/**
+ * Remove line in file when occurrence is present
+ * @param filePath : file path to remove line when there is occurrence
+ * @param readMode : mode rb or b
+ * @param occur : occurrence that the line will be remove
+ * @return OK 0,<br>
+ * ERROR -1
+ */
+int removeLineOccurIsPresent(const char *filePath, const char *mode, const char *occur);
 
 /**
  * Get current time in seconds

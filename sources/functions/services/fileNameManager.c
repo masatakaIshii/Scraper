@@ -268,9 +268,7 @@ static int checkIfNameIsUsed(const char *fileNamesManagerPath, const char *nameT
     return result;
 }
 
-/**
 
- */
 
 /**
  * Delete file name manager by given directory path and the name of file
