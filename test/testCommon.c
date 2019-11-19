@@ -47,6 +47,16 @@ static void testStrMallocCpy() {
     CU_ASSERT_PTR_NULL(test);
 }
 
+static void testGetCurrentTimeSec() {
+    unsigned long seconds = getCurrentTimeSec();
+    time_t expected = time(NULL);
+    CU_ASSERT_EQUAL(seconds, expected);
+
+    char *currentDate = getTimeToString(1574124725);
+    CU_ASSERT_STRING_EQUAL(currentDate, "Tue Nov 19 01:52:05 2019\n");
+    free(currentDate);
+}
+
 static void testGetCurrentDate() {
     char *currentDate = getCurrentTime();
     time_t expected = time(NULL);
@@ -328,16 +338,13 @@ static void testProperStrSplit() {
     freeArrayString(result, count);
 }
 
-static void testTransformTimeStringToIntSec() {
-
-}
-
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
     if (NULL == CU_add_test(pSuite, "testGetNumberDigit", testGetNumberDigit) ||
         NULL == CU_add_test(pSuite, "testGetIndexAfterOccurStr", testGetIndexAfterOccurStr) ||
         NULL == CU_add_test(pSuite, "testStrMallocCpy", testStrMallocCpy) ||
+        NULL == CU_add_test(pSuite, "testGetCurrentTimeSec", testGetCurrentTimeSec) ||
         NULL == CU_add_test(pSuite, "testGetCurrentDate", testGetCurrentDate) ||
         NULL == CU_add_test(pSuite, "testStrMallocCat", testStrMallocCat) ||
         NULL == CU_add_test(pSuite, "testStrReallocCat", testStrReallocCat) ||
@@ -348,8 +355,7 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr) ||
         NULL == CU_add_test(pSuite, "testMyStrrstr", testMyStrrstr) ||
         NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit) ||
-        NULL == CU_add_test(pSuite, "testProperStrSplit", testProperStrSplit) ||
-        NULL == CU_add_test(pSuite, "testTransformTimeStringToIntSec", testTransformTimeStringToIntSec)) {
+        NULL == CU_add_test(pSuite, "testProperStrSplit", testProperStrSplit)) {
 
         CU_cleanup_registry();
         return CU_get_error();

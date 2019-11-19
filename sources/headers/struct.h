@@ -7,6 +7,13 @@
 
 #include <curl/curl.h>
 
+typedef struct Time {
+    int seconds;
+    int minutes;
+    int hours;
+    int years;
+} Time;
+
 /**
  * Possibility of option value
  * valueInt : integer's value of option

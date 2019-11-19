@@ -360,6 +360,33 @@ char *getContentInFile(const char *filePath, const char *mode) {
     return result;
 }
 
+unsigned long getCurrentTimeSec() {
+    time_t currentTime;
+    currentTime = time(NULL);
+    if (currentTime == (time_t) -1) {
+        fprintf(stderr, "Problem to set time in getCurrentTime\n");
+        return -1;
+    }
+    return (unsigned long)currentTime;
+}
+
+char *getTimeToString(unsigned long seconds) {
+    time_t currentTime;
+    char *strCurrentTime = NULL;
+    char *temp = NULL;
+
+    currentTime = seconds;
+
+    temp = ctime(&currentTime);
+    strCurrentTime = strMallocCpy(temp, (int) strlen(temp));
+    if (strCurrentTime == NULL) {
+        fprintf(stderr, "Problem get current time\n");
+        return NULL;
+    }
+
+    return strCurrentTime;
+}
+
 /**
  * Get current time format "strDate strMonth intDate intHours:intMin:intSec intYears"
  * Example : "Sun Oct 01 13:12:00 2019"
@@ -384,6 +411,14 @@ char *getCurrentTime() {
     }
 
     return strCurrentTime;
+}
+
+static unsigned long getAllTimesValuesToSec(int years, int hours, int minutes, int seconds) {
+    unsigned long result = seconds;
+    result += 60 * minutes;
+    result += 3600 * hours;
+    result += 31536000 * (years - 1970);
+    return result;
 }
 
 /**
