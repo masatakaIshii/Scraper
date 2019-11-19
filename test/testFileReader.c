@@ -3,12 +3,10 @@
 //
 #include "test.h"
 
-//static FILE *frp = NULL;
 static char *result = NULL;
 static char **results = NULL;
 static int count = 0;
 static FILE *fwp = NULL;
-static char *contentFile = NULL;
 
 static void startExampleFileToRead1() {
     fwp = startFileWriter("tonton.txt", "ab", "=");
@@ -34,7 +32,6 @@ static void startExampleFileWithArrayValue1() {
     fwp = startFileWriter("tonton.txt", "ab", "=");
     writeOptionNameAndValue(fwp, "tata", "tonton");
     writeOptionNameAndArrayValues(fwp, "tabT", (const char**)arrStr, 6);
-    //writeOptionNameAndValue(fwp, "tabT", "tonton");
     closeFileWriter(fwp);
 }
 
@@ -45,24 +42,6 @@ static void startExemplaManageParenthesis() {
     writeOptionNameAndArrayValues(fwp, "tabT", (const char**)arrStr, 6);
     writeOptionNameAndValue(fwp, "tabT", "tonton");
     closeFileWriter(fwp);
-}
-
-static void testInitFileReader() {
-//    startExampleFileToRead1();
-//
-//    frp = startFileReader("tonton.txt", "ab");
-//    CU_ASSERT_PTR_NULL(frp);
-//    frp = NULL;
-//
-//    frp = startFileReader("tonton.txt", "wb");
-//    CU_ASSERT_PTR_NULL(frp);
-//    frp = NULL;
-//
-//    frp = startFileReader("tonton.txt", "rb");
-//    CU_ASSERT_PTR_NOT_NULL_FATAL(frp);
-//    closeFileReader(frp);
-//
-//    unlink("tonton.txt");
 }
 
 static void testGetOptionValue() {
@@ -137,8 +116,7 @@ static void testGetValueInParenthesis() {
 CU_ErrorCode fileReaderSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testFileReader", initManageStderr, cleanManageStderr);
 
-    if (NULL == CU_add_test(pSuite, "testInitFileReader", testInitFileReader) ||
-        NULL == CU_add_test(pSuite, "testGetOptionValue", testGetOptionValue) ||
+    if (NULL == CU_add_test(pSuite, "testGetOptionValue", testGetOptionValue) ||
         NULL == CU_add_test(pSuite, "testGetOptionValues", testGetOptionValues) ||
         NULL == CU_add_test(pSuite, "testGetArrOptionValue", testGetArrOptionValue) ||
         NULL == CU_add_test(pSuite, "testGetValueInParenthesis", testGetValueInParenthesis)) {

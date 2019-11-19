@@ -17,10 +17,10 @@ Config *initConfig();
 
 Action *initAction();
 
-int runConfig(Config *pConfig);
+int fillConfig(Config *pConfig);
+
+int runAllTasks(Config *pConfig);
 
 void destroyConfig(Config *pConfig);
-
-
 
 #endif //SCRAPER_CONFIG_H

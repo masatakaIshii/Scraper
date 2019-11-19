@@ -2,8 +2,8 @@
 {name -> Mon site web}
 {url -> https://www.example.com}
 +
-{max-depth -> 0}
-{versioning -> off}
+{max-depth -> 1}
+{versioning -> on}
 {types -> (text/javascript, text/html, application/javascript)}
 
 =
@@ -11,7 +11,7 @@
 {url -> https://www.google.com}
 +
 {max-depth -> 0}
-{versioning -> on}
+{versioning -> off}
 
 ==
 {name -> Ma super tache}

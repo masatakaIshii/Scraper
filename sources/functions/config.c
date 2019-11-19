@@ -108,13 +108,12 @@ static int getVersioningNumber(char *versioning) {
 
 static int checkIfOptionValueIsInteger(char *content, char *optionName) {
     char *potentialNumber = NULL;
+    int result = 0;
     potentialNumber = getOptValueByContent(content, optionName);
-    if (atoi(potentialNumber) && potentialNumber[0] != '\0') {
+    result = strtol(potentialNumber, NULL, 10);
 
-        free(potentialNumber);
-        return atoi(potentialNumber);
-    }
-    return 0;
+    free(potentialNumber);
+    return result;
 }
 
 static Action *parseAction(char *actionContent) {
@@ -232,18 +231,7 @@ static int runActionByTask(Task *task, Action **actions, int numberAction) {
     return 0;
 }
 
-static int runAllTasks(Config *pConfig) {
-    int i;
-
-    for (i = 0; i < pConfig->numberTasks; i++) {
-        if (runActionByTask(pConfig->tasks[i], pConfig->actions, pConfig->numberActions) == -1) {
-            return -1;
-        }
-    }
-    return 0;
-}
-
-int runConfig(Config *pConfig) {
+int fillConfig(Config *pConfig) {
 
     pConfig->content = getContentInFile("configuration.sconf", "rb");
     if (pConfig->content == NULL) {
@@ -259,10 +247,18 @@ int runConfig(Config *pConfig) {
         return -1;
     }
 
-    if (runAllTasks(pConfig) == -1) {
-        return -1;
-    }
+    return 0;
+}
 
+
+int runAllTasks(Config *pConfig) {
+    int i;
+
+    for (i = 0; i < pConfig->numberTasks; i++) {
+        if (runActionByTask(pConfig->tasks[i], pConfig->actions, pConfig->numberActions) == -1) {
+            return -1;
+        }
+    }
     return 0;
 }
 
