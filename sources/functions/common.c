@@ -159,6 +159,41 @@ char *myStrrstr(const char *string, const char *lastOccur) {
 }
 
 /**
+ * Extract content string to few token that split by delimiter
+ * @param count : number of delimiter
+ * @param temp : string to split
+ * @param delimiter : delimiter that split temp string
+ * @return OK array of string that is split by delimiter, <br>
+ * ERROR NULL
+ */
+static char **extractTokAndSaveInResult(int count, char *temp, const char *delimiter) {
+    int i = 0;
+    char *token = NULL;
+    char **result = malloc(sizeof(char *) * count);
+    if (result == NULL) {
+        fprintf(stderr, "ERROR in extractTokAndSaveInResult : Problem malloc of result\n");
+        return NULL;
+    }
+
+    token = strtok(temp, delimiter);
+    while (token != NULL) {
+        if (strlen(token) > 0) {
+            result[i] = strMallocCpy(token, (int) strlen(token));
+            if (result[i] == NULL) {
+                freeArrayString(result, i);
+                free(result);
+                fprintf(stderr, "ERROR in extractTokAndSaveInResult : Problem strMallocCpy the token to result[%d]", i);
+                return NULL;
+            }
+            i++;
+        }
+        token = strtok(NULL, delimiter);
+    }
+
+    return result;
+}
+
+/**
  * Function to operate split of string to array of string by delimiter
  * @param str
  * @param delimiter
@@ -166,21 +201,20 @@ char *myStrrstr(const char *string, const char *lastOccur) {
  * @return result : array of string
  */
 static char **fillArraySplitStr(const char *str, const char *delimiter, int count) {
-    char *token = NULL;
-    int i = 0;
     char *temp; // string to malloc, to use strtok without affect param str
-    char **result = malloc(sizeof(char *) * count);
-    verifyPointer(result, "Problem malloc result in fillArraySplitStr\n");
+    char **result;// = malloc(sizeof(char *) * count);
 
     temp = strMallocCpy(str, (int) strlen(str));
-    verifyPointer(temp, "Problem strMallocCpy temp in fillArraySplitStr\n");
+    if (temp == NULL) {
+        fprintf(stderr, "ERROR in fillArraySplitStr : Problem strMallocCpy temp in fillArraySplitStr\n");
+        return NULL;
+    }
 
-    token = strtok(temp, delimiter);
-    while (token != NULL) {
-        result[i] = strMallocCpy(token, (int) strlen(token));
-        verifyPointer(result[i], "Problem result[i] in fillArraySplitStr\n");
-        token = strtok(NULL, delimiter);
-        i++;
+    result = extractTokAndSaveInResult(count, temp, delimiter);
+    if (result == NULL) {
+        free(temp);
+        fprintf(stderr, "ERROR in fillArraySplitStr : Problem strMallocCpy temp in fillArraySplitStr\n");
+        return NULL;
     }
 
     free(temp);
@@ -209,13 +243,27 @@ char **strSplit(const char *str, const char *delimiter, int *pCount) {
     return arrayStr;
 }
 
+/**
+ * Function to properStrSplit
+ * @param content
+ * @param delimiter
+ * @param count
+ * @return
+ */
 char **properStrSplit(const char *content, const char *delimiter, int *count) {
     char **arrStr = NULL;
+    char *lastOccur = myStrrstr(content, delimiter);
+    char *startOccur = strstr(content, delimiter);
+    int length = 0;
 
     arrStr = strSplit(content, delimiter, count);
+    length = (int)(lastOccur - content);
 
-    if (content[strlen(content) - 1] == delimiter[0]) {
+    if (length + strlen(delimiter) == strlen(content)) {
         (*count)--;
+        if (lastOccur != startOccur && strncmp(content, delimiter, strlen(delimiter)) == 0) {
+            (*count)--;
+        }
     }
 
     return arrStr;

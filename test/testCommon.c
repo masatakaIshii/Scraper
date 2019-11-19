@@ -298,6 +298,40 @@ static void testStrReallocCat() {
     free(test);
 }
 
+static void testProperStrSplit() {
+    char *assert1 = "test\ntest\ntest\n";
+    char *assert2 = "test==testons==testez==";
+    char *assert3 = "==teste==testes==teste==";
+    int count = 0;
+    char **result = properStrSplit(assert1, "\n", &count);
+
+    CU_ASSERT_EQUAL(count, 3);
+    CU_ASSERT_STRING_EQUAL(result[0], "test");
+    CU_ASSERT_STRING_EQUAL(result[1], "test");
+    CU_ASSERT_STRING_EQUAL(result[2], "test");
+    freeArrayString(result, count);
+    count = 0;
+
+    result = properStrSplit(assert2, "==", &count);
+    CU_ASSERT_EQUAL(count, 3);
+    CU_ASSERT_STRING_EQUAL(result[0], "test");
+    CU_ASSERT_STRING_EQUAL(result[1], "testons");
+    CU_ASSERT_STRING_EQUAL(result[2], "testez");
+    freeArrayString(result, count);
+    count = 0;
+
+    result = properStrSplit(assert3, "==", &count);
+    CU_ASSERT_EQUAL(count, 3);
+    CU_ASSERT_STRING_EQUAL(result[0], "teste");
+    CU_ASSERT_STRING_EQUAL(result[1], "testes");
+    CU_ASSERT_STRING_EQUAL(result[2], "teste");
+    freeArrayString(result, count);
+}
+
+static void testTransformTimeStringToIntSec() {
+
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
@@ -313,7 +347,9 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testGetContentFile", testGetContentFile) ||
         NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr) ||
         NULL == CU_add_test(pSuite, "testMyStrrstr", testMyStrrstr) ||
-        NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit)) {
+        NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit) ||
+        NULL == CU_add_test(pSuite, "testProperStrSplit", testProperStrSplit) ||
+        NULL == CU_add_test(pSuite, "testTransformTimeStringToIntSec", testTransformTimeStringToIntSec)) {
 
         CU_cleanup_registry();
         return CU_get_error();
