@@ -314,7 +314,6 @@ static void testProperStrSplit() {
     char *assert3 = "==teste==testes==teste==";
     int count = 0;
     char **result = properStrSplit(assert1, "\n", &count);
-
     CU_ASSERT_EQUAL(count, 3);
     CU_ASSERT_STRING_EQUAL(result[0], "test");
     CU_ASSERT_STRING_EQUAL(result[1], "test");
@@ -338,6 +337,35 @@ static void testProperStrSplit() {
     freeArrayString(result, count);
 }
 
+static void testCheckIfStrIsInArrStr() {
+    char *arrStr[100] = {"toto", "tata", "titi"};
+    char *str1 = "tot";
+    char *str2 = "tataa";
+    char *str3 = "titi\n";
+    char *str4 = "toto";
+
+    CU_ASSERT_EQUAL(checkIfStrIsInArrStr(str1, (const char **)arrStr, 3), 0);
+    CU_ASSERT_EQUAL(checkIfStrIsInArrStr(str2, (const char **)arrStr, 3), 0);
+    CU_ASSERT_EQUAL(checkIfStrIsInArrStr(str3, (const char **)arrStr, 3), 0);
+    CU_ASSERT_EQUAL(checkIfStrIsInArrStr(str4, (const char **)arrStr, 3), 1);
+}
+
+static void testStrSlice() {
+    char *testSlice = "testons le slice";
+    char *result = strSlice(testSlice, 8, 10);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "le");
+    free(result);
+
+    result = strSlice(testSlice, 0, strlen("testons"));
+    CU_ASSERT_STRING_EQUAL(result, "testons");
+    free(result);
+
+    result = strSlice(testSlice, strlen("testons le "), strlen(testSlice));
+    CU_ASSERT_STRING_EQUAL(result, "slice");
+    free(result);
+}
+
 CU_ErrorCode commonSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testCommon", NULL, NULL);
 
@@ -355,7 +383,9 @@ CU_ErrorCode commonSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testGetNumberOccurrenceInStr", testGetNumberOccurrenceInStr) ||
         NULL == CU_add_test(pSuite, "testMyStrrstr", testMyStrrstr) ||
         NULL == CU_add_test(pSuite, "testStrSplit", testStrSplit) ||
-        NULL == CU_add_test(pSuite, "testProperStrSplit", testProperStrSplit)) {
+        NULL == CU_add_test(pSuite, "testProperStrSplit", testProperStrSplit) ||
+        NULL == CU_add_test(pSuite, "testCheckIfStrIsInArrStr", testCheckIfStrIsInArrStr) ||
+        NULL == CU_add_test(pSuite, "testStrSlice", testStrSlice)) {
 
         CU_cleanup_registry();
         return CU_get_error();

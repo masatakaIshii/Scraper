@@ -96,7 +96,7 @@ int runSessionAndResources(Session *pSession, Action *pAction) {
         return 0;
     }
 
-    // init resource and save
+    // init resource and save initSession
 
     return 1;
 }

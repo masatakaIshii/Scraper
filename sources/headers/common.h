@@ -52,6 +52,8 @@ char *strReallocCat(char *currentStr, const char *strToAdd);
  */
 char *strMallocCat(const char *str1, const char *str2);
 
+char *strSlice(const char *string, int start, int end);
+
 /**
  * function to get the number of occurence in string
  * @param str : string to view of there are occurence
@@ -59,6 +61,16 @@ char *strMallocCat(const char *str1, const char *str2);
  * @return result : number of occurence in string 'str'
  */
 int getNbrOccurInStr(const char *str, const char *occur);
+
+/**
+ * Function to check if strin is in array of string
+ * @param str
+ * @param arrStr
+ * @param count
+ * @return OK 1 : the string is in array of string
+ * ERROR 1 : the string is not in array of string
+ */
+int checkIfStrIsInArrStr(const char *str, const char **arrStr, int count);
 
 /**
  * Function to get last occurrence of string

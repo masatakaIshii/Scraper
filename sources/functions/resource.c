@@ -3,33 +3,34 @@
 //
 #include "../headers/resource.h"
 
-static void initFieldsResource(Resource *pResource, int depth, int maxDepth);
+static void initFieldsResource(Resource *pResource, Action *pAction, int depth);
 static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath);
 static int setOutputPath(Resource *pResource);
 char **setLinks(Resource *pResource);
 
-Resource *initResource(const char *url, int depth, int maxDepth) {
+Resource *initResource(const char *url, Action *pAction, int depth) {
     Resource *pResource = NULL;
-    if (maxDepth >= 0 && depth >= 0 && maxDepth >= depth) {
-        pResource = malloc(sizeof(Resource));
-        if (pResource == NULL) {
-            return NULL;
-        }
-        initFieldsResource(pResource, depth, maxDepth);
-        pResource->pRequest = initRequest(url);
-        if (pResource->pRequest == NULL) {
-            free(pResource);
-            return NULL;
-        }
-        pResource->isRequest = 1;
+    if (pAction == NULL || pAction->maxDepth < depth || pAction->maxDepth < 0 || depth < 0) {
+        return NULL;
     }
+    pResource = malloc(sizeof(Resource));
+    if (pResource == NULL) {
+        return NULL;
+    }
+    initFieldsResource(pResource, pAction, depth);
+    pResource->pRequest = initRequest(url);
+    if (pResource->pRequest == NULL) {
+        free(pResource);
+        return NULL;
+    }
+    pResource->isRequest = 1;
 
     return pResource;
 }
 
-static void initFieldsResource(Resource *pResource, int depth, int maxDepth) {
+static void initFieldsResource(Resource *pResource, Action *pAction, int depth) {
     pResource->depth = depth;
-    pResource->maxDepth = maxDepth;
+    pResource->maxDepth = pAction->maxDepth;
 
     pResource->isCreatedDate = 0;
     pResource->createdDate = NULL;
@@ -79,33 +80,45 @@ int setTypesFilter(Resource *pResource, char **types, int count) {
     return 0;
 }
 
-int createFileResource(Resource *pResource, const char *dirResourcePath, const char **filter, int depth) {
+int createFileResource(Resource **pResource, const char *dirResourcePath, Action *pAction, int depth) {
     int result;
 
-    result = setDirAndOutputPath(pResource, dirResourcePath);
+    result = setDirAndOutputPath(*pResource, dirResourcePath);
     if (result != 0) {
-        fprintf(stderr, "\nDon't found file extention of resource with url '%s'\n", pResource->pRequest->pUrlHelper->url);
+        fprintf(stderr, "\nDon't found file extention of resource with url '%s'\n", (*pResource)->pRequest->pUrlHelper->url);
+        *pResource = NULL;
         return -1;
     }
 
-    mkdirP(pResource->dirResourcePath);
+    mkdirP((*pResource)->dirResourcePath);
 
-    if (saveRequestInFile(pResource->pRequest, pResource->outputPath) != CURLE_OK) {
-        fprintf(stderr, "\nERROR request : %s\n", pResource->pRequest->errBuf);
+    if (saveRequestInFile((*pResource)->pRequest, (*pResource)->outputPath) != CURLE_OK) {
+        fprintf(stderr, "\nERROR request : %s\n", (*pResource)->pRequest->errBuf);
+        *pResource = NULL;
         return -1;
     }
-    if (pResource->pRequest->isHandleInit) {
-        clearPHandle(pResource->pRequest);
+
+    if ((*pResource)->pRequest->isHandleInit) {
+        clearPHandle((*pResource)->pRequest);
     }
-    if (pResource->pRequest->isFileOpen) {
-        clearPFile(pResource->pRequest);
+    if ((*pResource)->pRequest->isFileOpen) {
+        clearPFile((*pResource)->pRequest);
     }
 
-    pResource->createdDate = getCurrentTime();
-    verifyPointer(pResource->createdDate, "Problem get current time in createFileResource\n");
-    pResource->isCreatedDate = 1;
+    if (pAction->numberTypes > 0 && depth > 0) {
+        if (checkIfStrIsInArrStr((*pResource)->pRequest->contentType, (const char **)pAction->types, pAction->numberTypes)) {
+            unlink((*pResource)->outputPath);
+            destroyResource(*pResource);
+            *pResource = NULL;
+            return -1;
+        }
+    }
 
-    pResource->links = setLinks(pResource);
+    (*pResource)->createdDate = getCurrentTime();
+    verifyPointer((*pResource)->createdDate, "Problem get current time in createFileResource\n");
+    (*pResource)->isCreatedDate = 1;
+
+    (*pResource)->links = setLinks(*pResource);
 
     return 0;
 }
@@ -124,7 +137,7 @@ static int setDirAndOutputPath(Resource *pResource, const char *dirResourcePath)
 
 static int setOutputPath(Resource *pResource) {
     UrlHelper *pUrlHelper = pResource->pRequest->pUrlHelper;
-    char *dirResourcePathWithSlash = strMallocCat(pResource->dirResourcePath, "/");;
+    char *dirResourcePathWithSlash = strMallocCat(pResource->dirResourcePath, "/");
 
     if (pUrlHelper->isFileExt == 0 || pUrlHelper->isFileName == 0) {
         if (getFileExtByMimeType(pResource->pRequest, pResource->dirResourcePath) != 1) { // fetch extension file by mime type search in conditions and list fileExt / mimeType
@@ -140,6 +153,12 @@ static int setOutputPath(Resource *pResource) {
     return 0;
 }
 
+/**
+ * Search links in download file of resource
+ * @param pResource
+ * @return OK links : all link in http page, <br>
+ * ERROR NULL;
+ */
 char **setLinks(Resource *pResource) {
     Request *pRequest = pResource->pRequest;
     UrlHelper *pUrlHelper = pRequest->pUrlHelper;
@@ -165,11 +184,7 @@ void addResourceInfoInFile(Resource *pResource, const char *resourcesFile) {
 
 }
 
-void destroyResource(Resource *pResource) {
-    if (pResource->isCreatedDate == 1) {
-        free(pResource->createdDate);
-        pResource->isCreatedDate = 0;
-    }
+static void destroyRequestAndPath(Resource *pResource) {
     if (pResource->isOutputPath == 1) {
         free(pResource->outputPath);
         pResource->isOutputPath = 0;
@@ -182,13 +197,23 @@ void destroyResource(Resource *pResource) {
         destroyRequest(pResource->pRequest);
         pResource->isRequest = 0;
     }
-    if (pResource->numberLinks > 0) {
-        freeArrayString(pResource->links, pResource->numberLinks);
-        pResource->numberLinks = 0;
-    }
-    if (pResource->numberType > 0) {
-        freeArrayString(pResource->type, pResource->numberType);
-    }
+}
 
-    free(pResource);
+void destroyResource(Resource *pResource) {
+    if (pResource != NULL) {
+        if (pResource->isCreatedDate == 1) {
+            free(pResource->createdDate);
+            pResource->isCreatedDate = 0;
+        }
+        destroyRequestAndPath(pResource);
+        if (pResource->numberLinks > 0) {
+            freeArrayString(pResource->links, pResource->numberLinks);
+            pResource->numberLinks = 0;
+        }
+        if (pResource->numberType > 0) {
+            freeArrayString(pResource->type, pResource->numberType);
+        }
+
+        free(pResource);
+    }
 }

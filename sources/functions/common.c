@@ -115,6 +115,14 @@ char *strMallocCpy(const char *str, int length) {
     return newStr;
 }
 
+char *strSlice(const char *string, int start, int end) {
+    char *result = NULL;
+
+    result = strMallocCpy(string + start, end - start);
+
+    return result;
+}
+
 /**
  * Function to get the number of occurence in string
  * @param str : string to view of there are occurence
@@ -133,6 +141,26 @@ int getNbrOccurInStr(const char *str, const char *occur) {
         }
     }
     return result;
+}
+
+/**
+ * Function to check if strin is in array of string
+ * @param str
+ * @param arrStr
+ * @param count
+ * @return OK 1 : the string is in array of string
+ * ERROR 1 : the string is not in array of string
+ */
+int checkIfStrIsInArrStr(const char *str, const char **arrStr, int count) {
+    int i;
+
+    for (i = 0; i < count; i++) {
+        if (strcmp(str, arrStr[i]) == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 /**
@@ -424,13 +452,13 @@ char *getCurrentTime() {
     return strCurrentTime;
 }
 
-static unsigned long getAllTimesValuesToSec(int years, int hours, int minutes, int seconds) {
-    unsigned long result = seconds;
-    result += 60 * minutes;
-    result += 3600 * hours;
-    result += 31536000 * (years - 1970);
-    return result;
-}
+//static unsigned long getAllTimesValuesToSec(int years, int hours, int minutes, int seconds) {
+//    unsigned long result = seconds;
+//    result += 60 * minutes;
+//    result += 3600 * hours;
+//    result += 31536000 * (years - 1970);
+//    return result;
+//}
 
 /**
  * Destroy pointer if boolean of field is == 1, and affect boolean to 0

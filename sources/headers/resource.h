@@ -10,11 +10,11 @@
 #include "request.h"
 #include "../headers/urlSearcher.h"
 
-Resource *initResource(const char *url, int depth, int maxDepth);
+Resource *initResource(const char *url, Action *pAction, int depth);
 
 int setTypesFilter(Resource *pResource, char **types, int count);
 
-int createFileResource(Resource *pResource, const char *dirResourcePath, const char **filter, int depth);
+int createFileResource(Resource **pResource, const char *dirResourcePath, Action *pAction, int depth);
 
 void addResourceInformationInResourcesFile(Resource *pResource, const char *resourcesFile);
 

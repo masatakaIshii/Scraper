@@ -183,6 +183,17 @@ static void testAddNameIfNotInFilesNamesManager() {
     unlink("urlManager.txt");
 }
 
+static void testAddNameEvenIfFileIsEmpty() {
+    FILE *fp = fopen("test.txt", "wb");
+
+    fclose(fp);
+    result = getAvailableName("test.txt", "", "tata", "_");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "tata_0");
+    free(result);
+    unlink("test.txt");
+}
+
 CU_ErrorCode fileNameManagerSpec(CU_pSuite pSuite) {
     pSuite = CU_add_suite("testFileNameManager", initManageStderr, cleanManageStderr);
 
@@ -191,7 +202,8 @@ CU_ErrorCode fileNameManagerSpec(CU_pSuite pSuite) {
         NULL == CU_add_test(pSuite, "testAddFileNameInAllFilesNames", testAddFileNameInAllFilesNames) ||
         NULL == CU_add_test(pSuite, "testIfFileNamesExitAddNewFileName", testIfFileNamesExitAddNewFileName) ||
         NULL == CU_add_test(pSuite, "testFilesNameManagerInDifferentDir", testFilesNameManagerInDifferentDir) ||
-        NULL == CU_add_test(pSuite, "testAddNameIfNotInFilesNamesManager", testAddNameIfNotInFilesNamesManager)) {
+        NULL == CU_add_test(pSuite, "testAddNameIfNotInFilesNamesManager", testAddNameIfNotInFilesNamesManager) ||
+        NULL == CU_add_test(pSuite, "testAddNameEvenIfFileIsEmpty", testAddNameEvenIfFileIsEmpty)) {
 
         CU_cleanup_registry();
         return CU_get_error();

@@ -41,6 +41,7 @@ Action *dummyTypesAction() {
     pAction->url = strMallocCpy("http://yahoo.com", strlen("http://yahoo.com"));
     pAction->name = strMallocCpy("first action", strlen("first action"));
     pAction->numberTypes = 3;
+    pAction->maxDepth = 1;
 
     pAction->types = malloc(sizeof(char *) * pAction->numberTypes);
     for (i = 0; i < pAction->numberTypes; i++) {
